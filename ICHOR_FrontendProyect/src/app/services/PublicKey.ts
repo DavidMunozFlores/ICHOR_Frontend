@@ -10,7 +10,8 @@ export class PublicKeyService {
   private http = inject(HttpClient);
 
   public get() {
-    return this.http.get(`${this.API_URL}/public/key`);
+    this.http.get<string>(`${this.API_URL}/api/v1/keys/public`).subscribe();
+
   }
 
 }
