@@ -1,7 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable, signal } from '@angular/core';
-import { PublicKeyService } from './PublicKey';
-import * as CryptJS from 'crypto-js';
+import { PublicKeyService } from './PublicKey.service';
 
 
 @Injectable({
@@ -13,9 +12,9 @@ export class CipherDataService {
   private publicKeyService = inject(PublicKeyService);
 
 
-
+// TODO FIX THE ENCRYPT
   encrypt(data: string): string {
-    return CryptoJS.AES.encrypt(data, this.publicKeyService.get()).toString();
+    return CryptoJS..encrypt(data, this.publicKeyService.get()).toString();
   }
 
 

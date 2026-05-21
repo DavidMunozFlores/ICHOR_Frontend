@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, signal, WritableSignal, inject, computed, Signal } from '@angular/core';
-import { PublicKeyService } from '../../services/PublicKey';
+import { PublicKeyService } from '../../services/PublicKey.service';
 import { LogInData } from '../../interfaces/LogInData';
-import { CipherDataService } from '../../services/CipherData';
+import { CipherDataService } from '../../services/EncryptData.service';
 
 @Component({
   selector: 'app-log-in',
