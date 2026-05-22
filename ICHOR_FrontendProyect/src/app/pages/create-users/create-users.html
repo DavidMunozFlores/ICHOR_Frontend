@@ -1,0 +1,92 @@
+<h1 class="flex h-20 justify-center">Crear usuario</h1>
+
+<div class="flex items-center justify-center">
+  <div class="-w-1/3">
+
+    <form [formGroup]="userForm" (ngSubmit)="onSubmit()">
+
+      <label for="username" class="fieldset-label">Username</label>
+      <input
+        type="text"
+        formControlName="username"
+        name="username"
+        class="input input-primary w-full"
+        placeholder="Username">
+
+      <br><br>
+
+      <label for="email" class="fieldset-label">Email</label>
+      <input
+        type="email"
+        formControlName="email"
+        name="email"
+        class="input input-primary w-full"
+        placeholder="Email">
+
+      <br><br>
+
+      <label for="dni" class="fieldset-label">DNI</label>
+      <input
+        type="text"
+        formControlName="dni"
+        name="dni"
+        class="input input-primary w-full"
+        placeholder="DNI">
+
+      <br><br>
+
+      <label for="password" class="fieldset-label">Password</label>
+      <input
+        type="password"
+        formControlName="password"
+        name="password"
+        class="input input-primary w-full"
+        placeholder="Password">
+
+      <br><br>
+
+      <label for="hospitals" class="fieldset-label">Hospital</label>
+      <select
+        formControlName="hospitals"
+        name="hospitals"
+        class="select select-primary w-full font-normal">
+        <option value="" disabled selected>Select a hospital...</option>
+        <option *ngFor="let hosp of hospitals" [value]="hosp.id">
+          {{ hosp.name }}
+        </option>
+      </select>
+
+      <br><br>
+
+      <label class="fieldset-label mb-2">Role</label>
+      <div class="flex gap-6 pl-1">
+        <label class="flex items-center gap-2 cursor-pointer">
+          <input
+            type="radio"
+            formControlName="role"
+            value="doctor"
+            class="radio radio-primary radio-sm" />
+          <span class="text-sm">Doctor</span>
+        </label>
+
+        <label class="flex items-center gap-2 cursor-pointer">
+          <input
+            type="radio"
+            formControlName="role"
+            value="coordinador"
+            class="radio radio-primary radio-sm" />
+          <span class="text-sm">Coordinator</span>
+        </label>
+      </div>
+
+      <br><br>
+
+      <button
+        type="submit"
+        class="btn btn-primary">
+        Crear Usuario
+      </button>
+
+    </form>
+  </div>
+</div>
