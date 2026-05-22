@@ -24,7 +24,7 @@ export class createUserComponent implements OnInit {
 
   initform() {
     this.userForm = this.fb.group({
-      fullname: [''],
+      username: [''],
       email: [''],
       dni: [''],
       password:[''],
