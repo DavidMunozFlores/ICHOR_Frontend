@@ -1,7 +1,8 @@
 import { ChangeDetectionStrategy, Component, signal, WritableSignal, inject, computed, Signal } from '@angular/core';
 import { PublicKeyService } from '../../services/PublicKey.service';
 import { LogInData } from '../../interfaces/LogInData';
-import { CipherDataService } from '../../services/EncryptData.service';
+import { EncryptDataService } from '../../services/EncryptData.service';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-log-in',
@@ -11,19 +12,20 @@ import { CipherDataService } from '../../services/EncryptData.service';
 })
 export class LogIn {
 
+  http = inject(HttpClient);
+
   name:WritableSignal<string> = signal('');
   pass:WritableSignal<string> = signal('');
 
-  private publicKeyService: PublicKeyService = inject(PublicKeyService);
-  private encodeData: CipherDataService = inject(CipherDataService);
-
-  cipherDataService:CipherDataService = inject(CipherDataService);
+  encryptDataService:EncryptDataService = inject(EncryptDataService);
 
   userTry: Signal<LogInData> = computed( () => {
+
     const user: LogInData = {
       name: this.name(),
       pass: this.pass()
     };
+
     return user;
   });
 
@@ -31,12 +33,14 @@ export class LogIn {
 
     console.log(this.userTry().name, this.userTry().pass, this.userTry());
 
+    const userEncrypt = this.encryptDataService.encrypt(JSON.stringify(this.userTry()));
 
-    //this.encodeData.encrypt(JSON.stringify(this.userTry()));
-    // TODO! hacer post
+    console.log('valor en login de userEncrypt',userEncrypt);
+    // this.http.post('http://localhost:8080/api/v1/login', userEncrypt).subscribe(
+       // TODO! logica para lo que recibo del post nose
+    // );
 
     this.clear();
-
   }
 
   clear(){
