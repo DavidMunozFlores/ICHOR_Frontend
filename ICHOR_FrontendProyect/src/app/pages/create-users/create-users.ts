@@ -45,7 +45,15 @@ export class createUserComponent implements OnInit {
   }
   onSubmit(): void {
     const { username, password, hospitals } = this.userForm.value
-    console.log('Datos : username: ' , username, 'password', password, 'id' ,hospitals);
+    const peticion = {username: username, password: password, id_hospital: Number(hospitals)}
+    const url = `${environment.url}/api/v1/doctor/create`;
+    this.http.post(url, peticion).subscribe({
+      next: (response) =>{console.log(response);
+      },
+      error: (err) => {
+        console.error(err)
+      }
+    })
   }
 
 
