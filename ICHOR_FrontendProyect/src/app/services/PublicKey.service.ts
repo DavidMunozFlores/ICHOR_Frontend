@@ -14,7 +14,7 @@ export class PublicKeyService {
   private http = inject(HttpClient);
 
   public get(): Observable<PublicKeyResponse> {
-    return this.http.get<PublicKeyResponse>(`${this.API_URL}/api/v1/keys/public`);
+    return this.http.get<PublicKeyResponse>(`${this.API_URL}/api/v1/keys/public-key`);
   }
 
 }

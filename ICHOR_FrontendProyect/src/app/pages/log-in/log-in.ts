@@ -1,8 +1,8 @@
 import { ChangeDetectionStrategy, Component, signal, WritableSignal, inject, computed, Signal } from '@angular/core';
-import { PublicKeyService } from '../../services/PublicKey.service';
-import { LogInData } from '../../interfaces/LogInData';
-import { EncryptDataService } from '../../services/EncryptData.service';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { LogInCredentials } from '../../interfaces/LogIn/LogInCredentials';
+import { Router } from '@angular/router';
+import { AuthService } from '../../services/AuthService.service';
 
 @Component({
   selector: 'app-log-in',
@@ -13,15 +13,19 @@ import { HttpClient } from '@angular/common/http';
 export class LogIn {
 
   http = inject(HttpClient);
+  router = inject(Router);
+  authService: AuthService = inject(AuthService);
 
-  name:WritableSignal<string> = signal('');
-  pass:WritableSignal<string> = signal('');
 
-  encryptDataService:EncryptDataService = inject(EncryptDataService);
+  name: WritableSignal<string> = signal('');
+  pass: WritableSignal<string> = signal('');
 
-  userTry: Signal<LogInData> = computed( () => {
+  //TODO! MANEJAR ESTO CON FORMULARIOS REACTIVOS
+  errMessage: WritableSignal<string> = signal('');
 
-    const user: LogInData = {
+
+  userTry: Signal<LogInCredentials> = computed(() => {
+    const user: LogInCredentials = {
       name: this.name(),
       pass: this.pass()
     };
@@ -29,23 +33,50 @@ export class LogIn {
     return user;
   });
 
-  logUser(){
+  logUser() {
 
-    console.log(this.userTry().name, this.userTry().pass, this.userTry());
+    console.log(this.userTry().name, this.userTry().pass, JSON.stringify(this.userTry()));
 
-    const userEncrypt = this.encryptDataService.encrypt(JSON.stringify(this.userTry()));
+    this.authService.login(this.userTry().name, this.userTry().pass)
+      .subscribe({
+        next: (response) => {
+          this.redirect(response.role);
+        },
+        error: (err: HttpErrorResponse) => {
+          console.log(err);
+          this.manageError(err);
+        }
+      })
 
-    console.log('valor en login de userEncrypt',userEncrypt);
-    // this.http.post('http://localhost:8080/api/v1/login', userEncrypt).subscribe(
-       // TODO! logica para lo que recibo del post nose
-    // );
 
     this.clear();
   }
 
-  clear(){
+  clear() {
     this.name.set('');
     this.pass.set('');
+  }
+
+
+
+  private redirect(role: string) {
+    if (role === 'USER_MANAGER') {
+      this.router.navigateByUrl('/user-manager');
+    } else if (role === 'DOCTOR') {
+      //  TODO!
+    } else if (role === 'COORDINATOR') {
+      // TODO!
+    }
+  }
+
+
+
+  private manageError(error: HttpErrorResponse) {
+    if (error.status === 401) {
+      this.errMessage.set('User or password incorrect');
+    } else {
+      this.errMessage.set('Server error');
+    }
   }
 
 

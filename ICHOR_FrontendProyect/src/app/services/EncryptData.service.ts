@@ -1,6 +1,6 @@
 import { inject, Injectable, signal } from '@angular/core';
 import { PublicKeyService } from './PublicKey.service';
-import { JSEncrypt } from 'jsencrypt';
+import { buffer, retry } from 'rxjs';
 
 
 @Injectable({
@@ -9,30 +9,41 @@ import { JSEncrypt } from 'jsencrypt';
 export class EncryptDataService {
 
   private publicKeyService = inject(PublicKeyService);
-  private cipher = new JSEncrypt();
 
-  constructor(){
-    const publicKey: string = '';
+
+  async encrypt(plaintext: string): Promise<string> {
+
+    let publicKey: string = '';
 
     this.publicKeyService.get().subscribe({
       next: (value) => {
-        console.log('Valor de public key',value.publicKey);
-        this.cipher.setPublicKey(value.publicKey);
+        publicKey = value.publicKey;
       },
-      error: (value) => {
-        console.error(value);
+      error: (err) => {
+        //TODO! TEST THIS PART TO SEE WHAT HAPPENS
+        throw new Error(`There was an error getting the key ${err}`);
       }
     });
 
+    const keyBuffer = Uint8Array.from(atob(publicKey), c => c.charCodeAt(0));
+
+    const importedKey = await crypto.subtle.importKey(
+      'spki',
+      keyBuffer,
+      { name: 'RSA-OAEP', hash: 'SHA-256' },
+      false,
+      ['encrypt']
+    );
+
+    const encoded = new TextEncoder().encode(plaintext);
+    const encryptedBuffer = await crypto.subtle.encrypt(
+      { name: 'RSA-OAEP' },
+      importedKey,
+      encoded
+    );
+
+    return btoa(String.fromCharCode(...new Uint8Array(encryptedBuffer)));
   }
 
-
-  public encrypt(data: string): string | false{
-    return this.cipher.encrypt(data);
-  }
-
-  public decrypt(data: string): string | false{
-    return this.cipher.decrypt(data);
-  }
 
 }
