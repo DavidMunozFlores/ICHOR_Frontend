@@ -15,26 +15,38 @@ import { LogInResponse } from '../interfaces/LogIn/LogInResponse';
 export class AuthService {
   private encryptData = inject(EncryptDataService);
   private http = inject(HttpClient);
-  private URL_API = 'https://41545ad6-a59e-4b93-9fe7-3fa0e135f3c5.mock.pstmn.io/api/v1/login';
+  // private URL_API = 'https://41545ad6-a59e-4b93-9fe7-3fa0e135f3c5.mock.pstmn.io/api/v1/login';
+  private URL_API = 'http://localhost:8080/api/v1/auth/log-in';
 
   public login(user: string, pass: string): Observable<LogInResponse> {
     const userTry: LogInCredentials = { name: user, pass: pass };
 
 
-    return from(this.encryptData.encrypt(JSON.stringify(userTry))).pipe(
 
-      switchMap((encryptedResult: string) => {
-
-        const body: LogInPost = {
-          credentialsEncrypted: encryptedResult
-        };
-
-
-        return this.http.post<LogInResponse>(this.URL_API, body);
-      }),
-
-      catchError(this.handleError)
+    //TODO! QUITAR ESTO QUE ES GUARRO PARA HACER PRUEBAS
+    return this.http.post<LogInResponse>(this.URL_API,
+      {
+        username: user,
+        password: pass
+      }
     );
+
+
+    //TODO! DESCOMENTAR ESTO PASA PONERLO PARA QUE LO MANDE ENCRIPTADO
+    // return from(this.encryptData.encrypt(JSON.stringify(userTry))).pipe(
+
+    //   switchMap((encryptedResult: string) => {
+
+    //     const body: LogInPost = {
+    //       credentialsEncrypted: encryptedResult
+    //     };
+
+
+    //     return this.http.post<LogInResponse>(this.URL_API, body);
+    //   }),
+
+    //   catchError(this.handleError)
+    // );
   }
 
   private handleError(error: any) {

@@ -43,7 +43,7 @@ export class LogIn {
     this.authService.login(this.userTry().name, this.userTry().pass)
       .subscribe({
         next: (response:LogInResponse) => {
-          this.redirect(response.role);
+          this.redirect(response.rol);
           console.log('todo ha ido bien y redirijo')
         },
         error: (err: HttpErrorResponse) => {
@@ -65,7 +65,7 @@ export class LogIn {
 
 
   private redirect(role: string) {
-    if (role === 'USER_MANAGER') {
+    if (role === 'MANAGER') {
       this.router.navigate(['/user-manager']);
     } else if (role === 'DOCTOR') {
       //  TODO!
