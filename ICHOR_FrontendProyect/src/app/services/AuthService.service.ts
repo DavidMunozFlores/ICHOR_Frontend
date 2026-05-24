@@ -24,13 +24,11 @@ export class AuthService {
     return from(this.encryptData.encrypt(JSON.stringify(userTry))).pipe(
 
       switchMap((encryptedResult: string) => {
-        console.log('Encryption successful. Encrypted payload:', encryptedResult);
 
         const body: LogInPost = {
           credentialsEncrypted: encryptedResult
         };
 
-        console.log('Se supone que este es el body encriptado',body);
 
         return this.http.post<LogInResponse>(this.URL_API, body);
       }),
@@ -50,7 +48,7 @@ export class AuthService {
       }
     } else {
       console.error('Encryption or Client Error:', error);
-      errMessage = error.message || 'Client side error';
+      errMessage = error.errormessage || 'Client side error';
     }
 
     return throwError(() => new Error(errMessage));

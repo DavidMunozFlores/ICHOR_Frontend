@@ -16,13 +16,11 @@ export class EncryptDataService {
   async encrypt(plaintext: string): Promise<string> {
 
 
-    console.log("He entrado al metodo encrypt");
 
     if (!this.publicKey) {
       try {
         const response: PublicKeyResponse = await firstValueFrom(this.publicKeyService.get());
         this.publicKey = response.publicKey;
-        console.log('Esta es la clave publica obtenida', this.publicKey);
       } catch (err) {
         throw new Error(`There was an error getting the key: ${err}`);
       }
