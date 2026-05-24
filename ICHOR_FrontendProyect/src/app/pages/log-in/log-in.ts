@@ -21,14 +21,16 @@ export class LogIn {
   name: WritableSignal<string> = signal('');
   pass: WritableSignal<string> = signal('');
 
+
+
   //TODO! MANEJAR ESTO CON FORMULARIOS REACTIVOS
   errMessage: WritableSignal<string> = signal('');
 
 
   userTry: Signal<LogInCredentials> = computed(() => {
     const user: LogInCredentials = {
-      name: this.name(),
-      pass: this.pass()
+      username: this.name(),
+      password: this.pass()
     };
 
     return user;
@@ -36,11 +38,11 @@ export class LogIn {
 
   logUser() {
 
-    console.log(this.userTry().name, this.userTry().pass, JSON.stringify(this.userTry()));
+    console.log(this.userTry().username, this.userTry().password, JSON.stringify(this.userTry()));
 
     console.log('entrando al método de logUser()');
 
-    this.authService.login(this.userTry().name, this.userTry().pass)
+    this.authService.login(this.userTry().username, this.userTry().password)
       .subscribe({
         next: (response:LogInResponse) => {
           this.redirect(response.rol);

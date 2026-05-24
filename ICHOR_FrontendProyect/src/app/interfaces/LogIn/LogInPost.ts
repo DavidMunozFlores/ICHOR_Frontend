@@ -1,3 +1,3 @@
 export interface LogInPost{
-  credentialsEncrypted: string
+  data: string
 }

@@ -19,34 +19,34 @@ export class AuthService {
   private URL_API = 'http://localhost:8080/api/v1/auth/log-in';
 
   public login(user: string, pass: string): Observable<LogInResponse> {
-    const userTry: LogInCredentials = { name: user, pass: pass };
+    const userTry: LogInCredentials = { username: user, password: pass };
 
 
 
     //TODO! QUITAR ESTO QUE ES GUARRO PARA HACER PRUEBAS
-    return this.http.post<LogInResponse>(this.URL_API,
-      {
-        username: user,
-        password: pass
-      }
-    );
+    // return this.http.post<LogInResponse>(this.URL_API,
+    //   {
+    //     username: user,
+    //     password: pass
+    //   }
+    // );
 
 
     //TODO! DESCOMENTAR ESTO PASA PONERLO PARA QUE LO MANDE ENCRIPTADO
-    // return from(this.encryptData.encrypt(JSON.stringify(userTry))).pipe(
+    return from(this.encryptData.encrypt(JSON.stringify(userTry))).pipe(
 
-    //   switchMap((encryptedResult: string) => {
+      switchMap((encryptedResult: string) => {
 
-    //     const body: LogInPost = {
-    //       credentialsEncrypted: encryptedResult
-    //     };
+        const body: LogInPost = {
+          data: encryptedResult
+        };
 
 
-    //     return this.http.post<LogInResponse>(this.URL_API, body);
-    //   }),
+        return this.http.post<LogInResponse>(this.URL_API, body);
+      }),
 
-    //   catchError(this.handleError)
-    // );
+      catchError(this.handleError)
+    );
   }
 
   private handleError(error: any) {

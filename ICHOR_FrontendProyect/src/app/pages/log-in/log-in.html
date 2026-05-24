@@ -17,7 +17,6 @@
       type="text"
       class="input input-primary"
       placeholder="Username"
-      [value]="name()"
       (input)="name.set(nameInput.value)"
       (change)="name.set(nameInput.value)">
 
@@ -31,7 +30,6 @@
       id="passwordInput"
       class="input input-primary"
       placeholder="Password"
-      [value]="pass()"
       (input)="pass.set(passInput.value)"
       (change)="pass.set(passInput.value)">
 
