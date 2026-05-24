@@ -1,8 +1,11 @@
-import { inject, Injectable, signal, WritableSignal } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { from, Observable } from 'rxjs';
+import { catchError, switchMap } from 'rxjs/operators';
+import { throwError } from 'rxjs';
+
 import { EncryptDataService } from './EncryptData.service';
 import { LogInCredentials } from '../interfaces/LogIn/LogInCredentials';
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { catchError, Observable, throwError } from 'rxjs';
 import { LogInPost } from '../interfaces/LogIn/LogInPost';
 import { LogInResponse } from '../interfaces/LogIn/LogInResponse';
 
@@ -10,44 +13,46 @@ import { LogInResponse } from '../interfaces/LogIn/LogInResponse';
   providedIn: 'root',
 })
 export class AuthService {
-
-  encryptData: EncryptDataService = inject(EncryptDataService);
-  http: HttpClient = inject(HttpClient);
-  URL_API: string = 'http://localhost:8080/api/v1/login';
-
+  private encryptData = inject(EncryptDataService);
+  private http = inject(HttpClient);
+  private URL_API = 'https://41545ad6-a59e-4b93-9fe7-3fa0e135f3c5.mock.pstmn.io/api/v1/login';
 
   public login(user: string, pass: string): Observable<LogInResponse> {
+    const userTry: LogInCredentials = { name: user, pass: pass };
 
-    const userTry: LogInCredentials = {
-      name: user,
-      pass: pass
-    }
 
-    const encryptedUser: WritableSignal<string> = signal('');
-    const errMessage: WritableSignal<string> = signal('');
+    return from(this.encryptData.encrypt(JSON.stringify(userTry))).pipe(
 
-    const encrypt = this.encryptData.encrypt(JSON.stringify(userTry));
+      switchMap((encryptedResult: string) => {
+        console.log('Encryption successful. Encrypted payload:', encryptedResult);
 
-    encrypt.then(
-      (response) => {
-        encryptedUser.set(response);
-      },
-    ).catch(
-      (error) => {
-        errMessage.set(error);
-        throw new Error(`An error happened encrypting the data: ${errMessage()}`);
-      }
+        const body: LogInPost = {
+          credentialsEncrypted: encryptedResult
+        };
+
+        console.log('Se supone que este es el body encriptado',body);
+
+        return this.http.post<LogInResponse>(this.URL_API, body);
+      }),
+
+      catchError(this.handleError)
     );
-
-    const body: LogInPost = {
-      credentialsEncrypted: encryptedUser()
-    }
-
-    return this.http.post<LogInResponse>(this.URL_API, body);
-
   }
 
+  private handleError(error: any) {
+    let errMessage = 'An error happened.';
 
+    if (error instanceof HttpErrorResponse) {
+      if (error.status === 0) {
+        errMessage = 'Server Error';
+      } else if (error.status === 401) {
+        errMessage = 'Incorrect username or password';
+      }
+    } else {
+      console.error('Encryption or Client Error:', error);
+      errMessage = error.message || 'Client side error';
+    }
+
+    return throwError(() => new Error(errMessage));
+  }
 }
-
-

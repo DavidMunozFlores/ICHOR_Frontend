@@ -3,6 +3,7 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { LogInCredentials } from '../../interfaces/LogIn/LogInCredentials';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/AuthService.service';
+import { LogInResponse } from '../../interfaces/LogIn/LogInResponse';
 
 @Component({
   selector: 'app-log-in',
@@ -37,16 +38,20 @@ export class LogIn {
 
     console.log(this.userTry().name, this.userTry().pass, JSON.stringify(this.userTry()));
 
+    console.log('entrando al método de logUser()');
+
     this.authService.login(this.userTry().name, this.userTry().pass)
       .subscribe({
-        next: (response) => {
+        next: (response:LogInResponse) => {
           this.redirect(response.role);
+          console.log('todo ha ido bien y redirijo')
         },
         error: (err: HttpErrorResponse) => {
+          console.log('Ha habido un error con la petición al http y ahora digo cual es.')
           console.log(err);
           this.manageError(err);
         }
-      })
+      });
 
 
     this.clear();
@@ -61,7 +66,7 @@ export class LogIn {
 
   private redirect(role: string) {
     if (role === 'USER_MANAGER') {
-      this.router.navigateByUrl('/user-manager');
+      this.router.navigate(['/user-manager']);
     } else if (role === 'DOCTOR') {
       //  TODO!
     } else if (role === 'COORDINATOR') {

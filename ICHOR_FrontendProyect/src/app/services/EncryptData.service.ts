@@ -1,6 +1,7 @@
 import { inject, Injectable, signal } from '@angular/core';
 import { PublicKeyService } from './PublicKey.service';
-import { buffer, retry } from 'rxjs';
+import { buffer, firstValueFrom } from 'rxjs';
+import { PublicKeyResponse } from '../interfaces/PublicKeyResponse';
 
 
 @Injectable({
@@ -9,23 +10,26 @@ import { buffer, retry } from 'rxjs';
 export class EncryptDataService {
 
   private publicKeyService = inject(PublicKeyService);
+  private publicKey = '';
 
 
   async encrypt(plaintext: string): Promise<string> {
 
-    let publicKey: string = '';
 
-    this.publicKeyService.get().subscribe({
-      next: (value) => {
-        publicKey = value.publicKey;
-      },
-      error: (err) => {
-        //TODO! TEST THIS PART TO SEE WHAT HAPPENS
-        throw new Error(`There was an error getting the key ${err}`);
+    console.log("He entrado al metodo encrypt");
+
+    if (!this.publicKey) {
+      try {
+        const response: PublicKeyResponse = await firstValueFrom(this.publicKeyService.get());
+        this.publicKey = response.publicKey;
+        console.log('Esta es la clave publica obtenida', this.publicKey);
+      } catch (err) {
+        throw new Error(`There was an error getting the key: ${err}`);
       }
-    });
+    }
 
-    const keyBuffer = Uint8Array.from(atob(publicKey), c => c.charCodeAt(0));
+
+    const keyBuffer = Uint8Array.from(atob(this.publicKey), c => c.charCodeAt(0));
 
     const importedKey = await crypto.subtle.importKey(
       'spki',
