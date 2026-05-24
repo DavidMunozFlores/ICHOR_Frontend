@@ -37,10 +37,11 @@ export class LogIn {
   });
 
   logUser() {
-
-    console.log(this.userTry().username, this.userTry().password, JSON.stringify(this.userTry()));
+    this.errMessage.set('');
 
     console.log('entrando al método de logUser()');
+
+    console.log(this.userTry().username, this.userTry().password, JSON.stringify(this.userTry()));
 
     this.authService.login(this.userTry().username, this.userTry().password)
       .subscribe({
@@ -50,7 +51,7 @@ export class LogIn {
         },
         error: (err: HttpErrorResponse) => {
           console.log('Ha habido un error con la petición al http y ahora digo cual es.')
-          console.log(err);
+          console.log(err.message);
           this.manageError(err);
         }
       });
@@ -80,7 +81,9 @@ export class LogIn {
 
   private manageError(error: HttpErrorResponse) {
     if (error.status === 401) {
-      this.errMessage.set('User or password incorrect');
+      this.errMessage.set('User or password incorrect.');
+    }else if(error.status === 404){
+      this.errMessage.set('User not exists.')
     } else {
       this.errMessage.set('Server error');
     }

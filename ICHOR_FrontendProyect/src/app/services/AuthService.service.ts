@@ -32,7 +32,7 @@ export class AuthService {
     // );
 
 
-    //TODO! DESCOMENTAR ESTO PASA PONERLO PARA QUE LO MANDE ENCRIPTADO
+    //TODO! DESCOMENTAR ESTO PARA QUE LO MANDE ENCRIPTADO
     return from(this.encryptData.encrypt(JSON.stringify(userTry))).pipe(
 
       switchMap((encryptedResult: string) => {
