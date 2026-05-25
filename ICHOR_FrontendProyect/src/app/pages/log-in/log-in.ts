@@ -1,7 +1,9 @@
 import { ChangeDetectionStrategy, Component, signal, WritableSignal, inject, computed, Signal } from '@angular/core';
-import { PublicKeyService } from '../../services/PublicKey';
-import { LogInData } from '../../interfaces/LogInData';
-import { CipherDataService } from '../../services/CipherData';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { LogInCredentials } from '../../interfaces/LogIn/LogInCredentials';
+import { Router } from '@angular/router';
+import { AuthService } from '../../services/AuthService.service';
+import { LogInResponse } from '../../interfaces/LogIn/LogInResponse';
 
 @Component({
   selector: 'app-log-in',
@@ -11,37 +13,80 @@ import { CipherDataService } from '../../services/CipherData';
 })
 export class LogIn {
 
-  name:WritableSignal<string> = signal('');
-  pass:WritableSignal<string> = signal('');
+  http = inject(HttpClient);
+  router = inject(Router);
+  authService: AuthService = inject(AuthService);
 
-  private publicKeyService: PublicKeyService = inject(PublicKeyService);
-  private encodeData: CipherDataService = inject(CipherDataService);
 
-  cipherDataService:CipherDataService = inject(CipherDataService);
+  name: WritableSignal<string> = signal('');
+  pass: WritableSignal<string> = signal('');
 
-  userTry: Signal<LogInData> = computed( () => {
-    const user: LogInData = {
-      name: this.name(),
-      pass: this.pass()
+
+
+  //TODO! MANEJAR ESTO CON FORMULARIOS REACTIVOS
+  errMessage: WritableSignal<string> = signal('');
+
+
+  userTry: Signal<LogInCredentials> = computed(() => {
+    const user: LogInCredentials = {
+      username: this.name(),
+      password: this.pass()
     };
+
     return user;
   });
 
-  logUser(){
+  logUser() {
+    this.errMessage.set('');
 
-    console.log(this.userTry().name, this.userTry().pass, this.userTry());
+    console.log('entrando al método de logUser()');
 
+    console.log(this.userTry().username, this.userTry().password, JSON.stringify(this.userTry()));
 
-    //this.encodeData.encrypt(JSON.stringify(this.userTry()));
-    // TODO! hacer post
+    this.authService.login(this.userTry().username, this.userTry().password)
+      .subscribe({
+        next: (response:LogInResponse) => {
+          this.redirect(response.rol);
+          console.log('todo ha ido bien y redirijo')
+        },
+        error: (err: HttpErrorResponse) => {
+          console.log('Ha habido un error con la petición al http y ahora digo cual es.')
+          console.log(err.message);
+          this.manageError(err);
+        }
+      });
+
 
     this.clear();
-
   }
 
-  clear(){
+  clear() {
     this.name.set('');
     this.pass.set('');
+  }
+
+
+
+  private redirect(role: string) {
+    if (role === 'MANAGER') {
+      this.router.navigate(['/user-manager']);
+    } else if (role === 'DOCTOR') {
+      //  TODO!
+    } else if (role === 'COORDINATOR') {
+      // TODO!
+    }
+  }
+
+
+
+  private manageError(error: HttpErrorResponse) {
+    if (error.status === 401) {
+      this.errMessage.set('User or password incorrect.');
+    }else if(error.status === 404){
+      this.errMessage.set('User not exists.')
+    } else {
+      this.errMessage.set('Server error');
+    }
   }
 
 
