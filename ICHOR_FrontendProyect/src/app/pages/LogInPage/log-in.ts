@@ -45,8 +45,7 @@ export class LogIn {
 
     this.authService.login(this.userTry().username, this.userTry().password)
       .subscribe({
-        next: (response:LogInResponse) => {
-          sessionStorage.setItem('try','tryValue');
+        next: (response: LogInResponse) => {
           this.saveCredentials();
           this.redirect(response.rol);
           console.log('todo ha ido bien y redirijo')
@@ -64,8 +63,8 @@ export class LogIn {
 
 
   saveCredentials() {
-    sessionStorage.setItem('username',this.name());
-    sessionStorage.setItem('password',this.pass());
+    sessionStorage.setItem('username', this.name());
+    sessionStorage.setItem('password', this.pass());
   }
 
   clear() {
@@ -89,22 +88,21 @@ export class LogIn {
 
   private manageError(error: HttpErrorResponse) {
 
-    const statusCode =  error.status || error.error?.status;
-    const backendMessage = error.error?.message || 'Unknown error';
+    const statusCode = error.status || error.error?.status;
 
-
-    console.log('El error es un string?: ', typeof error === 'string' ? 'SI, es un string': 'NO');
-    console.log('valor bruto del error: ', error);
-
-    console.log('Codigo de estado detectado: ', statusCode);
-    console.log('Mensaje del back', backendMessage);
-
-    if (statusCode === 401) {
-      this.errMessage.set('User or password incorrect.');
-    }else if(statusCode === 404){
-      this.errMessage.set('User not exists.')
-    } else {
-      this.errMessage.set(`Server error ${statusCode}`);
+    switch (statusCode) {
+      case 401:
+        this.errMessage.set(`User or password incorrect.`);
+        break;
+      case 404:
+        this.errMessage.set(`User does not exists.`);
+        break;
+      case 0:
+        this.errMessage.set(`Check your internet conection.`);
+        break;
+      default:
+        const backendMessage = error.error?.message || `Unexpected server error`;
+        this.errMessage.set(`Error ${error.status}: ${backendMessage}`);
     }
   }
 

@@ -55,22 +55,14 @@ export class AuthService {
   }
 
   private handleError(error: any) {
-    let errMessage = 'An error happened.';
-
-    if (error instanceof HttpErrorResponse) {
-      if (error.status === 0) {
-        errMessage = 'Server Error';
-      } else if (error.status === 401) {
-        errMessage = 'Incorrect username or password';
-      } else if(error.status === 404){
-        errMessage = 'User does not exists.';
-      }
-    } else {
-      console.error('Encryption or Client Error:', error);
-      errMessage = error.errormessage || 'Client side error';
+    if(!(error instanceof HttpErrorResponse)){
+      console.error('Fatal error on client side: ', error);
+      return throwError(() => new Error('Client side crash'));
     }
 
-    return throwError(() => new Error(errMessage));
+    console.warn(`Network error captured on service [Status: ${error.status}]`);
+    return throwError(() => error);
+
   }
 
   public logOut() {
