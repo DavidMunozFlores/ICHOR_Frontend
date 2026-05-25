@@ -45,8 +45,8 @@ export class createUserComponent implements OnInit {
   }
   onSubmit(): void {
     const { username, password, hospitals } = this.userForm.value
-    const peticion = {username: username, password: password, id_hospital: Number(hospitals)}
-    const url = `http://localhost:8080/api/v1/doctor/create`;
+    const peticion = {username: username, password: password, id_hospital: Number(hospitals), managerData: {username: "managerCreator", password: "1234"}}
+    const url = `https://41545ad6-a59e-4b93-9fe7-3fa0e135f3c5.mock.pstmn.io/api/v1/doctor/create2`;
     this.http.post(url, peticion).subscribe({
       next: (response) =>{console.log(response);
       },
