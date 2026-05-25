@@ -46,18 +46,25 @@ export class LogIn {
     this.authService.login(this.userTry().username, this.userTry().password)
       .subscribe({
         next: (response:LogInResponse) => {
+          sessionStorage.setItem('try','tryValue');
+          this.saveCredentials();
           this.redirect(response.rol);
           console.log('todo ha ido bien y redirijo')
+          this.clear();
         },
         error: (err: HttpErrorResponse) => {
           console.log('Ha habido un error con la petición al http y ahora digo cual es.')
           console.log(err.message);
           this.manageError(err);
+          this.clear();
         }
       });
+  }
 
 
-    this.clear();
+  saveCredentials() {
+    sessionStorage.setItem('username',this.name());
+    sessionStorage.setItem('password',this.pass());
   }
 
   clear() {
