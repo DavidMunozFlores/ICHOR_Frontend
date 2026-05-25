@@ -88,12 +88,23 @@ export class LogIn {
 
 
   private manageError(error: HttpErrorResponse) {
-    if (error.status === 401) {
+
+    const statusCode =  error.status || error.error?.status;
+    const backendMessage = error.error?.message || 'Unknown error';
+
+
+    console.log('El error es un string?: ', typeof error === 'string' ? 'SI, es un string': 'NO');
+    console.log('valor bruto del error: ', error);
+
+    console.log('Codigo de estado detectado: ', statusCode);
+    console.log('Mensaje del back', backendMessage);
+
+    if (statusCode === 401) {
       this.errMessage.set('User or password incorrect.');
-    }else if(error.status === 404){
+    }else if(statusCode === 404){
       this.errMessage.set('User not exists.')
     } else {
-      this.errMessage.set(`Server error ${error.status}`);
+      this.errMessage.set(`Server error ${statusCode}`);
     }
   }
 

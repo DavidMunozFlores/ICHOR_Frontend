@@ -62,6 +62,8 @@ export class AuthService {
         errMessage = 'Server Error';
       } else if (error.status === 401) {
         errMessage = 'Incorrect username or password';
+      } else if(error.status === 404){
+        errMessage = 'User does not exists.';
       }
     } else {
       console.error('Encryption or Client Error:', error);
