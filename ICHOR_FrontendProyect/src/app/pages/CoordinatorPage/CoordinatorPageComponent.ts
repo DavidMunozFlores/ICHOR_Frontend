@@ -1,9 +1,9 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 
 @Component({
-  selector: 'app-user-manager',
+  selector: 'app-coordinator-page-component',
   imports: [],
-  templateUrl: './user-manager.html',
+  templateUrl: './CoordinatorPageComponent.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class UserManager {}
+export class CoordinatorPageComponent {}

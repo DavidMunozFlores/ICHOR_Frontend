@@ -8,6 +8,8 @@ import { EncryptDataService } from './EncryptData.service';
 import { LogInCredentials } from '../interfaces/LogIn/LogInCredentials';
 import { LogInPost } from '../interfaces/LogIn/LogInPost';
 import { LogInResponse } from '../interfaces/LogIn/LogInResponse';
+import { Router } from '@angular/router';
+import { routes } from '../app.routes';
 
 @Injectable({
   providedIn: 'root',
@@ -15,8 +17,11 @@ import { LogInResponse } from '../interfaces/LogIn/LogInResponse';
 export class AuthService {
   private encryptData = inject(EncryptDataService);
   private http = inject(HttpClient);
-  // private URL_API = 'https://41545ad6-a59e-4b93-9fe7-3fa0e135f3c5.mock.pstmn.io/api/v1/login';
-  private URL_API = 'http://localhost:8080/api/v1/auth/log-in';
+  private router = inject(Router);
+
+
+  private URL_API = 'https://41545ad6-a59e-4b93-9fe7-3fa0e135f3c5.mock.pstmn.io/api/v1/login';
+  // private URL_API = 'http://localhost:8080/api/v1/auth/log-in';
 
   public login(user: string, pass: string): Observable<LogInResponse> {
     const userTry: LogInCredentials = { username: user, password: pass };
@@ -29,7 +34,7 @@ export class AuthService {
     //     username: user,
     //     password: pass
     //   }
-    // );
+    // ).pipe(catchError(this.handleError));
 
 
     //TODO! DESCOMENTAR ESTO PARA QUE LO MANDE ENCRIPTADO
@@ -64,5 +69,16 @@ export class AuthService {
     }
 
     return throwError(() => new Error(errMessage));
+  }
+
+  public logOut() {
+
+    localStorage.removeItem('username');
+    localStorage.removeItem('password');
+    sessionStorage.clear();
+
+    this.router.navigate(['/log-in']);
+
+
   }
 }

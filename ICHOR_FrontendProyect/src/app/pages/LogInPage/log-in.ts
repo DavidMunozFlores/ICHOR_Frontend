@@ -71,9 +71,9 @@ export class LogIn {
     if (role === 'MANAGER') {
       this.router.navigate(['/user-manager']);
     } else if (role === 'DOCTOR') {
-      //  TODO!
+      this.router.navigate(['/doctor-page']);
     } else if (role === 'COORDINATOR') {
-      // TODO!
+      this.router.navigate(['/coordinator-page']);
     }
   }
 
