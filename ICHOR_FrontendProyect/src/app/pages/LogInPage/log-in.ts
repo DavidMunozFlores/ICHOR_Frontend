@@ -55,6 +55,7 @@ export class LogIn {
         error: (err: HttpErrorResponse) => {
           console.log('Ha habido un error con la petición al http y ahora digo cual es.')
           console.log(err.message);
+          console.log(err.status);
           this.manageError(err);
           this.clear();
         }
@@ -92,7 +93,7 @@ export class LogIn {
     }else if(error.status === 404){
       this.errMessage.set('User not exists.')
     } else {
-      this.errMessage.set('Server error');
+      this.errMessage.set(`Server error ${error.status}`);
     }
   }
 
