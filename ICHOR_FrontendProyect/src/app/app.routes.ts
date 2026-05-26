@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 import { LogIn } from './pages/log-in/log-in';
 import { UserManager } from './pages/user-manager/user-manager';
+import { createPatient } from './pages/create-patient/createPatient.component';
 
 export const routes: Routes = [
 
@@ -15,5 +16,9 @@ export const routes: Routes = [
   {
     path:'user-manager',
     component: UserManager
-  }
+  },
+  {
+     path:'patientCreate',
+    component: createPatient
+  },
 ];
