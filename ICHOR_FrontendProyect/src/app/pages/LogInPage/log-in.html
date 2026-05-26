@@ -1,43 +1,65 @@
 <div class="flex h-100 items-center justify-center">
 
-  <div class="w-1/3">
+  <form [formGroup]="myForm" (ngSubmit)="onSubmit()">
 
-      @if(errMessage() != ''){
     <div>
+
+        @if(errMessage() != ''){
+      <div>
+        <br>
+        <label class="text-red-700 text-xl">{{ errMessage() }}</label>
+
+      </div>
+      }
+
+      <label for="usernameInput" class="fieldset-label">Username</label>
+      <input
+        #nameInput
+        id="usernameInput"
+        type="text"
+        class="input input-primary"
+        placeholder="Username"
+        (input)="name.set(nameInput.value)"
+        (change)="name.set(nameInput.value)"
+        formControlName="name">
+
+        <br>
+
+        @if(  formUtils.isValidField(myForm, 'name') ){
+          <span class="text-field text-orange-500">
+            {{ formUtils.getFieldError(myForm, 'name') }}
+          </span>
+        }
+
       <br>
-      <label class="text-red-700 text-xl">{{ errMessage() }}</label>
+      <br>
 
+      <label for="passwordInput" class="label fieldset-label">Password</label>
+      <input
+        #passInput
+        type="password"
+        id="passwordInput"
+        class="input input-primary"
+        placeholder="Password"
+        (input)="pass.set(passInput.value)"
+        (change)="pass.set(passInput.value)"
+        formControlName="password">
+
+        <br>
+
+        @if(  formUtils.isValidField(myForm, 'password') ){
+          <span class="text-field text-orange-500">
+            {{ formUtils.getFieldError(myForm, 'password') }}
+          </span>
+        }
+
+      <br>
+      <br>
+      <button
+        class="btn btn-primary"
+        (click)="onSubmit()">Log in</button>
     </div>
-  }
 
-    <label for="usernameInput" class="fieldset-label">Username</label>
-    <input
-      #nameInput
-      id="usernameInput"
-      type="text"
-      class="input input-primary"
-      placeholder="Username"
-      (input)="name.set(nameInput.value)"
-      (change)="name.set(nameInput.value)">
-
-    <br>
-    <br>
-
-    <label for="passwordInput" class="label fieldset-label">Password</label>
-    <input
-      #passInput
-      type="password"
-      id="passwordInput"
-      class="input input-primary"
-      placeholder="Password"
-      (input)="pass.set(passInput.value)"
-      (change)="pass.set(passInput.value)">
-
-    <br>
-    <br>
-    <button
-      class="btn btn-primary"
-      (click)="logUser()">Log in</button>
-  </div>
+  </form>
 
 </div>
