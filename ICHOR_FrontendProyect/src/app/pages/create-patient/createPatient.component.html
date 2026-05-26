@@ -4,15 +4,15 @@
 
   <form [formGroup]="patientForm" (ngSubmit)="onSubmit()" class="flex flex-col gap-2 w-full max-w-xs">
 
-    <label class="font-semibold text-sm">Nombre Completo</label>
-    <input type="text" formControlName="fullname" class="input input-primary w-full" placeholder="Nombre">
+    <label class="font-semibold text-sm">Full name</label>
+    <input type="text" formControlName="fullname" class="input input-primary w-full" placeholder="name">
 
     <label class="font-semibold text-sm">DNI</label>
     <input type="text" formControlName="dni" class="input input-primary w-full" placeholder="DNI">
 
-    <label class="font-semibold text-sm">Tipo de Sangre</label>
+    <label class="font-semibold text-sm">Blood type</label>
     <select formControlName="bloodType" class="select select-primary w-full">
-      <option value="" disabled selected>Selecciona tipo...</option>
+      <option value="" disabled selected>Select type</option>
       <option *ngFor="let type of bloodTypes" [value]="type">{{ type }}</option>
     </select>
 
