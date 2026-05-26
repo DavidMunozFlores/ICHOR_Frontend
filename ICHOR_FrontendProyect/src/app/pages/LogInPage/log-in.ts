@@ -47,7 +47,7 @@ export class LogIn {
       .subscribe({
         next: (response: LogInResponse) => {
           this.saveCredentials();
-          this.redirect(response.rol);
+          this.redirect(response.role);
           console.log('todo ha ido bien y redirijo')
           this.clear();
         },
