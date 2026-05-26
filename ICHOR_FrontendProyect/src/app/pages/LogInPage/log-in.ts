@@ -45,19 +45,24 @@ export class LogIn {
 
     this.authService.login(this.userTry().username, this.userTry().password)
       .subscribe({
-        next: (response:LogInResponse) => {
+        next: (response: LogInResponse) => {
+          this.saveCredentials();
           this.redirect(response.rol);
           console.log('todo ha ido bien y redirijo')
+          this.clear();
         },
         error: (err: HttpErrorResponse) => {
-          console.log('Ha habido un error con la petición al http y ahora digo cual es.')
-          console.log(err.message);
+          console.log('Ha habido un error con la petición');
           this.manageError(err);
+          this.clear();
         }
       });
+  }
 
 
-    this.clear();
+  saveCredentials() {
+    sessionStorage.setItem('username', this.name());
+    sessionStorage.setItem('password', this.pass());
   }
 
   clear() {
@@ -68,24 +73,30 @@ export class LogIn {
 
 
   private redirect(role: string) {
-    if (role === 'MANAGER') {
-      this.router.navigate(['/user-manager']);
-    } else if (role === 'DOCTOR') {
-      //  TODO!
-    } else if (role === 'COORDINATOR') {
-      // TODO!
-    }
+    if (role === 'MANAGER') { this.router.navigate(['/user-manager']); }
+    else if (role === 'DOCTOR') { this.router.navigate(['/doctor-page']); }
+    else if (role === 'COORDINATOR') { this.router.navigate(['/coordinator-page']); }
   }
 
 
 
   private manageError(error: HttpErrorResponse) {
-    if (error.status === 401) {
-      this.errMessage.set('User or password incorrect.');
-    }else if(error.status === 404){
-      this.errMessage.set('User not exists.')
-    } else {
-      this.errMessage.set('Server error');
+
+    const statusCode = error.status || error.error?.status;
+
+    switch (statusCode) {
+      case 401:
+        this.errMessage.set(`User or password incorrect.`);
+        break;
+      case 404:
+        this.errMessage.set(`User does not exists.`);
+        break;
+      case 0:
+        this.errMessage.set(`Check your internet conection.`);
+        break;
+      default:
+        const backendMessage = error.error?.message || `Unexpected server error`;
+        this.errMessage.set(`Error ${error.status}: ${backendMessage}`);
     }
   }
 

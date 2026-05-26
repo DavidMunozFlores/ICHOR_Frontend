@@ -1,9 +1,10 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { Router } from '@angular/router';
+import { HeaderComponent } from '../../components/shared/Header/HeaderComponent';
 
 @Component({
   selector: 'app-user-manager',
-  imports: [],
+  imports: [HeaderComponent],
   templateUrl: './user-manager.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

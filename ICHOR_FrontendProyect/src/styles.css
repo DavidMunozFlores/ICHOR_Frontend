@@ -3,4 +3,4 @@
 @import 'tailwindcss';
 @plugin "daisyui"{
   themes: dim --default, dmyk --prefersdark;
-};
+}
