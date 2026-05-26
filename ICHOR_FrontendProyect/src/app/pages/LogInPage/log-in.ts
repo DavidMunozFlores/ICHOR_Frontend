@@ -52,9 +52,7 @@ export class LogIn {
           this.clear();
         },
         error: (err: HttpErrorResponse) => {
-          console.log('Ha habido un error con la petición al http y ahora digo cual es.')
-          console.log(err.message);
-          console.log(err.status);
+          console.log('Ha habido un error con la petición');
           this.manageError(err);
           this.clear();
         }
@@ -75,13 +73,9 @@ export class LogIn {
 
 
   private redirect(role: string) {
-    if (role === 'MANAGER') {
-      this.router.navigate(['/user-manager']);
-    } else if (role === 'DOCTOR') {
-      this.router.navigate(['/doctor-page']);
-    } else if (role === 'COORDINATOR') {
-      this.router.navigate(['/coordinator-page']);
-    }
+    if (role === 'MANAGER') { this.router.navigate(['/user-manager']); }
+    else if (role === 'DOCTOR') { this.router.navigate(['/doctor-page']); }
+    else if (role === 'COORDINATOR') { this.router.navigate(['/coordinator-page']); }
   }
 
 

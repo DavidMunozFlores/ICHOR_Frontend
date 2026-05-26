@@ -26,27 +26,21 @@ export class AuthService {
   public login(user: string, pass: string): Observable<LogInResponse> {
     const userTry: LogInCredentials = { username: user, password: pass };
 
-
-
-    //TODO! QUITAR ESTO QUE ES GUARRO PARA HACER PRUEBAS
-    // return this.http.post<LogInResponse>(this.URL_API,
-    //   {
-    //     username: user,
-    //     password: pass
-    //   }
-    // ).pipe(catchError(this.handleError));
+    // hacer tu propia construcción de cuerpo a encriptar
 
 
     //TODO! DESCOMENTAR ESTO PARA QUE LO MANDE ENCRIPTADO
     return from(this.encryptData.encrypt(JSON.stringify(userTry))).pipe(
 
       switchMap((encryptedResult: string) => {
-
+        // ---------------------------
+        // construcción de datos a mandar
         const body: LogInPost = {
           data: encryptedResult
         };
+        //---------------------------------
 
-
+        // modificación de la url para distintos post
         return this.http.post<LogInResponse>(this.URL_API, body);
       }),
 
