@@ -1,7 +1,7 @@
 import { CommonModule } from "@angular/common";
 import { HttpClient } from "@angular/common/http";
 import { ChangeDetectionStrategy, Component, inject, OnInit } from "@angular/core";
-import { FormBuilder, FormGroup, ReactiveFormsModule } from "@angular/forms";
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validator, Validators } from "@angular/forms";
 import { form } from "@angular/forms/signals";
 import { groupBy } from "rxjs";
 
@@ -27,9 +27,9 @@ export class createPatient implements OnInit{
 
     initForm(): void {
       this.patientForm = this.fb.group({
-        fullname: [''],
-        dni: [''],
-        bloodType: ['']
+        fullname: ['', Validators.required],
+        dni: ['', Validators.required],
+        bloodType: ['', Validators.required]
       });
     }
 
@@ -45,6 +45,5 @@ export class createPatient implements OnInit{
       }
       console.log(bodyTosend);
     }
-
 
   }
