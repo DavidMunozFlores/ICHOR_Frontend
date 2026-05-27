@@ -19,10 +19,12 @@ export class CreateUserService {
   private URL_API = 'https://41545ad6-a59e-4b93-9fe7-3fa0e135f3c5.mock.pstmn.io/api/v1/doctor/create';
   //private URL_API = 'http://localhost:8080/api/v1/auth/log-in';
 
-  public CreateUser(user: string, pass: string, hospitalID: Number, userManager: string, passManager: string): Observable<CreateUserResponse> {
-    const credentials: data = { username: user, password: pass, id_hopsitals: hospitalID};
+  public CreateUser(user: string, pass: string, hospitalID: Number, userManager: string, passManager: string, role: string ): Observable<CreateUserResponse> {
+    const credentials: data = { username: user, password: pass, idHospital: hospitalID};
     const authCredentials: authCredentials = {username: userManager, password: passManager};
     const doctorCreateBody: userCreateBody = {authCredentials: authCredentials, data: credentials};
+
+    const url = `http://localhost:8080/api/v1/${role}/create`;
 
 
 
@@ -35,7 +37,7 @@ export class CreateUserService {
         };
 
 
-        return this.http.post<CreateUserResponse>(this.URL_API, body);
+        return this.http.post<CreateUserResponse>(url, body);
       }),
 
       catchError(this.handleError)
