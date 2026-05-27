@@ -3,10 +3,6 @@ import { CommonModule } from "@angular/common";
 import { Component, EnvironmentInjector, inject, OnInit } from "@angular/core";
 import { FormBuilder, FormGroup, ReactiveFormsModule } from "@angular/forms";
 import { HttpClient } from "@angular/common/http";
-import { environment } from "../../../environments/environment";
-import { CreateUserPost } from '../../interfaces/CreateUsers/CreateUserPost';
-import { authCredentials, data, userCreateBody } from '../../interfaces/CreateUsers/CreateUser';
-import { UserManager } from '../user-manager/user-manager';
 
 @Component({
   templateUrl: 'create-users.html',
