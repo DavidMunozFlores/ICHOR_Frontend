@@ -1,7 +1,7 @@
 export interface data {
     username: string,
     password: string,
-    id_hospitals: Number
+    idHospital: Number
 }
 export interface authCredentials {
     username: string,
