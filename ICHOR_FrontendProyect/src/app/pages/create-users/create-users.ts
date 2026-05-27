@@ -22,7 +22,7 @@ export class createUserComponent implements OnInit {
   hospitals: any[] = [];
 
   loadHospitals() {
-    const url = `${environment.url}/api/v1/hospitales`;
+    const url = `http://localhost:8080/api/v1/hospitals`;
     this.http.get<any[]>(url).subscribe({
       next: data => {this.hospitals = data.map(h => ({ id: h.id, name: h.name }));
     },
@@ -47,8 +47,11 @@ export class createUserComponent implements OnInit {
     });
   }
   onSubmit(): void {
-    const { name, pass, hospitals } = this.userForm.value
-    this.createUserService.CreateUser(name, pass, hospitals, "managerCreator", "1234").subscribe({
+    const { username, password, hospitals, role } = this.userForm.value
+
+
+
+    this.createUserService.CreateUser(username, password, hospitals, "managerCreator", "1234", role).subscribe({
       next: (response) =>{console.log(response);
       },
       error: (err) => {
