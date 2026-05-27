@@ -1,8 +1,12 @@
+import { CreateUserService } from './../../services/CreateUser.service';
 import { CommonModule } from "@angular/common";
 import { Component, EnvironmentInjector, inject, OnInit } from "@angular/core";
 import { FormBuilder, FormGroup, ReactiveFormsModule } from "@angular/forms";
 import { HttpClient } from "@angular/common/http";
 import { environment } from "../../../environments/environment";
+import { CreateUserPost } from '../../interfaces/CreateUsers/CreateUserPost';
+import { authCredentials, data, userCreateBody } from '../../interfaces/CreateUsers/CreateUser';
+import { UserManager } from '../user-manager/user-manager';
 
 @Component({
   templateUrl: 'create-users.html',
@@ -13,6 +17,7 @@ import { environment } from "../../../environments/environment";
 export class createUserComponent implements OnInit {
   userForm!: FormGroup;
   private http = inject(HttpClient);
+  createUserService: CreateUserService = inject(CreateUserService)
 
   hospitals: any[] = [];
 
@@ -35,8 +40,6 @@ export class createUserComponent implements OnInit {
   initform() {
     this.userForm = this.fb.group({
       username: [''],
-      email: [''],
-      dni: [''],
       password:[''],
       role: ['doctor'],
       hospitals: [''],
@@ -44,10 +47,8 @@ export class createUserComponent implements OnInit {
     });
   }
   onSubmit(): void {
-    const { username, password, hospitals } = this.userForm.value
-    const peticion = {username: username, password: password, id_hospital: Number(hospitals), managerData: {username: "managerCreator", password: "1234"}}
-    const url = `https://41545ad6-a59e-4b93-9fe7-3fa0e135f3c5.mock.pstmn.io/api/v1/doctor/create2`;
-    this.http.post(url, peticion).subscribe({
+    const { name, pass, hospitals } = this.userForm.value
+    this.createUserService.CreateUser(name, pass, hospitals, "managerCreator", "1234").subscribe({
       next: (response) =>{console.log(response);
       },
       error: (err) => {
