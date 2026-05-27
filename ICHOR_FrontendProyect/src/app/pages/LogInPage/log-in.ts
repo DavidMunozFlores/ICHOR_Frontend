@@ -4,10 +4,12 @@ import { LogInCredentials } from '../../interfaces/LogIn/LogInCredentials';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/AuthService.service';
 import { LogInResponse } from '../../interfaces/LogIn/LogInResponse';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormUtils } from '../../utils/formUtils';
 
 @Component({
   selector: 'app-log-in',
-  imports: [],
+  imports: [ReactiveFormsModule],
   templateUrl: './log-in.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -16,60 +18,17 @@ export class LogIn {
   http = inject(HttpClient);
   router = inject(Router);
   authService: AuthService = inject(AuthService);
+  private fb = inject(FormBuilder);
+  formUtils = FormUtils;
 
-
-  name: WritableSignal<string> = signal('');
-  pass: WritableSignal<string> = signal('');
-
+  myForm: FormGroup = this.fb.group({
+    name: ['', [Validators.required]],
+    password: ['', Validators.required]
+  });
 
 
   //TODO! MANEJAR ESTO CON FORMULARIOS REACTIVOS
   errMessage: WritableSignal<string> = signal('');
-
-
-  userTry: Signal<LogInCredentials> = computed(() => {
-    const user: LogInCredentials = {
-      username: this.name(),
-      password: this.pass()
-    };
-
-    return user;
-  });
-
-  logUser() {
-    this.errMessage.set('');
-
-    console.log('entrando al método de logUser()');
-
-    console.log(this.userTry().username, this.userTry().password, JSON.stringify(this.userTry()));
-
-    this.authService.login(this.userTry().username, this.userTry().password)
-      .subscribe({
-        next: (response: LogInResponse) => {
-          this.saveCredentials();
-          this.redirect(response.role);
-          console.log('todo ha ido bien y redirijo')
-          this.clear();
-        },
-        error: (err: HttpErrorResponse) => {
-          console.log('Ha habido un error con la petición');
-          this.manageError(err);
-          this.clear();
-        }
-      });
-  }
-
-
-  saveCredentials() {
-    sessionStorage.setItem('username', this.name());
-    sessionStorage.setItem('password', this.pass());
-  }
-
-  clear() {
-    this.name.set('');
-    this.pass.set('');
-  }
-
 
 
   private redirect(role: string) {
@@ -98,6 +57,30 @@ export class LogIn {
         const backendMessage = error.error?.message || `Unexpected server error`;
         this.errMessage.set(`Error ${error.status}: ${backendMessage}`);
     }
+  }
+
+  onSubmit(){
+    if(this.myForm.invalid){
+      this.myForm.markAllAsTouched();
+      return;
+    }
+
+    const { name, password } = this.myForm.value;
+    this.errMessage.set('');
+
+    this.authService.login(name, password)
+      .subscribe({
+        next: (response: LogInResponse) => {
+          sessionStorage.setItem('username', name);
+          sessionStorage.setItem('password', password);
+          this.myForm.reset();
+          this.redirect(response.role);
+        },
+        error: (err: HttpErrorResponse) => {
+          console.log(`Ha habido un error con la petición`);
+          this.manageError(err);
+        }
+      });
   }
 
 
