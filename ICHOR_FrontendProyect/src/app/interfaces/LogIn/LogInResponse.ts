@@ -1,4 +1,4 @@
 
 export interface LogInResponse {
-  rol: string
+  role: string
 }
