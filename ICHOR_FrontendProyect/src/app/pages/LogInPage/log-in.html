@@ -1,7 +1,9 @@
-<div class="flex h-100 items-center justify-center">
+<div class="flex min-h-screen items-center justify-center bg-base-300">
 
-  <form [formGroup]="myForm" (ngSubmit)="onSubmit()">
+  <form [formGroup]="myForm" (ngSubmit)="onSubmit()"
+  class="card w-full max-w-sm bg-base-100 shadow-xl">
 
+  <h2 class="card-title justify-center text-2xl font-black tracking-wider text-center mb-2">Log In</h2>
     <div>
 
         @if(errMessage() != ''){
