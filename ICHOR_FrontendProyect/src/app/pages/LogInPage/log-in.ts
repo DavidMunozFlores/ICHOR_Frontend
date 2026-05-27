@@ -27,53 +27,8 @@ export class LogIn {
   });
 
 
-  name: WritableSignal<string> = signal('');
-  pass: WritableSignal<string> = signal('');
-
-
-
   //TODO! MANEJAR ESTO CON FORMULARIOS REACTIVOS
   errMessage: WritableSignal<string> = signal('');
-
-
-  userTry: Signal<LogInCredentials> = computed(() => {
-    const user: LogInCredentials = {
-      username: this.name(),
-      password: this.pass()
-    };
-
-    return user;
-  });
-
-
-
-  logUser() {
-    this.errMessage.set('');
-
-    console.log('entrando al método de logUser()');
-
-    console.log(this.userTry().username, this.userTry().password, JSON.stringify(this.userTry()));
-
-    this.authService.login(this.userTry().username, this.userTry().password)
-      .subscribe({
-        next: (response: LogInResponse) => {
-          this.saveCredentials();
-          this.redirect(response.role);
-          console.log('todo ha ido bien y redirijo')
-        },
-        error: (err: HttpErrorResponse) => {
-          console.log('Ha habido un error con la petición');
-          this.manageError(err);
-        }
-      });
-  }
-
-
-  saveCredentials() {
-    sessionStorage.setItem('username', this.name());
-    sessionStorage.setItem('password', this.pass());
-  }
-
 
 
   private redirect(role: string) {
@@ -110,9 +65,22 @@ export class LogIn {
       return;
     }
 
-    this.logUser();
+    const { name, password } = this.myForm.value;
+    this.errMessage.set('');
 
-    this.myForm.reset();
+    this.authService.login(name, password)
+      .subscribe({
+        next: (response: LogInResponse) => {
+          sessionStorage.setItem('username', name);
+          sessionStorage.setItem('password', password);
+          this.myForm.reset();
+          this.redirect(response.role);
+        },
+        error: (err: HttpErrorResponse) => {
+          console.log(`Ha habido un error con la petición`);
+          this.manageError(err);
+        }
+      });
   }
 
 
