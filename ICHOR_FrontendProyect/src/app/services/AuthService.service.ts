@@ -1,4 +1,4 @@
-import { inject, Injectable } from '@angular/core';
+import { computed, inject, Injectable, signal } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { from, Observable } from 'rxjs';
 import { catchError, switchMap } from 'rxjs/operators';
@@ -11,6 +11,8 @@ import { LogInResponse } from '../interfaces/LogIn/LogInResponse';
 import { Router } from '@angular/router';
 import { routes } from '../app.routes';
 
+type AuthStatus = 'checking' | 'authenticated' | 'not-authenticated';
+
 @Injectable({
   providedIn: 'root',
 })
@@ -19,9 +21,24 @@ export class AuthService {
   private http = inject(HttpClient);
   private router = inject(Router);
 
-
   private URL_API = 'https://41545ad6-a59e-4b93-9fe7-3fa0e135f3c5.mock.pstmn.io/api/v1/login';
   // private URL_API = 'http://localhost:8080/api/v1/auth/log-in';
+
+  private _authStatus = signal<AuthStatus>('checking');
+  private _user = signal<LogInCredentials | null>(null);
+
+
+  authStatus = computed<AuthStatus>(() => {
+    if(this._authStatus() === 'checking') return 'checking';
+
+    if(this._user()) return 'authenticated';
+
+    else return 'not-authenticated';
+  });
+
+  user = computed<LogInCredentials | null>(() => this._user() );
+
+
 
   public login(user: string, pass: string): Observable<LogInResponse> {
     const userTry: LogInCredentials = { username: user, password: pass };
