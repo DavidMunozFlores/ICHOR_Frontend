@@ -1,12 +1,12 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { HeaderComponent } from "../../components/shared/Header/HeaderComponent";
 import { FormUtils } from '../../utils/formUtils';
-import { FormBuilder, Validators } from '@angular/forms';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { hlaStringValidator } from '../../utils/hlaValidator';
 
 @Component({
   selector: 'app-coordinator-page-component',
-  imports: [HeaderComponent],
+  imports: [HeaderComponent, ReactiveFormsModule],
   templateUrl: './CoordinatorPageComponent.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -22,6 +22,10 @@ export class CoordinatorPageComponent {
     hla: ['', [Validators.required, hlaStringValidator()]],
   })
 
+
+  onSubmit(){
+
+  }
 
 
 }
