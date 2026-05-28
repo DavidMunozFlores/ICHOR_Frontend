@@ -1,19 +1,72 @@
+@if(isLoading()){
+<div role="alert" class="alert alert-info alert-soft">
+  <span>Loading form data. Please wait...</span>
+</div>
+}
+
+@else if(hasError()){
+<div role="alert" class="alert alert-error">
+  <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 shrink-0 stroke-current" fill="none" viewBox="0 0 24 24">
+    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+      d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+  </svg>
+  <span>Error loading form data. Please try again later.</span>
+</div>
+
+}
+
+@else {
+
 <app-header />
+
 <div class="card">
   <h3 class="text text-green-400 text-2xl card-title">Welcome Coordinator</h3>
 
   <form [formGroup]="myForm" (ngSubmit)="onSubmit()">
 
     <fieldset class="fieldset">
-      <legend class="fieldset-legend">Browsers</legend>
-      <select class="select">
-        <option disabled selected>Pick a browser</option>
-        <option>Chrome</option>
-        <option>FireFox</option>
-        <option>Safari</option>
+      <legend class="fieldset-legend">Select organ</legend>
+      <select class="select" [class.select-error]="formUtils.isValidField(myForm, 'organ')" formControlName="organ">
+        <option disabled selected>Pick an organ</option>
+        @for(organ of organService.organs(); track $index ){
+          <option [value]="organ.organType">{{organ.organType}}</option>
+        }
       </select>
-      <span class="label">Optional</span>
+
+      @if( formUtils.isValidField(myForm, 'organ')){
+        <span class="label text-orange-600">{{ formUtils.getFieldError(myForm, 'organ') }}</span>
+      }
     </fieldset>
+
+    <fieldset class="fieldset">
+      <legend class="fieldset-legend">Organ's weigth</legend>
+      <input type="text" class="input" placeholder="Weigth in grams" formControlName="weigth"/>
+      @if( formUtils.isValidField(myForm, 'weigth')){
+        <span class="label text-orange-600">{{ formUtils.getFieldError(myForm, 'weigth') }}</span>
+      }
+    </fieldset>
+
+
+    <fieldset class="fieldset">
+      <legend class="fieldset-legend">Organ's size</legend>
+      <input type="text" class="input" placeholder="Size in CC" formControlName="size"/>
+      @if( formUtils.isValidField(myForm, 'size')){
+        <span class="label text-orange-600">{{ formUtils.getFieldError(myForm, 'size') }}</span>
+      }
+    </fieldset>
+
+
+    <fieldset class="fieldset">
+      <legend class="fieldset-legend">HLA Chain</legend>
+      <input type="text" class="input" placeholder="Size in CC" formControlName="hla"/>
+      @if( formUtils.isValidField(myForm, 'hla')){
+        <span class="label text-orange-600">{{ formUtils.getFieldError(myForm, 'hla') }}</span>
+      }
+    </fieldset>
+
+
 
   </form>
 </div>
+
+}

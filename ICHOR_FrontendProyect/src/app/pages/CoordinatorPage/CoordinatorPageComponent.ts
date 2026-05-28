@@ -3,6 +3,7 @@ import { HeaderComponent } from "../../components/shared/Header/HeaderComponent"
 import { FormUtils } from '../../utils/formUtils';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { hlaStringValidator } from '../../utils/hlaValidator';
+import { OrganServiceService } from '../../services/Organs.service';
 
 
 @Component({
@@ -18,26 +19,38 @@ export class CoordinatorPageComponent {
   }
 
   private fb = inject(FormBuilder);
+  organService = inject(OrganServiceService);
   formUtils = FormUtils;
 
   isLoading: WritableSignal<boolean> = signal(true);
-  hasLoading: WritableSignal<boolean> = signal(false);
-
-  organs: WritableSignal<Organ[]> = signal([]);
+  hasLoaded: WritableSignal<boolean> = signal(false);
+  hasError: WritableSignal<boolean> = signal(false);
 
   myForm = this.fb.group({
     organ: ['', [Validators.required]],
     weigth: ['', [Validators.required, Validators.min(1)]],
-    volume: ['', [Validators.required, Validators.min(1)]],
+    size: ['', [Validators.required, Validators.min(1)]],
     hla: ['', [Validators.required, hlaStringValidator()]],
   })
 
   loadOrgans(){
-    // tengo que hacer la petición al back y que me devuelva una lista de objetos de los organos
-    // y yo la carge en la signal organs
+    this.organService.loadOrgans().subscribe({
+      next: (success) => {
+        this.hasLoaded.set(true);
+        this.isLoading.set(false);
 
+        if(success){
+          this.hasError.set(false);
+        }else{
+          this.hasError.set(true);
 
-
+        }
+      },
+      error: () => {
+        this.isLoading.set(false);
+        this.hasError.set(true);
+      }
+    });
   }
 
 
