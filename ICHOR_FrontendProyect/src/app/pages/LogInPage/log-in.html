@@ -1,0 +1,59 @@
+<div class="flex h-100 items-center justify-center">
+
+  <form [formGroup]="myForm" (ngSubmit)="onSubmit()">
+
+    <div>
+
+        @if(errMessage() != ''){
+      <div>
+        <br>
+        <label class="text-red-700 text-xl">{{ errMessage() }}</label>
+
+      </div>
+      }
+
+      <label for="usernameInput" class="fieldset-label">Username</label>
+      <input
+        id="usernameInput"
+        type="text"
+        class="input input-primary"
+        placeholder="Username"
+        formControlName="name">
+
+        <br>
+
+        @if(  formUtils.isValidField(myForm, 'name') ){
+          <span class="text-field text-orange-500">
+            {{ formUtils.getFieldError(myForm, 'name') }}
+          </span>
+        }
+
+      <br>
+      <br>
+
+      <label for="passwordInput" class="label fieldset-label">Password</label>
+      <input
+        type="password"
+        id="passwordInput"
+        class="input input-primary"
+        placeholder="Password"
+        formControlName="password">
+
+        <br>
+
+        @if(  formUtils.isValidField(myForm, 'password') ){
+          <span class="text-field text-orange-500">
+            {{ formUtils.getFieldError(myForm, 'password') }}
+          </span>
+        }
+
+      <br>
+      <br>
+      <button
+        class="btn btn-primary"
+        >Log in</button>
+    </div>
+
+  </form>
+
+</div>
