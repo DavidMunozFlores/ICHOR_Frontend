@@ -15,58 +15,110 @@
 
 }
 
-@else {
+@else if(hasLoaded() && !hasError() && !isVerified()) {
 
 <app-header />
 
 <div class="card">
   <h3 class="text text-green-400 text-2xl card-title">Welcome Coordinator</h3>
 
-  <form [formGroup]="myForm" (ngSubmit)="onSubmit()">
+  <form [formGroup]="myForm" (ngSubmit)="showVerification()">
 
     <fieldset class="fieldset">
       <legend class="fieldset-legend">Select organ</legend>
       <select class="select" [class.select-error]="formUtils.isValidField(myForm, 'organ')" formControlName="organ">
         <option disabled selected>Pick an organ</option>
         @for(organ of organService.organs(); track $index ){
-          <option [value]="organ.organType">{{organ.organType}}</option>
+        <option [value]="organ.organType">{{organ.organType}}</option>
         }
       </select>
 
       @if( formUtils.isValidField(myForm, 'organ')){
-        <span class="label text-orange-600">{{ formUtils.getFieldError(myForm, 'organ') }}</span>
+      <span class="label text-orange-600">{{ formUtils.getFieldError(myForm, 'organ') }}</span>
       }
     </fieldset>
 
     <fieldset class="fieldset">
       <legend class="fieldset-legend">Organ's weigth</legend>
-      <input type="text" class="input" placeholder="Weigth in grams" formControlName="weigth"/>
+      <input type="text" [class.input-error]="formUtils.isValidField(myForm, 'weigth')" class="input"
+        placeholder="Weigth in grams (Ex: 305.03)" formControlName="weigth" />
       @if( formUtils.isValidField(myForm, 'weigth')){
-        <span class="label text-orange-600">{{ formUtils.getFieldError(myForm, 'weigth') }}</span>
+      <span class="label text-orange-600">{{ formUtils.getFieldError(myForm, 'weigth') }}</span>
       }
     </fieldset>
 
 
     <fieldset class="fieldset">
       <legend class="fieldset-legend">Organ's size</legend>
-      <input type="text" class="input" placeholder="Size in CC" formControlName="size"/>
+      <input type="text" [class.input-error]="formUtils.isValidField(myForm, 'size')" class="input"
+        placeholder="Size in CC (Ex: 23.04)" formControlName="size" />
       @if( formUtils.isValidField(myForm, 'size')){
-        <span class="label text-orange-600">{{ formUtils.getFieldError(myForm, 'size') }}</span>
+      <span class="label text-orange-600">{{ formUtils.getFieldError(myForm, 'size') }}</span>
       }
     </fieldset>
 
 
     <fieldset class="fieldset">
       <legend class="fieldset-legend">HLA Chain</legend>
-      <input type="text" class="input" placeholder="Size in CC" formControlName="hla"/>
+      <input type="text" [class.input-error]="formUtils.isValidField(myForm, 'hla')" class="input"
+        placeholder="HLA (Ex: A:07:02 A:11:03 B:15:06...)" formControlName="hla" />
       @if( formUtils.isValidField(myForm, 'hla')){
-        <span class="label text-orange-600">{{ formUtils.getFieldError(myForm, 'hla') }}</span>
+      <span class="label text-orange-600">{{ formUtils.getFieldError(myForm, 'hla') }}</span>
       }
     </fieldset>
 
-
+    <button class="btn btn-primary">Guardar</button>
 
   </form>
 </div>
+}
+
+@else if(isVerified()){
+
+<div class="flex min-h-screen items-center justify-center bg-base-200 p-4">
+
+  <form [formGroup]="myForm" (ngSubmit)="onSubmit()" class="card w-full max-w-sm bg-base-100 shadow-xl">
+    <div class="card-body gap-4">
+
+      <h2 class="card-title justify-center text-2xl font-black tracking-wider text-center mb-2">Summary</h2>
+
+      <div class="label justify-start pl-1">
+        <span class="label-text font-semibold">Organ</span>
+      </div>
+
+      <div class="label justify-start pl-1">
+        <span class="text text-info">{{myForm.controls.organ.value}}</span>
+      </div>
+
+      <div class="label justify-start pl-1">
+        <span class="label-text font-semibold">Weight</span>
+      </div>
+      <div class="label justify-start pl-1">
+        <span class="text text-info">{{myForm.controls.weigth.value}}</span>
+      </div>
+
+      <div class="label justify-start pl-1">
+        <span class="label-text font-semibold">Size</span>
+      </div>
+      <div class="label justify-start pl-1">
+        <span class="text text-info">{{myForm.controls.size.value}}</span>
+      </div>
+
+      <div class="label justify-start pl-1">
+        <span class="label-text font-semibold">HLA</span>
+      </div>
+      <div class="label justify-start pl-1">
+        <span class="text text-info">{{myForm.controls.hla.value}}</span>
+      </div>
+    </div>
+
+    <button>Enviar</button>
+    <button>Cancelar</button>
+
+  </form>
+
+</div>
+
+
 
 }

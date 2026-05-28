@@ -12,7 +12,7 @@ export function hlaStringValidator(): ValidatorFn {
     }
 
 
-    const MANDATORY_GENS = ['A', 'B', 'DRB1'];
+    const GENS = ['A', 'B', 'DRB1'];
     const HLA_ALLELE_PATTERN = /^[A-Z0-9\-]+:[0-9]{2,3}:[0-9]{2,3}$/;
 
     const alleles = controlValue
@@ -25,8 +25,9 @@ export function hlaStringValidator(): ValidatorFn {
     }
 
     const genGroupsCount: Record<string, number> = {};
+    const uniqueAlleles = new Set<string>();
 
-    for (const allele in alleles) {
+    for (const allele of alleles) {
       if (!HLA_ALLELE_PATTERN.test(allele)) {
         return {
           hlaInvalid: {
@@ -35,26 +36,41 @@ export function hlaStringValidator(): ValidatorFn {
         };
       }
 
+
+      if(uniqueAlleles.has(allele)){
+        return{
+          hlaInvalid: {
+            message: `The allele ${allele} is introduced two times. It must not be equals.`
+          }
+        }
+      }
+
+      uniqueAlleles.add(allele);
+
       const genName = allele.split(':')[0];
 
       if(genGroupsCount[genName]){
-        genGroupsCount[genName] + 1;
+        genGroupsCount[genName] += 1;
       }else{
         genGroupsCount[genName] = 1;
       }
 
-      if(genGroupsCount[genName] > 2) {
-        return {
-          hlaInvalid: {
-            message: `The gen ${genName} appears more than 2 times.`
-          }
-        };
-      }
 
     }
 
 
-    for(const mandatoryGene of MANDATORY_GENS){
+    for(const geneName in genGroupsCount) {
+      if(genGroupsCount[geneName] !== 2){
+        return{
+          hlaInvalid: {
+            message: `The gene ${geneName} has been introduced ${genGroupsCount[geneName]} time/s. It must be only 2 times.`
+          }
+        }
+      }
+    }
+
+
+    for(const mandatoryGene of GENS){
       if(!genGroupsCount[mandatoryGene] || genGroupsCount[mandatoryGene] === 0){
         return {
           hlaInvalid: {

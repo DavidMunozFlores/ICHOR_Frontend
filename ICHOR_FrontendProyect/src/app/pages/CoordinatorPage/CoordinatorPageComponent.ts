@@ -25,6 +25,7 @@ export class CoordinatorPageComponent {
   isLoading: WritableSignal<boolean> = signal(true);
   hasLoaded: WritableSignal<boolean> = signal(false);
   hasError: WritableSignal<boolean> = signal(false);
+  isVerified: WritableSignal<boolean> = signal(false);
 
   myForm = this.fb.group({
     organ: ['', [Validators.required]],
@@ -55,6 +56,12 @@ export class CoordinatorPageComponent {
 
 
   onSubmit(){
+    if(!this.isVerified()){
+
+    }
+  }
+
+  showVerification(){
 
   }
 
