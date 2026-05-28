@@ -27,6 +27,10 @@ export class CoordinatorPageComponent {
   hasError: WritableSignal<boolean> = signal(false);
   isVerified: WritableSignal<boolean> = signal(false);
 
+  countdown: WritableSignal<number> = signal(10);
+  canSubmit: WritableSignal<boolean> = signal(false);
+  private timerInterval: any;
+
   myForm = this.fb.group({
     organ: ['', [Validators.required]],
     weigth: ['', [Validators.required, Validators.min(1)]],
@@ -39,13 +43,8 @@ export class CoordinatorPageComponent {
       next: (success) => {
         this.hasLoaded.set(true);
         this.isLoading.set(false);
+        this.hasError.set(!success);
 
-        if(success){
-          this.hasError.set(false);
-        }else{
-          this.hasError.set(true);
-
-        }
       },
       error: () => {
         this.isLoading.set(false);
@@ -56,14 +55,44 @@ export class CoordinatorPageComponent {
 
 
   onSubmit(){
-    if(!this.isVerified()){
-
+    if(!this.canSubmit()){
+      return;
     }
+
+    //TODO! AQUI VA EL POST DEL ORGANO
+    console.log(this.myForm.value);
   }
 
   showVerification(){
+    if(this.myForm.invalid){
+      this.myForm.markAllAsTouched;
+      return;
+    }
 
+    this.countdown.set(10);
+    this.canSubmit.set(false);
+    this.isVerified.set(true);
+
+
+    this.timerInterval = setInterval( () => {
+      this.countdown.update((v) => v-1);
+
+      if(this.countdown() <= 0){
+        this.canSubmit.set(true);
+        clearInterval(this.timerInterval) // rarete autoreferencia para pararse a sí mismo pero funka bien
+      }
+    }, 1000)
   }
+
+
+  cancelVerification(){
+    this.isVerified.set(false);
+    if(this.timerInterval){
+      clearInterval(this.timerInterval);
+    }
+  }
+
+
 
 
 }
