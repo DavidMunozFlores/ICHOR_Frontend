@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, signal, WritableSignal, inject, com
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { LogInCredentials } from '../../interfaces/LogIn/LogInCredentials';
 import { Router } from '@angular/router';
-import { AuthService } from '../../services/AuthService.service';
+import { AuthService } from '../../auth/services/AuthService.service';
 import { LogInResponse } from '../../interfaces/LogIn/LogInResponse';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { FormUtils } from '../../utils/formUtils';
@@ -21,6 +21,12 @@ export class LogIn {
   private fb = inject(FormBuilder);
   formUtils = FormUtils;
 
+  private readonly roleRoutes: Record<string, string> = {
+    'MANAGER': '/user-manager',
+    'DOCTOR': '/doctor-page',
+    'COORDINATOR': '/coordinator-page'
+  }
+
   myForm: FormGroup = this.fb.group({
     name: ['', [Validators.required]],
     password: ['', Validators.required]
@@ -32,9 +38,12 @@ export class LogIn {
 
 
   private redirect(role: string) {
-    if (role === 'MANAGER') { this.router.navigate(['/user-manager']); }
-    else if (role === 'DOCTOR') { this.router.navigate(['/doctor-page']); }
-    else if (role === 'COORDINATOR') { this.router.navigate(['/coordinator-page']); }
+    const route = this.roleRoutes[role];
+
+    if(route){
+      this.router.navigate([route]);
+    }
+
   }
 
 
@@ -71,10 +80,14 @@ export class LogIn {
     this.authService.login(name, password)
       .subscribe({
         next: (response: LogInResponse) => {
+
+          const { role } = response;
+
           sessionStorage.setItem('username', name);
           sessionStorage.setItem('password', password);
+          sessionStorage.setItem('role', role)
           this.myForm.reset();
-          this.redirect(response.role);
+          this.redirect(role);
         },
         error: (err: HttpErrorResponse) => {
           console.log(`Ha habido un error con la petición`);

@@ -4,12 +4,12 @@ import { from, Observable } from 'rxjs';
 import { catchError, switchMap } from 'rxjs/operators';
 import { throwError } from 'rxjs';
 
-import { EncryptDataService } from './EncryptData.service';
-import { LogInCredentials } from '../interfaces/LogIn/LogInCredentials';
-import { LogInPost } from '../interfaces/LogIn/LogInPost';
-import { LogInResponse } from '../interfaces/LogIn/LogInResponse';
+import { EncryptDataService } from '../../services/EncryptData.service';
+import { LogInCredentials } from '../../interfaces/LogIn/LogInCredentials';
+import { LogInPost } from '../../interfaces/LogIn/LogInPost';
+import { LogInResponse } from '../../interfaces/LogIn/LogInResponse';
 import { Router } from '@angular/router';
-import { routes } from '../app.routes';
+import { routes } from '../../app.routes';
 
 @Injectable({
   providedIn: 'root',
@@ -44,7 +44,7 @@ export class AuthService {
         return this.http.post<LogInResponse>(this.URL_API, body);
       }),
 
-      catchError(this.handleError)
+      catchError(error => this.handleError(error))
     );
   }
 
@@ -60,13 +60,46 @@ export class AuthService {
   }
 
   public logOut() {
-
-    localStorage.removeItem('username');
-    localStorage.removeItem('password');
+    sessionStorage.removeItem('username');
+    sessionStorage.removeItem('password');
+    sessionStorage.removeItem('role');
     sessionStorage.clear();
 
     this.router.navigate(['/log-in']);
-
-
   }
+
+
+  isAuthenticated(): boolean{
+    return (
+      !!sessionStorage.getItem('username') &&
+      !!sessionStorage.getItem('password')
+    );
+  }
+
+  getRole(): string | null {
+    return sessionStorage.getItem('role');
+  }
+
+  hasRequiredRole(requiredRole: string): boolean{
+    if(!this.getRole()){
+      return false;
+    }else{
+      console.log(`Los roles son iguales? ${this.getRole() === requiredRole}`)
+      return this.getRole() === requiredRole;
+    }
+  }
+
+  getCredentials(): LogInCredentials | null{
+    if(this.isAuthenticated()){
+      const credentials: LogInCredentials = {
+        username: sessionStorage.getItem('username')!,
+        password: sessionStorage.getItem('password')!
+      }
+      return credentials;
+    }else{
+      return null;
+    }
+  }
+
+
 }
