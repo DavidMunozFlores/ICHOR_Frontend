@@ -6,7 +6,7 @@ import { HttpClient } from '@angular/common/http';
 
 interface Employee {
   username: string;
-  hospital: string;
+  hospitalId: string;
   role: string;
 }
 @Component({
@@ -45,13 +45,13 @@ export class UserManager {
     const query = this.searchBar.toLowerCase();
     return this.employees.filter(emp =>
       emp.username?.toLowerCase().includes(query) ||
-      emp.hospital?.toLowerCase().includes(query) ||
+      emp.hospitalId?.toLowerCase().includes(query) ||
       emp.role?.toLowerCase().includes(query)
     );
   }
 
   redirectToCreate(){
-    this.router.navigate(['/create-user']);
+    this.router.navigate(['/create-users']);
   }
 
 

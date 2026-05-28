@@ -28,13 +28,12 @@
         <tbody>
           <tr *ngFor="let employee of filteredEmployees" class="hover:bg-base-200 transition-colors">
             <td class="font-medium">{{ employee.username }}</td>
-            <td>{{ employee.hospital }}</td>
+            <td>{{ employee.hospitalId }}</td>
             <td>
-              <span class="badge font-semibold"
-                    [ngClass]="employee.role?.toLowerCase() === 'coordinator' ? 'badge-secondary' : 'badge-accent'">
-                {{ employee.role }}
-              </span>
-            </td>
+  <span class="badge badge-ghost font-medium">
+    {{ employee.role }}
+  </span>
+</td>
           </tr>
 
           <tr *ngIf="filteredEmployees.length === 0">
