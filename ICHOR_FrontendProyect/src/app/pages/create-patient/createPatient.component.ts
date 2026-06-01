@@ -27,21 +27,28 @@ export class createPatient implements OnInit{
 
     initForm(): void {
       this.patientForm = this.fb.group({
+        internalID: ['', Validators.required],
         fullname: ['', Validators.required],
         dni: ['', Validators.required],
-        bloodType: ['', Validators.required]
+        bloodType: ['', Validators.required],
+        height: ['', [Validators.required, Validators.min(0)]],
+        weight: ['', [Validators.required, Validators.min(0)]],
+        idHospital: ['', Validators.required],
+
       });
     }
 
     onSubmit(): void {
-      if (this.patientForm.invalid) return;
 
-      const { fullname, dni, bloodType }= this.patientForm.value;
+      const { internalID, fullname, dni, bloodType, height, weight}= this.patientForm.value;
 
       const bodyTosend = {
+        internalID: internalID,
         name: fullname,
         dni: dni,
-        blood_type: bloodType
+        blood_type: bloodType,
+        height: height,
+        weight: weight,
       }
       console.log(bodyTosend);
     }
