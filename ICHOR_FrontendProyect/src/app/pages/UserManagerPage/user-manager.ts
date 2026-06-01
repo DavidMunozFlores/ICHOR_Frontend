@@ -1,8 +1,10 @@
 import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
+import { environment } from '../../../environments/environment';
+import { forkJoin } from 'rxjs';
 
 interface Employee {
   username: string;
@@ -23,18 +25,25 @@ export class UserManager {
   searchBar: string = '';
 
   ngOnInit(): void {
-    this.loadEmployees();
+    this.loadAllUsers();
   }
-  loadEmployees(): void {
-    const url = 'http://localhost:8080/api/v1/doctors';
+  constructor () {this.loadAllUsers();
+}
 
-    this.http.get<Employee[]>(url).subscribe({
-      next: (data) => {
-        this.employees = data;
-      },
-      error: (err) => {
-        console.error(err);
-      }
+  loadAllUsers(): void {
+    const urlDoctors =`${environment.url}api/v1/doctors`;
+    const urlCoordinators = `${environment.url}api/v1/doctors`;
+
+    forkJoin ({
+      doctors: this.http.get<Employee[]>(urlDoctors),
+      coordinators: this.http.get<Employee[]>(urlCoordinators)
+    }).subscribe({
+        next: ({doctors, coordinators}) => {
+          const DoctorList = doctors.map(employee => ({...employee, role: 'DOCTOR'}))
+          const CoordinatorList = coordinators.map(employee => ({...employee, role: 'COORDINATOR'}))
+          this.employees = [...DoctorList, ...CoordinatorList];
+        },
+        error: (err) => {console.error(err)}
     });
 
   }
@@ -45,7 +54,6 @@ export class UserManager {
     const query = this.searchBar.toLowerCase();
     return this.employees.filter(emp =>
       emp.username?.toLowerCase().includes(query) ||
-      emp.hospitalId?.toLowerCase().includes(query) ||
       emp.role?.toLowerCase().includes(query)
     );
   }
