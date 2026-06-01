@@ -1,4 +1,7 @@
-interface Organ {
-  type: string,
-  expiration: number
+export interface Organ {
+  organType: string,
+  bloodType: string,
+  weightGrams: number,
+  volumeCC: number,
+  hla: string
 }

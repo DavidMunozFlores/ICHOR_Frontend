@@ -4,6 +4,7 @@ import { FormUtils } from '../../utils/formUtils';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { hlaStringValidator } from '../../utils/hlaValidator';
 import { OrganServiceService } from '../../services/Organs.service';
+import { Organ } from '../../interfaces/Coordinator/Organ.interface';
 
 
 @Component({
@@ -22,17 +23,22 @@ export class CoordinatorPageComponent {
   organService = inject(OrganServiceService);
   formUtils = FormUtils;
 
+  username: WritableSignal<string> = signal(sessionStorage.getItem('username')!);
+  bloodTypes: WritableSignal<string[]> = signal(['A+','A-','B+','B-','O+','O-','AB+','AB-']);
+
   isLoading: WritableSignal<boolean> = signal(true);
   hasLoaded: WritableSignal<boolean> = signal(false);
   hasError: WritableSignal<boolean> = signal(false);
   isVerified: WritableSignal<boolean> = signal(false);
+  isSavingOrgan:WritableSignal<boolean> = signal(false);
 
   countdown: WritableSignal<number> = signal(10);
   canSubmit: WritableSignal<boolean> = signal(false);
   private timerInterval: any;
 
   myForm = this.fb.group({
-    organ: ['', [Validators.required]],
+    organ: [, [Validators.required]],
+    blood: [, [Validators.required]],
     weigth: ['', [Validators.required, Validators.min(1)]],
     size: ['', [Validators.required, Validators.min(1)]],
     hla: ['', [Validators.required, hlaStringValidator()]],
@@ -59,17 +65,36 @@ export class CoordinatorPageComponent {
       return;
     }
 
-    //TODO! AQUI VA EL POST DEL ORGANO
-    console.log(this.myForm.value);
+    const organ: Organ = {
+      organType: this.myForm.controls.organ.value!,
+      bloodType:this.myForm.controls.blood.value!,
+      weightGrams: Number(this.myForm.controls.weigth.value),
+      volumeCC: Number(this.myForm.controls.size.value!),
+      hla: this.myForm.controls.hla.value!
+    }
+
+    console.log(organ);
+    this.organService.saveOrgan(organ).subscribe({
+      next: (success) => {
+        this.isSavingOrgan.set(true);
+        //window.location.reload();
+      },
+      error: (error) => {
+        this.hasError.set(true);
+
+      }
+    });
+
   }
 
   showVerification(){
     if(this.myForm.invalid){
-      this.myForm.markAllAsTouched;
+      this.myForm.markAllAsTouched();
+      console.log('has clicado en el boton de ver resumen');
       return;
     }
 
-    this.countdown.set(10);
+    this.countdown.set(5);
     this.canSubmit.set(false);
     this.isVerified.set(true);
 
