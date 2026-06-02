@@ -1,0 +1,22 @@
+<section class="overflow-x-auto bg-base-100 rounded-lg shadow-sm border border-base-300">
+  <table class="table w-3/4">
+    <thead>
+      <tr class="bg-base-300">
+        <th>#</th>
+        <th>Patient ID</th>
+        <th>Organ</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (petition of petitions(); track petition.idPatient; let index = $index) {
+        <tr>
+          <td>{{index + 1}</td>
+          <td>{{petition.idPatient}}</td>
+          <td>{{petition.organType}}</td>
+          <td>{{petition.status}}</td>
+        </tr>
+      }
+    </tbody>
+  </table>
+</section>

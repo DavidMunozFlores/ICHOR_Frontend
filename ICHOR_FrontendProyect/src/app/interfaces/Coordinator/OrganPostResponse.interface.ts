@@ -5,7 +5,7 @@ volumeCC: number,
 hla: hlaAllele[]
 }
 
-interface hlaAllele {
+export interface hlaAllele {
   letter: string,
   allele: string,
   protein: string

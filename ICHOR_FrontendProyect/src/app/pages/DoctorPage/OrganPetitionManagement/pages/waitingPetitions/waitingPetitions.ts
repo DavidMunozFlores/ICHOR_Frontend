@@ -1,9 +1,9 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 
 @Component({
-  selector: 'app-organ-petition-management',
+  selector: 'app-waiting-petitions',
   imports: [],
-  templateUrl: './OrganPetitionManagement.html',
+  templateUrl: './waitingPetitions.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class OrganPetitionManagement {}
+export class WaitingPetitions {}
