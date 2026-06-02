@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { AuthService } from '../../../services/AuthService.service';
+import { AuthService } from '../../../auth/services/AuthService.service';
 
 @Component({
   selector: 'app-header',
