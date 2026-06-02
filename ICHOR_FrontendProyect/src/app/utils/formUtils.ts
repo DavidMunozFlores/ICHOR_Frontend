@@ -43,8 +43,12 @@ export class FormUtils {
         case 'emailTaken':
           return `Email ya existente: NO VALIDO`
 
-          case 'reservedName':
-            return `Ese valor está reservado`
+        case 'reservedName':
+          return `Ese valor está reservado`
+
+        case 'hlaInvalid':
+          return errors['hlaInvalid'].message;
+
 
         default:
           return `Error de validación no controlado ${key}`;

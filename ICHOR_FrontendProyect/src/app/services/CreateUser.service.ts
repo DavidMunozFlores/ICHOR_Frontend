@@ -40,7 +40,7 @@ export class CreateUserService {
         return this.http.post<CreateUserResponse>(url, body);
       }),
 
-      catchError(this.handleError)
+      catchError((error) => this.handleError(error))
     );
   }
 

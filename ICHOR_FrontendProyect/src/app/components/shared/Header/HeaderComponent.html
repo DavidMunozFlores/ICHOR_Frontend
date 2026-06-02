@@ -1,8 +1,20 @@
-<section>
+<section class="navbar bg-gradient-to-b from-cyan-900 to-base-100 px-4 sm:px-6 pt-4 pb-10">
 
-  <button
-    class="btn btn-warning"
-    (click)="logOut()"
-    >Log Out</button>
+  <div class="navbar-start">
+    <button
+      class="btn btn-soft btn-warning btn-sm sm:btn-md gap-2 group"
+      (click)="logOut()"
+      >
+      <span>Log Out</span>
+    </button>
+  </div>
+
+  <div class="navbar-center">
+    <h1 class="text -2xl sm:text-3xl font-black tracking-widest text-primary font-mono select-none">
+      ICHOR
+    </h1>
+  </div>
+
+  <div class="navbar-end"></div>
 
 </section>
