@@ -49,7 +49,7 @@ export class createUserComponent implements OnInit {
 
 
 
-    this.createUserService.CreateUser(username, password, hospitals, "managerCreator", "1234", role).subscribe({
+    this.createUserService.CreateUser(username, password, hospitals, sessionStorage.getItem('username') ?? '', sessionStorage.getItem('password') ?? '', role).subscribe({
       next: (response) =>{console.log(response);
         this.router.navigate(['/user-manager']);
       },

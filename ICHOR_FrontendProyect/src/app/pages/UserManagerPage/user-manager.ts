@@ -1,3 +1,4 @@
+import { HeaderComponent } from "../../components/shared/Header/HeaderComponent";
 import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
@@ -14,7 +15,7 @@ interface Employee {
 }
 @Component({
   selector: 'app-user-manager',
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, HeaderComponent],
   templateUrl: './user-manager.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
