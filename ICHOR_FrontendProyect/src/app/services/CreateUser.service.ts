@@ -1,10 +1,9 @@
 import { CreateUserResponse } from './../interfaces/CreateUsers/CreateUserResponse';
-import { inject, Injectable } from '@angular/core';
+import { inject, Injectable, signal, WritableSignal } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { from, Observable } from 'rxjs';
 import { catchError, switchMap } from 'rxjs/operators';
 import { throwError } from 'rxjs';
-
 import { EncryptDataService } from './EncryptData.service';
 import { CreateUserPost } from '../interfaces/CreateUsers/CreateUserPost';
 import { data, authCredentials, userCreateBody } from '../interfaces/CreateUsers/CreateUser';
@@ -16,8 +15,20 @@ import { data, authCredentials, userCreateBody } from '../interfaces/CreateUsers
 export class CreateUserService {
   private encryptData = inject(EncryptDataService);
   private http = inject(HttpClient);
-  private URL_API = 'https://41545ad6-a59e-4b93-9fe7-3fa0e135f3c5.mock.pstmn.io/api/v1/doctor/create';
-  //private URL_API = 'http://localhost:8080/api/v1/auth/log-in';
+  API_URL = 'http://localhost:8080/api/v1/hospitals';
+
+  private _hospitals:  WritableSignal<HospitalGetResponse[]> = signal<HospitalGetResponse[]>([]);
+  public hospitals = this._hospitals.asReadonly();
+
+  loadHospitals(): Observable<boolean> {
+    return this.http.get<HospitalGetResponse[]>(`${this.API_URL}`).pipe(
+      switchMap((response: HospitalGetResponse[]) => {
+        this._hospitals.set(response);
+        return from([true]);
+      }),
+      catchError((error) => this.handleError(error))
+    );
+  }
 
   public CreateUser(user: string, pass: string, hospitalID: Number, userManager: string, passManager: string, role: string ): Observable<CreateUserResponse> {
     const credentials: data = { username: user, password: pass, idHospital: hospitalID};
@@ -51,7 +62,7 @@ export class CreateUserService {
       if (error.status === 0) {
         errMessage = 'Server Error';
       } else if (error.status === 500) {
-        errMessage = 'No se ha podido crear el usuario';
+        errMessage = 'Error de Front :D';
       }
     } else {
       console.error('Encryption or Client Error:', error);
