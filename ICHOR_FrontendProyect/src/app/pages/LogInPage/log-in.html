@@ -1,59 +1,55 @@
-<div class="flex h-100 items-center justify-center">
+<div class="flex min-h-screen items-center justify-center bg-base-200 p-4">
 
-  <form [formGroup]="myForm" (ngSubmit)="onSubmit()">
+  <form [formGroup]="myForm" (ngSubmit)="onSubmit()" class="card w-full max-w-sm bg-base-100 shadow-xl">
+    <div class="card-body gap-4">
+      
+      <h2 class="card-title justify-center text-2xl font-black tracking-wider text-center mb-2">Log In</h2>
 
-    <div>
-
-        @if(errMessage() != ''){
-      <div>
-        <br>
-        <label class="text-red-700 text-xl">{{ errMessage() }}</label>
-
-      </div>
+      @if(errMessage() != ''){
+        <div class="alert alert-error py-2 justify-center">
+          <span class="text-sm font-semibold text-error-content">{{ errMessage() }}</span>
+        </div>
       }
 
-      <label for="usernameInput" class="fieldset-label">Username</label>
-      <input
-        id="usernameInput"
-        type="text"
-        class="input input-primary"
-        placeholder="Username"
-        formControlName="name">
-
-        <br>
-
-        @if(  formUtils.isValidField(myForm, 'name') ){
-          <span class="text-field text-orange-500">
-            {{ formUtils.getFieldError(myForm, 'name') }}
-          </span>
+      <label class="form-control w-full">
+        <div class="label justify-start pl-1">
+          <span class="label-text font-semibold">Username</span>
+        </div>
+        <input 
+          type="text" 
+          class="input input-bordered input-primary w-full text-center" 
+          placeholder="Username" 
+          formControlName="name" />
+        
+        @if( formUtils.isValidField(myForm, 'name') ){
+          <div class="label justify-center">
+            <span class="label-text-alt text-orange-500 font-medium">{{ formUtils.getFieldError(myForm, 'name') }}</span>
+          </div>
         }
+      </label>
 
-      <br>
-      <br>
-
-      <label for="passwordInput" class="label fieldset-label">Password</label>
-      <input
-        type="password"
-        id="passwordInput"
-        class="input input-primary"
-        placeholder="Password"
-        formControlName="password">
-
-        <br>
-
-        @if(  formUtils.isValidField(myForm, 'password') ){
-          <span class="text-field text-orange-500">
-            {{ formUtils.getFieldError(myForm, 'password') }}
-          </span>
+      <label class="form-control w-full">
+        <div class="label justify-start pl-1">
+          <span class="label-text font-semibold">Password</span>
+        </div>
+        <input 
+          type="password" 
+          class="input input-bordered input-primary w-full text-center" 
+          placeholder="Password" 
+          formControlName="password" />
+        
+        @if( formUtils.isValidField(myForm, 'password') ){
+          <div class="label justify-center">
+            <span class="label-text-alt text-orange-500 font-medium">{{ formUtils.getFieldError(myForm, 'password') }}</span>
+          </div>
         }
+      </label>
 
-      <br>
-      <br>
-      <button
-        class="btn btn-primary"
-        >Log in</button>
+      <div class="card-actions mt-2">
+        <button type="submit" class="btn btn-primary w-full">Log in</button>
+      </div>
+      
     </div>
-
   </form>
 
 </div>
