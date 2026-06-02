@@ -33,7 +33,7 @@ export class LogIn {
 
   private redirect(role: string) {
     if (role === 'MANAGER') { this.router.navigate(['/user-manager']); }
-    else if (role === 'doctor') { this.router.navigate(['/doctor-page']); }
+    else if (role === 'DOCTOR') { this.router.navigate(['/doctor-page']); }
     else if (role === 'COORDINATOR') { this.router.navigate(['/coordinator-page']); }
   }
 
