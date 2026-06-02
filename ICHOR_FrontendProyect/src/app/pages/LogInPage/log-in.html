@@ -1,0 +1,55 @@
+<div class="flex min-h-screen items-center justify-center bg-base-200 p-4">
+
+  <form [formGroup]="myForm" (ngSubmit)="onSubmit()" class="card w-full max-w-sm bg-base-100 shadow-xl">
+    <div class="card-body gap-4">
+      
+      <h2 class="card-title justify-center text-2xl font-black tracking-wider text-center mb-2">Log In</h2>
+
+      @if(errMessage() != ''){
+        <div class="alert alert-error py-2 justify-center">
+          <span class="text-sm font-semibold text-error-content">{{ errMessage() }}</span>
+        </div>
+      }
+
+      <label class="form-control w-full">
+        <div class="label justify-start pl-1">
+          <span class="label-text font-semibold">Username</span>
+        </div>
+        <input 
+          type="text" 
+          class="input input-bordered input-primary w-full text-center" 
+          placeholder="Username" 
+          formControlName="name" />
+        
+        @if( formUtils.isValidField(myForm, 'name') ){
+          <div class="label justify-center">
+            <span class="label-text-alt text-orange-500 font-medium">{{ formUtils.getFieldError(myForm, 'name') }}</span>
+          </div>
+        }
+      </label>
+
+      <label class="form-control w-full">
+        <div class="label justify-start pl-1">
+          <span class="label-text font-semibold">Password</span>
+        </div>
+        <input 
+          type="password" 
+          class="input input-bordered input-primary w-full text-center" 
+          placeholder="Password" 
+          formControlName="password" />
+        
+        @if( formUtils.isValidField(myForm, 'password') ){
+          <div class="label justify-center">
+            <span class="label-text-alt text-orange-500 font-medium">{{ formUtils.getFieldError(myForm, 'password') }}</span>
+          </div>
+        }
+      </label>
+
+      <div class="card-actions mt-2">
+        <button type="submit" class="btn btn-primary w-full">Log in</button>
+      </div>
+      
+    </div>
+  </form>
+
+</div>
