@@ -9,6 +9,6 @@ import { petitionGetResponse } from '../../../../../interfaces/Doctor/petitionGe
 })
 export class PetitionList {
 
-  petitions = input.required<petitionGetResponse[]>();
+  petitions = input.required<petitionGetResponse[] | null>();
 
 }

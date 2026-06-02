@@ -1,9 +1,16 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, signal, WritableSignal } from '@angular/core';
+import { PetitionList } from "../../components/petitionList/petitionList";
+import { petitionGetResponse } from '../../../../../interfaces/Doctor/petitionGetResponse.interface';
 
 @Component({
   selector: 'app-waiting-petitions',
-  imports: [],
+  imports: [PetitionList],
   templateUrl: './waitingPetitions.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class WaitingPetitions {}
+export class WaitingPetitions {
+
+    waitingPetitions: WritableSignal<petitionGetResponse[] | null> = signal<petitionGetResponse[] | null>([]);
+
+
+}

@@ -36,7 +36,7 @@ export const routes: Routes = [
     data: { role: ['DOCTOR'] }
   },
   {
-    path: 'coordinator-page',
+    path: 'coordinator',
     component: CoordinatorPageComponent,
     canActivate: [authGuard, roleGuard],
     data: { role: ['COORDINATOR'] }
