@@ -5,6 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
 import { forkJoin } from 'rxjs';
+import { ChangeDetectorRef } from '@angular/core';
 
 interface Employee {
   username: string;
@@ -20,6 +21,7 @@ interface Employee {
 export class UserManager {
   private http = inject(HttpClient);
   private router = inject(Router);
+  private cdr = inject(ChangeDetectorRef);
 
   employees: Employee[] = [];
   searchBar: string = '';
@@ -27,12 +29,11 @@ export class UserManager {
   ngOnInit(): void {
     this.loadAllUsers();
   }
-  constructor () {this.loadAllUsers();
-}
+
 
   loadAllUsers(): void {
     const urlDoctors =`${environment.url}api/v1/doctors`;
-    const urlCoordinators = `${environment.url}api/v1/doctors`;
+    const urlCoordinators = `${environment.url}api/v1/coordinators`;
 
     forkJoin ({
       doctors: this.http.get<Employee[]>(urlDoctors),
@@ -42,6 +43,8 @@ export class UserManager {
           const DoctorList = doctors.map(employee => ({...employee, role: 'DOCTOR'}))
           const CoordinatorList = coordinators.map(employee => ({...employee, role: 'COORDINATOR'}))
           this.employees = [...DoctorList, ...CoordinatorList];
+
+          this.cdr.markForCheck();
         },
         error: (err) => {console.error(err)}
     });
@@ -57,10 +60,12 @@ export class UserManager {
       emp.role?.toLowerCase().includes(query)
     );
   }
-
-  redirectToCreate(){
+  redirectToCreate(): void {
     this.router.navigate(['/create-users']);
   }
+
+
+
 
 
 

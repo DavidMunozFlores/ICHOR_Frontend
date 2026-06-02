@@ -3,6 +3,7 @@ import { CommonModule } from "@angular/common";
 import { Component, EnvironmentInjector, inject, OnInit } from "@angular/core";
 import { FormBuilder, FormGroup, ReactiveFormsModule } from "@angular/forms";
 import { HttpClient } from "@angular/common/http";
+import { Router } from '@angular/router';
 
 @Component({
   templateUrl: 'create-users.html',
@@ -13,6 +14,7 @@ import { HttpClient } from "@angular/common/http";
 export class createUserComponent implements OnInit {
   userForm!: FormGroup;
   private http = inject(HttpClient);
+  private router = inject(Router);
   createUserService: CreateUserService = inject(CreateUserService)
 
   hospitals: any[] = [];
@@ -49,11 +51,15 @@ export class createUserComponent implements OnInit {
 
     this.createUserService.CreateUser(username, password, hospitals, "managerCreator", "1234", role).subscribe({
       next: (response) =>{console.log(response);
+        this.router.navigate(['/user-manager']);
       },
       error: (err) => {
         console.error(err)
       }
     })
+  }
+  onCancel(): void {
+    this.router.navigate(['/user-manager']);
   }
 
 
