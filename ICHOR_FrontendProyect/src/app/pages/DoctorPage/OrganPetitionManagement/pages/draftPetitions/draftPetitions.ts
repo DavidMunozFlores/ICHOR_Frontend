@@ -1,6 +1,7 @@
-import { ChangeDetectionStrategy, Component, signal, WritableSignal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, signal, WritableSignal } from '@angular/core';
 import { petitionGetResponse } from '../../../../../interfaces/Doctor/petitionGetResponse.interface';
 import { PetitionList } from "../../components/petitionList/petitionList";
+import { OrganPetitionService } from '../../../../../services/OrganPetitions.service';
 
 @Component({
   selector: 'app-draft-petitions',
@@ -12,5 +13,23 @@ export class DraftPetitions {
 
   draftPetitions: WritableSignal<petitionGetResponse[] | null> = signal<petitionGetResponse[] | null>([]);
 
+  isLoading: WritableSignal<boolean> = signal<boolean>(true);
+  hasError: WritableSignal<boolean> = signal<boolean>(false);
+
+  private organPetitionService = inject(OrganPetitionService);
+
+  constructor() {
+    this.organPetitionService.loadDraftPetitions().subscribe({
+      next: (response) => {
+        this.isLoading.set(false);
+        this.hasError.set(!response);
+        this.draftPetitions.set(this.organPetitionService.draftPetitions());
+      },
+      error: () => {
+        this.isLoading.set(false);
+        this.hasError.set(true);
+      }
+    })
+  }
 
 }

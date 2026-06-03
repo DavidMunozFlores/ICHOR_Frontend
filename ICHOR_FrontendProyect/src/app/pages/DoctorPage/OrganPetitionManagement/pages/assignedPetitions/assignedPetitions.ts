@@ -14,20 +14,23 @@ export class AssignedPetitions {
   private organPetitionService = inject(OrganPetitionService);
 
   assignedPetitions: WritableSignal<petitionGetResponse[] | null> = signal<petitionGetResponse[] | null>([]);
+  isLoading: WritableSignal<boolean> = signal<boolean>(true);
+  hasError: WritableSignal<boolean> = signal<boolean>(false);
 
   constructor() {
     this.organPetitionService.loadAssignedPetitions().subscribe({
-      next: () => {
+      next: (response) => {
+        this.isLoading.set(false);
+        this.hasError.set(!response);
         this.assignedPetitions.set(this.organPetitionService.assignedPetitions());
       },
       error: () => {
-
-        // TODO! CARGAR MENSAJE ERROR DE CARGA DE PETICIONES
-
+        this.isLoading.set(false);
+        this.hasError.set(true);
       }
     })
   }
-  // TODO! HACER PETICIÓN EN SERVICE
+
   // TODO! MANEJAR EL ESTADO PARA CUANDO SE HACEN LAS PETICIONES
   // TODO! HACER QUE EN LAS DRAFT SALGA EL COMPONENTE DE EDITAR PARA PODER PONERLA EN WAITING
 
