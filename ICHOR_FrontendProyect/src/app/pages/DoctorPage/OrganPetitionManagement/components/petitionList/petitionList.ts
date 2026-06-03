@@ -10,5 +10,7 @@ import { petitionGetResponse } from '../../../../../interfaces/Doctor/petitionGe
 export class PetitionList {
 
   petitions = input.required<petitionGetResponse[] | null>();
+  isLoading = input.required<boolean>();
+  hasError = input.required<boolean>();
 
 }

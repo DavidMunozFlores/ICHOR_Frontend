@@ -1,3 +1,6 @@
+ @if(isLoading()){
+ }
+
 <section class="overflow-x-auto bg-base-100 rounded-lg shadow-sm border border-base-300 m-10">
   <table class="table">
     <thead>
@@ -24,6 +27,8 @@
   </table>
 
   @if(!petitions()){
-    <span class="m-3">Ups! No petitions available yet.</span>
+    <div role="alert" class="alert alert-soft m-3 flex items-center justify-center h-20">
+      <span class="h-max">Ups! No petitions available yet.</span>
+    </div>
   }
 </section>
