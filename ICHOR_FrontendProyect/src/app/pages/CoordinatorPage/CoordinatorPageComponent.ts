@@ -5,11 +5,20 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { hlaStringValidator } from '../../utils/hlaValidator';
 import { OrganServiceService } from '../../services/Organs.service';
 import { Organ } from '../../interfaces/Coordinator/Organ.interface';
+import { LoadingComponent } from "../../components/shared/loadingComponent/loadingComponent";
+import { ErrorLoading } from "../../components/shared/errorLoading/errorLoading";
+import { CommonModule, KeyValuePipe } from '@angular/common';
 
 
 @Component({
   selector: 'app-coordinator-page-component',
-  imports: [HeaderComponent, ReactiveFormsModule],
+  imports: [
+    HeaderComponent,
+    ReactiveFormsModule,
+    LoadingComponent,
+    ErrorLoading,
+    CommonModule
+  ],
   templateUrl: './CoordinatorPageComponent.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -40,11 +49,14 @@ export class CoordinatorPageComponent {
     organ: [, [Validators.required]],
     blood: [, [Validators.required]],
     weigth: ['', [Validators.required, Validators.min(1)]],
-    size: ['', [Validators.required, Validators.min(1)]],
+    volume: ['', [Validators.required, Validators.min(1)]],
     hla: ['', [Validators.required, hlaStringValidator()]],
   })
 
+  myFormControls: string[] = Object.keys(this.myForm.controls);
+
   loadOrgans(){
+
     this.organService.loadOrgans().subscribe({
       next: (success) => {
         this.hasLoaded.set(true);
@@ -69,7 +81,7 @@ export class CoordinatorPageComponent {
       organType: this.myForm.controls.organ.value!,
       bloodType:this.myForm.controls.blood.value!,
       weightGrams: Number(this.myForm.controls.weigth.value),
-      volumeCC: Number(this.myForm.controls.size.value!),
+      volumeCC: Number(this.myForm.controls.volume.value!),
       hla: this.myForm.controls.hla.value!
     }
 
