@@ -1,7 +1,7 @@
-import { Organ } from "../Coordinator/Organ.interface"
 import { hlaAllele, OrganPostResponse } from "../Coordinator/OrganPostResponse.interface"
 
-export interface petitionGetResponse {
+export interface OrganPetitionResponse {
+  idOrganPetition: number,
   idPatient: number,
   organType: string,
   weightGrams: number,
@@ -9,5 +9,4 @@ export interface petitionGetResponse {
   hla: hlaAllele[],
   petitionState: string,
   organAssigned: OrganPostResponse | null
-  status: string
 }

@@ -2,7 +2,8 @@ export interface OrganPostResponse {
 organType: string,
 weightGrams: number,
 volumeCC: number,
-hla: hlaAllele[]
+hla: hlaAllele[],
+bloodType: string
 }
 
 export interface hlaAllele {

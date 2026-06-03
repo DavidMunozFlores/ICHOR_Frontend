@@ -1,7 +1,7 @@
 export interface Organ {
   organType: string,
-  bloodType: string,
   weightGrams: number,
   volumeCC: number,
-  hla: string
+  hla: string,
+  bloodType: string,
 }

@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, inject, signal, WritableSignal } from '@angular/core';
 import { PetitionList } from "../../components/petitionList/petitionList";
-import { petitionGetResponse } from '../../../../../interfaces/Doctor/petitionGetResponse.interface';
+import { OrganPetitionResponse } from '../../../../../interfaces/Doctor/OrganPetitionResponse.interface';
 import { OrganPetitionService } from '../../../../../services/OrganPetitions.service';
 
 @Component({
@@ -13,7 +13,7 @@ export class AssignedPetitions {
 
   private organPetitionService = inject(OrganPetitionService);
 
-  assignedPetitions: WritableSignal<petitionGetResponse[] | null> = signal<petitionGetResponse[] | null>([]);
+  assignedPetitions: WritableSignal<OrganPetitionResponse[] | null> = signal<OrganPetitionResponse[] | null>([]);
   isLoading: WritableSignal<boolean> = signal<boolean>(true);
   hasError: WritableSignal<boolean> = signal<boolean>(false);
 

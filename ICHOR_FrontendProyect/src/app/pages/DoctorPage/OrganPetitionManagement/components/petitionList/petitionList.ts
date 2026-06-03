@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
-import { petitionGetResponse } from '../../../../../interfaces/Doctor/petitionGetResponse.interface';
+import { OrganPetitionResponse } from '../../../../../interfaces/Doctor/OrganPetitionResponse.interface';
 
 @Component({
   selector: 'app-petition-list',
@@ -9,7 +9,7 @@ import { petitionGetResponse } from '../../../../../interfaces/Doctor/petitionGe
 })
 export class PetitionList {
 
-  petitions = input.required<petitionGetResponse[] | null>();
+  petitions = input.required<OrganPetitionResponse[] | null>();
   isLoading = input.required<boolean>();
   hasError = input.required<boolean>();
 
