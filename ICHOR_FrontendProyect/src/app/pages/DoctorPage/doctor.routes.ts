@@ -8,6 +8,7 @@ import { AssignedPetitions } from "./OrganPetitionManagement/pages/assignedPetit
 import { WaitingPetitions } from "./OrganPetitionManagement/pages/waitingPetitions/waitingPetitions";
 import { CancelledPetitions } from "./OrganPetitionManagement/pages/cancelledPetitions/cancelledPetitions";
 import { DraftPetitions } from "./OrganPetitionManagement/pages/draftPetitions/draftPetitions";
+import { OrganPetition } from "./OrganPetition/OrganPetition";
 
 
 export const doctorRoutes: Routes = [
@@ -15,6 +16,12 @@ export const doctorRoutes: Routes = [
   {
     path: '',
     component: DoctorPageComponent,
+    canActivate: [authGuard, roleGuard],
+    data: { role: ['DOCTOR'] },
+  },
+  {
+    path: 'organ-petition',
+    component: OrganPetition,
     canActivate: [authGuard, roleGuard],
     data: { role: ['DOCTOR'] },
   },
