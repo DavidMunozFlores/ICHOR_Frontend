@@ -3,6 +3,7 @@ import { CommonModule } from "@angular/common";
 import { Component, EnvironmentInjector, inject, OnInit } from "@angular/core";
 import { FormBuilder, FormGroup, ReactiveFormsModule } from "@angular/forms";
 import { HttpClient } from "@angular/common/http";
+import { Router } from '@angular/router';
 
 @Component({
   templateUrl: 'create-users.html',
@@ -13,16 +14,18 @@ import { HttpClient } from "@angular/common/http";
 export class createUserComponent implements OnInit {
   userForm!: FormGroup;
   private http = inject(HttpClient);
+  private router = inject(Router);
   createUserService: CreateUserService = inject(CreateUserService)
 
   hospitals: any[] = [];
 
   loadHospitals() {
-    const url = `http://localhost:8080/api/v1/hospitals`;
-    this.http.get<any[]>(url).subscribe({
-      next: data => {this.hospitals = data.map(h => ({ id: h.id, name: h.name }));
-    },
-    error: (err) => console.error('Error al cargar los hospitales', err)
+    this.createUserService.loadHospitals().subscribe({
+      next: (success) => {
+        if (success) {
+          this.hospitals = this.createUserService.hospitals();
+        }
+      }
     });
   }
 
@@ -47,13 +50,17 @@ export class createUserComponent implements OnInit {
 
 
 
-    this.createUserService.CreateUser(username, password, hospitals, "managerCreator", "1234", role).subscribe({
+    this.createUserService.CreateUser(username, password, hospitals, sessionStorage.getItem('username') ?? '', sessionStorage.getItem('password') ?? '', role).subscribe({
       next: (response) =>{console.log(response);
+        this.router.navigate(['/user-manager'], {state: {userCreated: true } });
       },
       error: (err) => {
         console.error(err)
       }
     })
+  }
+  onCancel(): void {
+    this.router.navigate(['/user-manager']);
   }
 
 
