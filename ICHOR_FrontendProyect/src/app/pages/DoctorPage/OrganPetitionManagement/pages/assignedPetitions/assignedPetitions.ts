@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, inject, signal, WritableSignal } fr
 import { PetitionList } from "../../components/petitionList/petitionList";
 import { OrganPetitionResponse } from '../../../../../interfaces/Doctor/OrganPetitionResponse.interface';
 import { OrganPetitionService } from '../../../../../services/OrganPetitions.service';
+import { OrganPetitionListUtils } from '../../Utils/OrganPetitionListUtils';
 
 @Component({
   selector: 'app-assigned-petitions',
@@ -12,6 +13,7 @@ import { OrganPetitionService } from '../../../../../services/OrganPetitions.ser
 export class AssignedPetitions {
 
   private organPetitionService = inject(OrganPetitionService);
+  petitionListUtils = inject(OrganPetitionListUtils);
 
   assignedPetitions = this.organPetitionService.assignedPetitions;
 
@@ -19,6 +21,7 @@ export class AssignedPetitions {
   hasError: WritableSignal<boolean> = signal<boolean>(false);
 
   constructor() {
+    this.petitionListUtils.shownPetition.set(null);
     this.organPetitionService.loadAssignedPetitions().subscribe({
       next: (response) => {
         this.isLoading.set(false);

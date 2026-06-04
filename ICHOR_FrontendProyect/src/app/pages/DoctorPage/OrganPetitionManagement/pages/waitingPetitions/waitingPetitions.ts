@@ -25,6 +25,7 @@ export class WaitingPetitions {
 
 
   constructor() {
+    this.petitionListUtils.shownPetition.set(null);
     this.organPetitionService.loadWaitingPetitions().subscribe({
       next: (response) => {
         this.isLoading.set(false);

@@ -14,11 +14,10 @@
     </thead>
 
     <tbody>
-      @if(!!petitionsAvailableAssign()){
+      @if(petitionsAvailableAssign().length !== 0){
 
-      <!-- peticiones que tienen notificación -->
       @for (petition of petitionsAvailableAssign(); track petition.idOrganPetition; let index = $index) {
-      <tr class="hover:bg-base-200 cursor-pointer transition-colors border-orange-300"
+      <tr class="hover:bg-base-200 hover:text-inherit cursor-pointer transition-colors bg-warning text-black"
         (click)="petitionListUtils.show(petition.idOrganPetition)">
         <td>{{index + 1}}</td>
         <td>{{petition.idPatient}}</td>
@@ -97,19 +96,14 @@
         </td>
       </tr>
 
-      <tr>
-        <td class="col-span-4 p-0">
-          <div class="divider"></div>
-        </td>
-      </tr>
-
       }
       }
-      } @else if(!!petitionsUnavailableAssign()){
+      }
+      @if(petitionsUnavailableAssign().length !== 0){
       @for (petition of petitionsUnavailableAssign(); track petition.idOrganPetition; let index = $index) {
       <tr class="hover:bg-base-200 cursor-pointer transition-colors"
         (click)="petitionListUtils.show(petition.idOrganPetition)">
-        <td>{{index + petitionsAvailableAssign.length + 1}}</td>
+        <td>{{index + petitionsAvailableAssign().length + 1}}</td>
         <td>{{petition.idPatient}}</td>
         <td>{{petition.organType}}</td>
         <td>{{petition.petitionState}}</td>

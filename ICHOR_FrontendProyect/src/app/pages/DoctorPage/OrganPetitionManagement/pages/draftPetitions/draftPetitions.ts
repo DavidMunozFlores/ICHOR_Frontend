@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, inject, signal, WritableSignal } fr
 import { OrganPetitionResponse } from '../../../../../interfaces/Doctor/OrganPetitionResponse.interface';
 import { PetitionList } from "../../components/petitionList/petitionList";
 import { OrganPetitionService } from '../../../../../services/OrganPetitions.service';
+import { OrganPetitionListUtils } from '../../Utils/OrganPetitionListUtils';
 
 @Component({
   selector: 'app-draft-petitions',
@@ -12,6 +13,7 @@ import { OrganPetitionService } from '../../../../../services/OrganPetitions.ser
 export class DraftPetitions {
 
   private organPetitionService = inject(OrganPetitionService);
+  petitionListUtils = inject(OrganPetitionListUtils);
 
   draftPetitions = this.organPetitionService.draftPetitions;
 
@@ -20,6 +22,7 @@ export class DraftPetitions {
 
 
   constructor() {
+    this.petitionListUtils.shownPetition.set(null);
     this.organPetitionService.loadDraftPetitions().subscribe({
       next: (response) => {
         this.isLoading.set(false);
