@@ -11,19 +11,19 @@ import { OrganPetitionService } from '../../../../../services/OrganPetitions.ser
 })
 export class CancelledPetitions {
 
+  private organPetitionService = inject(OrganPetitionService);
 
-  cancelledPetitions: WritableSignal<OrganPetitionResponse[] | null> = signal<OrganPetitionResponse[] | null>([]);
+  cancelledPetitions = this.organPetitionService.cancelledPetitions;
+
   isLoading: WritableSignal<boolean> = signal<boolean>(true);
   hasError: WritableSignal<boolean> = signal<boolean>(false);
 
-  private organPetitionService = inject(OrganPetitionService);
 
   constructor() {
     this.organPetitionService.loadCancelledPetitions().subscribe({
       next: (response) => {
         this.isLoading.set(false);
         this.hasError.set(!response);
-        this.cancelledPetitions.set(this.organPetitionService.cancelledPetitions());
       },
       error: () => {
         this.isLoading.set(false);

@@ -11,19 +11,19 @@ import { OrganPetitionService } from '../../../../../services/OrganPetitions.ser
 })
 export class WaitingPetitions {
 
-  waitingPetitions: WritableSignal<OrganPetitionResponse[] | null> = signal<OrganPetitionResponse[] | null>([]);
+  private organPetitionService = inject(OrganPetitionService);
+
+  waitingPetitions = this.organPetitionService.waitingPetitions;
 
   isLoading: WritableSignal<boolean> = signal<boolean>(true);
   hasError: WritableSignal<boolean> = signal<boolean>(false);
 
-  private organPetitionService = inject(OrganPetitionService);
 
   constructor() {
     this.organPetitionService.loadWaitingPetitions().subscribe({
       next: (response) => {
         this.isLoading.set(false);
         this.hasError.set(!response);
-        this.waitingPetitions.set(this.organPetitionService.waitingPetitions());
       },
       error: () => {
         this.isLoading.set(false);

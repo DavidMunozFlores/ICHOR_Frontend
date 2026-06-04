@@ -20,6 +20,7 @@ export class AuthService {
   private http = inject(HttpClient);
   private router = inject(Router);
 
+  // private url = 'http://localhost:8080/api/v1/login';
 
   public login(user: string, pass: string): Observable<LogInResponse> {
     const userTry: LogInCredentials = { username: user, password: pass };
@@ -39,7 +40,8 @@ export class AuthService {
         //---------------------------------
 
         // modificación de la url para distintos post
-        return this.http.post<LogInResponse>(API_URL, body);
+        return this.http.post<LogInResponse>(`${API_URL}/api/v1/auth/log-in`, body);
+        // return this.http.post<LogInResponse>(this.url, body);
       }),
 
       catchError(error => this.handleError(error))

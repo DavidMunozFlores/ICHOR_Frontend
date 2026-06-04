@@ -9,7 +9,7 @@ import { hlaStringValidator } from '../../../utils/hlaValidator';
 import { OrganService } from '../../../services/Organs.service';
 import { KeyValuePipe } from '@angular/common';
 import { IOrganPetition } from '../../../interfaces/Doctor/IOrganPetition.interface';
-import { RouterLink } from "@angular/router";
+import { Router, RouterLink } from "@angular/router";
 
 @Component({
   selector: 'app-organ-petition',
@@ -19,25 +19,27 @@ import { RouterLink } from "@angular/router";
 })
 export class OrganPetition {
 
-private fb = inject(FormBuilder);
+  private fb = inject(FormBuilder);
   organPetitionService = inject(OrganPetitionService);
   organService = inject(OrganService);
   formUtils = FormUtils;
+  router = inject(Router);
 
   // username: WritableSignal<string> = signal(sessionStorage.getItem('username')!);
-  bloodTypes: WritableSignal<string[]> = signal(['A+','A-','B+','B-','O+','O-','AB+','AB-']);
+  bloodTypes: WritableSignal<string[]> = signal(['A+', 'A-', 'B+', 'B-', 'O+', 'O-', 'AB+', 'AB-']);
 
   isLoading: WritableSignal<boolean> = signal(true);
   hasLoaded: WritableSignal<boolean> = signal(false);
   hasError: WritableSignal<boolean> = signal(false);
   isVerified: WritableSignal<boolean> = signal(false);
-  isSavingPetition:WritableSignal<boolean> = signal(false);
+  isSavingPetition: WritableSignal<boolean> = signal(false);
 
   countdown: WritableSignal<number> = signal(10);
   canSubmit: WritableSignal<boolean> = signal(false);
+  isSubmited: WritableSignal<boolean> = signal(false);
   private timerInterval: any;
 
-  constructor(){
+  constructor() {
 
     this.organService.loadOrgans().subscribe({
       next: (success) => {
@@ -62,8 +64,13 @@ private fb = inject(FormBuilder);
     hla: ['', [Validators.required, hlaStringValidator()]],
   })
 
-  showVerification(){
-    if(this.myForm.invalid){
+
+  goBack() {
+    this.router.navigate(['./doctor/organ-petitions']);
+  }
+
+  showVerification() {
+    if (this.myForm.invalid) {
       this.myForm.markAllAsTouched();
       return;
     }
@@ -73,10 +80,10 @@ private fb = inject(FormBuilder);
     this.isVerified.set(true);
 
 
-    this.timerInterval = setInterval( () => {
-      this.countdown.update((v) => v-1);
+    this.timerInterval = setInterval(() => {
+      this.countdown.update((v) => v - 1);
 
-      if(this.countdown() <= 0){
+      if (this.countdown() <= 0) {
         this.canSubmit.set(true);
         clearInterval(this.timerInterval)
       }
@@ -84,40 +91,41 @@ private fb = inject(FormBuilder);
   }
 
 
-   cancelVerification(){
+  cancelVerification() {
     this.isVerified.set(false);
-    if(this.timerInterval){
+    if (this.timerInterval) {
       clearInterval(this.timerInterval);
     }
   }
 
-  onSubmit(){
-      if(!this.canSubmit()){
-        return;
-      }
-
-      const petition: IOrganPetition = {
-        idPatient: this.myForm.controls.idPatient.value!,
-        organType:this.myForm.controls.organ.value!,
-        weightGrams: Number(this.myForm.controls.weigth.value),
-        volumeCC: Number(this.myForm.controls.volume.value!),
-        hla: this.myForm.controls.hla.value!
-      }
-
-
-      console.log(petition);
-
-      this.organPetitionService.savePetition(petition).subscribe({
-        next: (success) => {
-          this.isSavingPetition.set(true);
-          //TODO! REDIRECT TO PETITION MANAGEMENT
-          //window.location.reload();
-        },
-        error: (error) => {
-          this.hasError.set(true);
-
-        }
-      });
-
+  onSubmit() {
+    if (!this.canSubmit()) {
+      return;
     }
+
+    this.isSavingPetition.set(true);
+    this.isSubmited.set(true);
+
+    const petition: IOrganPetition = {
+      idPatient: this.myForm.controls.idPatient.value!,
+      organType: this.myForm.controls.organ.value!,
+      weightGrams: Number(this.myForm.controls.weigth.value),
+      volumeCC: Number(this.myForm.controls.volume.value!),
+      hla: this.myForm.controls.hla.value!
+    }
+
+
+    console.log(petition);
+
+    this.organPetitionService.savePetition(petition).subscribe({
+      next: (success) => {
+        this.router.navigate(['./doctor/organ-petitions']);
+      },
+      error: (error) => {
+        this.hasError.set(true);
+        this.isSubmited.set(false);
+      }
+    });
+
+  }
 }

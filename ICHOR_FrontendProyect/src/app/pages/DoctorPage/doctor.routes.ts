@@ -20,7 +20,7 @@ export const doctorRoutes: Routes = [
     data: { role: ['DOCTOR'] },
   },
   {
-    path: 'organ-petition',
+    path: 'create-petition',
     component: OrganPetition,
     canActivate: [authGuard, roleGuard],
     data: { role: ['DOCTOR'] },
@@ -54,7 +54,7 @@ export const doctorRoutes: Routes = [
         component: DraftPetitions,
         canActivate: [authGuard, roleGuard],
         data: { role: ['DOCTOR'] },
-      }
+      },
     ]
   }
 

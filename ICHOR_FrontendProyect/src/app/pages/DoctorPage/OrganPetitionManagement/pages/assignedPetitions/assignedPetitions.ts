@@ -13,7 +13,8 @@ export class AssignedPetitions {
 
   private organPetitionService = inject(OrganPetitionService);
 
-  assignedPetitions: WritableSignal<OrganPetitionResponse[] | null> = signal<OrganPetitionResponse[] | null>([]);
+  assignedPetitions = this.organPetitionService.assignedPetitions;
+
   isLoading: WritableSignal<boolean> = signal<boolean>(true);
   hasError: WritableSignal<boolean> = signal<boolean>(false);
 
@@ -22,7 +23,6 @@ export class AssignedPetitions {
       next: (response) => {
         this.isLoading.set(false);
         this.hasError.set(!response);
-        this.assignedPetitions.set(this.organPetitionService.assignedPetitions());
       },
       error: () => {
         this.isLoading.set(false);

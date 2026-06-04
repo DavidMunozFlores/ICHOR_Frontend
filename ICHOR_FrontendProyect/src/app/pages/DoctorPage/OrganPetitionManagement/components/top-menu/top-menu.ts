@@ -1,5 +1,5 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { RouterLink, RouterLinkActive } from '@angular/router';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 
 @Component({
   selector: 'app-top-menu',
@@ -7,4 +7,12 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
   templateUrl: './top-menu.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class TopMenu {}
+export class TopMenu {
+
+  router = inject(Router);
+
+  goToNewPetition(){
+    this.router.navigate(['./doctor/create-petition']);
+  }
+
+}

@@ -19,7 +19,7 @@ export class OrganService {
   public lastOrganSaved = this._lastOrganSaved.asReadonly();
 
   loadOrgans(): Observable<boolean> {
-    return this.http.get<OrganGetResponse[]>(`${API_URL}/organs/type-info`).pipe(
+    return this.http.get<OrganGetResponse[]>(`${API_URL}/api/v1/organs/type-info`).pipe(
       map(response => this.handleSuccessLoad(response)),
       catchError((error) => this.handleErrorLoad(error))
     )
@@ -37,7 +37,7 @@ export class OrganService {
       data: data
     }
 
-    return this.http.post<OrganPostResponse>(`${API_URL}/organs/register-organ`, body).pipe(
+    return this.http.post<OrganPostResponse>(`${API_URL}/api/v1/organs/register-organ`, body).pipe(
       map( response => this.handleSuccessSave(response)),
       catchError( error => this.handleErrorSave(error))
     );

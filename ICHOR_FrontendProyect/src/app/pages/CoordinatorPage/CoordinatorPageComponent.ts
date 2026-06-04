@@ -90,7 +90,7 @@ export class CoordinatorPageComponent {
     console.log(organ);
     this.organService.saveOrgan(organ).subscribe({
       next: (success) => {
-        window.location.reload();
+        // window.location.reload();
       },
       error: (error) => {
         this.hasError.set(true);

@@ -1,5 +1,5 @@
- @if(isLoading()){
- }
+@if(isLoading()){
+}
 
 <section class="overflow-x-auto bg-base-100 rounded-lg shadow-sm border border-base-300 m-10">
   <table class="table">
@@ -13,22 +13,61 @@
     </thead>
 
     <tbody>
-    @if(!!petitions()){
-        @for (petition of petitions(); track petition.idPatient; let index = $index) {
-          <tr>
-            <td>{{index + 1}</td>
-            <td>{{petition.idPatient}}</td>
-            <td>{{petition.organType}}</td>
-            <td>{{petition.petitionState}}</td>
-          </tr>
-        }
+      @if(!!petitions()){
+      @for (petition of petitions(); track petition.idOrganPetition; let index = $index) {
+      <tr class="hover:bg-base-200" (click)="show(petition.idOrganPetition)">
+        <td>{{index + 1}}</td>
+        <td>{{petition.idPatient}}</td>
+        <td>{{petition.organType}}</td>
+        <td>{{petition.petitionState}}</td>
+      </tr>
+      @if(shownPetition() === petition.idOrganPetition){
+      <tr class="space-y-1 w-max">
+        <div>
+          <h3>ID Petition: {{petition.idOrganPetition}}</h3>
+        </div>
+        <div>
+          <h3>ID Patient: {{petition.idPatient}}</h3>
+        </div>
+        <div>
+          <h3>Organ: {{petition.organType}}</h3>
+        </div>
+        <div>
+          <h3>Organ's weight: {{petition.weightGrams}}</h3>
+        </div>
+        <div>
+          <h3>Organ's volume: {{petition.volumeCC}}</h3>
+        </div>
+        <div>
+          <h3>HLA: {{showHla(petition.hla)}}</h3>
+        </div>
+        <div>
+          <h3>Petition State: {{petition.petitionState}}</h3>
+        </div>
+
+        <div class="space-x-3 ml-1">
+          @if(petition.petitionState === 'DRAFT') {
+
+          <button class="btn btn-warning" (click)="deletePetition(petition.idOrganPetition)">Delete</button>
+          <button class="btn btn-primary" (click)="acceptPetition(petition.idOrganPetition)">Accept</button>
+
+          } @else if(petition.petitionState === 'WAITING' && !!petition.organAssigned){
+          <button class="btn btn-warning" (click)="cancelPetition(petition.idOrganPetition)">Cancel</button>
+          <button class="btn btn-primary" (click)="assingPetition(petition.idOrganPetition)">Confirm Assingment</button>
+
+          }
+        </div>
+
+      </tr>
+      }
+      }
       }
     </tbody>
   </table>
 
   @if(!petitions()){
-    <div role="alert" class="alert alert-soft m-3 flex items-center justify-center h-20">
-      <span class="h-max">Ups! No petitions available yet.</span>
-    </div>
+  <div role="alert" class="alert alert-soft m-3 flex items-center justify-center h-20">
+    <span class="h-max">Ups! No petitions available yet.</span>
+  </div>
   }
 </section>
