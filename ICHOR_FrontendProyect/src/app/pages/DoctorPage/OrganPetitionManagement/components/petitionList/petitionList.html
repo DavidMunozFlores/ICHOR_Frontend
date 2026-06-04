@@ -1,4 +1,5 @@
 @if(isLoading()){
+  <app-loading-component />
 }
 
 <section class="overflow-x-auto bg-base-100 rounded-lg shadow-sm border border-base-300 m-10">
@@ -15,13 +16,13 @@
     <tbody>
       @if(!!petitions()){
       @for (petition of petitions(); track petition.idOrganPetition; let index = $index) {
-      <tr class="hover:bg-base-200 cursor-pointer transition-colors" (click)="show(petition.idOrganPetition)">
+      <tr class="hover:bg-base-200 cursor-pointer transition-colors" (click)="petitionListUtils.show(petition.idOrganPetition)">
         <td>{{index + 1}}</td>
         <td>{{petition.idPatient}}</td>
         <td>{{petition.organType}}</td>
         <td>{{petition.petitionState}}</td>
       </tr>
-      @if(shownPetition() === petition.idOrganPetition){
+      @if(petitionListUtils.shownPetition() === petition.idOrganPetition){
       <tr>
         <td colspan="4" class="bg-base-200 p-0">
           <div class="card bg-base-100 shadow-md m-4 animate-in fade-in duration-300">
@@ -68,7 +69,7 @@
               <div class="space-y-2">
                 <p>
                   <span class="font-semibold">HLA:</span>
-                  {{showHla(petition.hla)}}
+                  {{petitionListUtils.showHla(petition.hla)}}
                 </p>
 
                 <p>
@@ -82,20 +83,20 @@
               <div class="card-actions justify-end mt-4">
 
                 @if(petition.petitionState === 'DRAFT') {
-                  <button class="btn btn-error" (click)="deletePetition(petition.idOrganPetition)">
+                  <button class="btn btn-error" (click)="petitionListUtils.deletePetition(petition.idOrganPetition)">
                     Delete
                   </button>
-                  <button class="btn btn-primary" (click)="acceptPetition(petition.idOrganPetition)">
+                  <button class="btn btn-primary" (click)="petitionListUtils.acceptPetition(petition.idOrganPetition)">
                     Accept
                   </button>
 
                 } @else if(petition.petitionState === 'WAITING' || petition.petitionState === 'ASSIGNED_ORGAN'){
-                  <button class="btn btn-warning" (click)="cancelPetition(petition.idOrganPetition)">
+                  <button class="btn btn-warning" (click)="petitionListUtils.cancelPetition(petition.idOrganPetition)">
                     Cancel
                   </button>
 
                   @if(petition.petitionState === 'WAITING' && !! petition.organAssigned){
-                    <button class="btn btn-success" (click)="assingPetition(petition.idOrganPetition)">
+                    <button class="btn btn-success" (click)="petitionListUtils.assingPetition(petition.idOrganPetition)">
                       Confirm Assignment
                     </button>
                   }

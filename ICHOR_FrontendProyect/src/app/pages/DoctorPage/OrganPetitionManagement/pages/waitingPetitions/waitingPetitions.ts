@@ -1,19 +1,21 @@
 import { ChangeDetectionStrategy, Component, inject, signal, WritableSignal } from '@angular/core';
-import { PetitionList } from "../../components/petitionList/petitionList";
-import { OrganPetitionResponse } from '../../../../../interfaces/Doctor/OrganPetitionResponse.interface';
 import { OrganPetitionService } from '../../../../../services/OrganPetitions.service';
+import { LoadingComponent } from "../../../../../components/shared/loadingComponent/loadingComponent";
+import { OrganPetitionListUtils } from '../../Utils/OrganPetitionListUtils';
 
 @Component({
   selector: 'app-waiting-petitions',
-  imports: [PetitionList],
+  imports: [LoadingComponent],
   templateUrl: './waitingPetitions.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class WaitingPetitions {
 
   private organPetitionService = inject(OrganPetitionService);
+  petitionListUtils = inject(OrganPetitionListUtils);
+  petitionList = OrganPetitionListUtils;
 
-  waitingPetitions = this.organPetitionService.waitingPetitions;
+  petitions = this.organPetitionService.waitingPetitions;
 
   isLoading: WritableSignal<boolean> = signal<boolean>(true);
   hasError: WritableSignal<boolean> = signal<boolean>(false);
@@ -31,4 +33,5 @@ export class WaitingPetitions {
       }
     })
   }
+
 }
