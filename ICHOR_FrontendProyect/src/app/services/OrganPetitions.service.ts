@@ -1,4 +1,4 @@
-import { inject, Injectable, signal, WritableSignal } from '@angular/core';
+import { computed, inject, Injectable, Signal, signal, WritableSignal } from '@angular/core';
 import { OrganPetitionResponse } from '../interfaces/Doctor/OrganPetitionResponse.interface';
 import { catchError, map, Observable, of } from 'rxjs';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
@@ -31,12 +31,15 @@ export class OrganPetitionService {
 
 
 
-  private _availableToAssignPetitions: WritableSignal<OrganPetitionResponse[]> = signal(this.waitingPetitions().filter( p => p.organAssigned !== null))
-  availableToAssignPetitions = this._availableToAssignPetitions.asReadonly();
+  availableToAssignPetitions: Signal<OrganPetitionResponse[]> = computed( () =>
+    this._waitingPetitions().filter( p => p.organAssigned !== null)
+  );
 
-  private _disavailableToAssignPetitions: WritableSignal<OrganPetitionResponse[]> = signal(this.waitingPetitions().filter( p => p.organAssigned === null))
-  disavailableToAssignPetitions = this._disavailableToAssignPetitions.asReadonly();
 
+
+  disavailableToAssignPetitions: Signal<OrganPetitionResponse[]> = computed( () =>
+    this._waitingPetitions().filter( p => p.organAssigned === null)
+  );
 
 
   private _lastPetitionSaved: WritableSignal<OrganPetitionResponse | {} > = signal({});
