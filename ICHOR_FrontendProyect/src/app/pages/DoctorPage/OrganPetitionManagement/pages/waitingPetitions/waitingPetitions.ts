@@ -17,6 +17,9 @@ export class WaitingPetitions {
 
   petitions = this.organPetitionService.waitingPetitions;
 
+  petitionsAvailableAssign = this.organPetitionService.availableToAssignPetitions;
+  petitionsUnavailableAssign = this.organPetitionService.unavailableToAssignPetitions;
+
   isLoading: WritableSignal<boolean> = signal<boolean>(true);
   hasError: WritableSignal<boolean> = signal<boolean>(false);
 

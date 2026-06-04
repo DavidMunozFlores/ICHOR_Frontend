@@ -37,7 +37,7 @@ export class OrganPetitionService {
 
 
 
-  disavailableToAssignPetitions: Signal<OrganPetitionResponse[]> = computed( () =>
+  unavailableToAssignPetitions: Signal<OrganPetitionResponse[]> = computed( () =>
     this._waitingPetitions().filter( p => p.organAssigned === null)
   );
 
