@@ -21,7 +21,9 @@
           </g>
         </svg>
         WAITING
-        <span class="badge badge-warning text-black">2</span>
+        @if(availableToAssignPetitions().length > 0){
+          <span class="badge badge-warning text-black">{{availableToAssignPetitions().length}}</span>
+        }
 
       </a>
     </li>

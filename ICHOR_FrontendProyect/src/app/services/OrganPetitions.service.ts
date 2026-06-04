@@ -31,6 +31,14 @@ export class OrganPetitionService {
 
 
 
+  private _availableToAssignPetitions: WritableSignal<OrganPetitionResponse[]> = signal(this.waitingPetitions().filter( p => p.organAssigned !== null))
+  availableToAssignPetitions = this._availableToAssignPetitions.asReadonly();
+
+  private _disavailableToAssignPetitions: WritableSignal<OrganPetitionResponse[]> = signal(this.waitingPetitions().filter( p => p.organAssigned === null))
+  disavailableToAssignPetitions = this._disavailableToAssignPetitions.asReadonly();
+
+
+
   private _lastPetitionSaved: WritableSignal<OrganPetitionResponse | {} > = signal({});
   lastPetitionSaved = this._lastPetitionSaved.asReadonly();
 
@@ -168,7 +176,6 @@ export class OrganPetitionService {
       catchError(error => this.handleErrorLoad(error, this._waitingPetitions))
     )
   }
-
 
   private handleSuccessLoad(draftPetitions: OrganPetitionResponse[], signalToSet: WritableSignal<OrganPetitionResponse[]>) {
     signalToSet.set(draftPetitions);

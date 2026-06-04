@@ -9,6 +9,7 @@ import { WaitingPetitions } from "./OrganPetitionManagement/pages/waitingPetitio
 import { CancelledPetitions } from "./OrganPetitionManagement/pages/cancelledPetitions/cancelledPetitions";
 import { DraftPetitions } from "./OrganPetitionManagement/pages/draftPetitions/draftPetitions";
 import { OrganPetition } from "./OrganPetition/OrganPetition";
+import { Component } from '@angular/core';
 
 
 export const doctorRoutes: Routes = [
@@ -31,6 +32,11 @@ export const doctorRoutes: Routes = [
     canActivate: [authGuard, roleGuard],
     data: { role: ['DOCTOR'] },
     children: [
+      {
+        path: '',
+        redirectTo: 'waiting',
+        pathMatch: 'full'
+      },
       {
         path: 'assigned',
         component: AssignedPetitions,

@@ -40,5 +40,6 @@ export const routes: Routes = [
     component: CoordinatorPageComponent,
     canActivate: [authGuard, roleGuard],
     data: { role: ['COORDINATOR'] }
-  }
+  },
+
 ];

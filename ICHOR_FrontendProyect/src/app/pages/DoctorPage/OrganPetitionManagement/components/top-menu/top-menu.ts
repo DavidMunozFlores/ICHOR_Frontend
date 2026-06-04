@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
+import { OrganPetitionService } from '../../../../../services/OrganPetitions.service';
 
 @Component({
   selector: 'app-top-menu',
@@ -10,9 +11,12 @@ import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 export class TopMenu {
 
   router = inject(Router);
+  organPetitionService = inject(OrganPetitionService);
 
   goToNewPetition(){
     this.router.navigate(['./doctor/create-petition']);
   }
+
+  availableToAssignPetitions = this.organPetitionService.availableToAssignPetitions;
 
 }

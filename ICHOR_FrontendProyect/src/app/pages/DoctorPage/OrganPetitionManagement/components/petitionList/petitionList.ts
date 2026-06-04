@@ -45,6 +45,7 @@ export class PetitionList {
       next: (success) => {
         console.log('Petition changed status: ', success);
         this.organPetitionService.loadDraftPetitions().subscribe();
+        //todo manejar errores aquí también.
       }, error: (err) => {
         // todo manejar errores aquí;
       }
@@ -55,6 +56,10 @@ export class PetitionList {
     this.organPetitionService.cancelPetition(idPetition).subscribe({
       next: (success) => {
         console.log('Petition changed status: ', success);
+        this.organPetitionService.loadWaitingPetitions().subscribe();
+        // todo manejar errores aquí también
+        this.organPetitionService.loadAssignedPetitions().subscribe();
+        // todo manejar errores aquí también
       }, error: (err) => {
         // todo manejar errores aquí;
       }
@@ -69,6 +74,8 @@ export class PetitionList {
     this.organPetitionService.assingPetition(idPetition).subscribe({
       next: (success) => {
         console.log('Petition changed status: ', success);
+        this.organPetitionService.loadWaitingPetitions().subscribe();
+        // todo manejar errorsitos
       }, error: (err) => {
         // todo manejar errores aquí;
       }
