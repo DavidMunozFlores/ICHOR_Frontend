@@ -125,13 +125,12 @@ export class OrganPetition {
   saveNewPetition() {
 
     const petition: IOrganPetition = {
-      idPatient: this.myForm.controls.idPatient.value!,
+      idPatient: Number(this.myForm.controls.idPatient.value!),
       organType: this.myForm.controls.organ.value!,
       weightGrams: Number(this.myForm.controls.weigth.value),
       volumeCC: Number(this.myForm.controls.volume.value!),
       hla: this.myForm.controls.hla.value!
     }
-
 
     console.log(petition);
 
@@ -156,7 +155,7 @@ export class OrganPetition {
       organType: this.myForm.controls.organ.value!,
       weightGrams: Number(this.myForm.controls.weigth.value),
       volumeCC: Number(this.myForm.controls.volume.value!),
-      hla: this.myForm.controls.hla.value!
+      hla: this.myForm.controls.hla.value!.trim()
     }
 
     console.log(UpdatePetition);
@@ -164,10 +163,12 @@ export class OrganPetition {
     this.organPetitionService.updatePetition(UpdatePetition).subscribe({
       next: (success) => {
         this.petitionListUtils.draftPetition.set(undefined);
+        this.petitionListUtils.isUpdate.set(false);
         this.router.navigate(['./doctor/organ-petitions']);
       },
       error: (error) => {
         this.petitionListUtils.draftPetition.set(undefined);
+        this.petitionListUtils.isUpdate.set(false);
         this.hasError.set(true);
         this.isSubmited.set(false);
       }

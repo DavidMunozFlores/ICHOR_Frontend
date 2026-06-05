@@ -83,7 +83,7 @@ export class CoordinatorPageComponent {
       organType: this.myForm.controls.organ.value!,
       weightGrams: Number(this.myForm.controls.weigth.value),
       volumeCC: Number(this.myForm.controls.volume.value!),
-      hla: this.myForm.controls.hla.value!,
+      hla: this.myForm.controls.hla.value!.trim(),
       bloodType: this.myForm.controls.blood.value!,
     }
 

@@ -10,7 +10,6 @@ import { OrganPetitionID } from '../interfaces/Doctor/OrganPetitionID.interface'
 import { OrganPetitionUpdateStatusPatch } from '../interfaces/Doctor/OrganPetitionUpdateStatusPatch.interface';
 import { OrganPetitionUpdate } from '../interfaces/Doctor/OrganPetitionUpdate.interface';
 import { OrganPetitionUpdatePost } from '../interfaces/Doctor/OrganPetitionUpdatePost.interface';
-import { LogIn } from '../pages/LogInPage/log-in';
 
 
 @Injectable({ providedIn: 'root' })
@@ -74,6 +73,8 @@ export class OrganPetitionService {
       authCredentials: credentials,
       data: data
     }
+
+    console.log(body);
 
     return this.http.post<OrganPetitionResponse>(`${API_URL}/api/v1/organ-petitions/create`, body).pipe(
       map(response => this.handleSuccessSave(response)),
