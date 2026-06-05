@@ -7,9 +7,10 @@ import { IOrganPetition } from '../interfaces/Doctor/IOrganPetition.interface';
 import { OrganPetitionPost } from '../interfaces/Doctor/OrganPetitionPost.interface';
 import { API_URL } from './API_URL.const';
 import { OrganPetitionID } from '../interfaces/Doctor/OrganPetitionID.interface';
-import { OrganPetitionAcceptPatch } from '../interfaces/Doctor/OrganPetitionAcceptPatch.interface';
+import { OrganPetitionUpdateStatusPatch } from '../interfaces/Doctor/OrganPetitionUpdateStatusPatch.interface';
 import { OrganPetitionUpdate } from '../interfaces/Doctor/OrganPetitionUpdate.interface';
 import { OrganPetitionUpdatePost } from '../interfaces/Doctor/OrganPetitionUpdatePost.interface';
+import { LogIn } from '../pages/LogInPage/log-in';
 
 
 @Injectable({ providedIn: 'root' })
@@ -56,6 +57,9 @@ export class OrganPetitionService {
   private _lastPetitionCancelled: WritableSignal<OrganPetitionResponse | {}> = signal({});
   lastPetitionCancelled = this._lastPetitionAccepted.asReadonly();
 
+  private _lastPetitionDeleted: WritableSignal<OrganPetitionResponse | {}> = signal({});
+  lastPetitionDeleted = this._lastPetitionDeleted.asReadonly();
+
 
 
 
@@ -99,7 +103,29 @@ export class OrganPetitionService {
 
   }
 
-  //TODO! DELETEpETITION
+  deletePetition(idPetition: number){
+
+    const credentials: LogInCredentials = {
+      username: sessionStorage.getItem('username')!,
+      password: sessionStorage.getItem('password')!
+    }
+
+    const cancelPetition: OrganPetitionID = {
+      idOrganPetition: idPetition
+    }
+
+    const body: OrganPetitionUpdateStatusPatch = {
+      authCredentials: credentials,
+      data: cancelPetition
+    }
+
+
+    return this.http.post<OrganPetitionResponse>(`${API_URL}/api/v1/organ-petitions/delete`, body).pipe(
+      map(response => this.handleSuccessDelete(response)),
+      catchError(error => this.handleErrorDelete(error))
+    )
+
+  }
 
   acceptPetition(idPetition: number): Observable<boolean> {
 
@@ -112,7 +138,7 @@ export class OrganPetitionService {
       idOrganPetition: idPetition
     }
 
-    const body: OrganPetitionAcceptPatch = {
+    const body: OrganPetitionUpdateStatusPatch = {
       authCredentials: credentials,
       data: acceptPetition
     }
@@ -136,13 +162,13 @@ export class OrganPetitionService {
       idOrganPetition: idPetition
     }
 
-    const body: OrganPetitionAcceptPatch = {
+    const body: OrganPetitionUpdateStatusPatch = {
       authCredentials: credentials,
       data: checkedPetition
     }
 
 
-    return this.http.patch<OrganPetitionResponse>(`${API_URL}/api/v1/organ-petitions/checked`, body).pipe(
+    return this.http.patch<OrganPetitionResponse>(`${API_URL}/api/v1/organ-petitions/check`, body).pipe(
       map(response => this.handleSuccessAssign(response)),
       catchError(error => this.handleErrorAssign(error))
     )
@@ -160,7 +186,7 @@ export class OrganPetitionService {
       idOrganPetition: idPetition
     }
 
-    const body: OrganPetitionAcceptPatch = {
+    const body: OrganPetitionUpdateStatusPatch = {
       authCredentials: credentials,
       data: cancelPetition
     }
@@ -225,6 +251,11 @@ export class OrganPetitionService {
 
   private handleSuccessCancel(petition: OrganPetitionResponse) {
     this._lastPetitionCancelled.set(petition);
+    return true;
+  }
+
+  private handleSuccessDelete(petition: OrganPetitionResponse) {
+    this._lastPetitionDeleted.set(petition);
     return true;
   }
 
@@ -336,6 +367,28 @@ export class OrganPetitionService {
     console.error('Catched error on PATCH petition to cancel organ petition: ', errMessage);
 
     this._lastPetitionCancelled.set({});
+    return of(false);
+
+  }
+
+  private handleErrorDelete(error: any) {
+
+    let errMessage = `Unexpected error happened.`;
+
+    if (error instanceof HttpErrorResponse) {
+      if (error.status === 0) {
+        errMessage = 'Server Error';
+      } else if (error.status === 500) {
+        errMessage = 'Imposible to delete organ petition.';
+      }
+    } else {
+      console.error('Encryption or Client Error:', error);
+      errMessage = error.message || 'Client side error';
+    }
+
+    console.error('Catched error on PATCH petition to delete organ petition: ', errMessage);
+
+    this._lastPetitionDeleted.set({});
     return of(false);
 
   }

@@ -150,19 +150,14 @@ export class OrganPetition {
 
   saveUpdatePetition() {
 
-    const petition: IOrganPetition = {
+    const UpdatePetition: OrganPetitionUpdate = {
+      idOrganPetition: this.petitionListUtils.draftPetition()!.idOrganPetition,
       idPatient: this.myForm.controls.idPatient.value!,
       organType: this.myForm.controls.organ.value!,
       weightGrams: Number(this.myForm.controls.weigth.value),
       volumeCC: Number(this.myForm.controls.volume.value!),
       hla: this.myForm.controls.hla.value!
     }
-
-    const UpdatePetition: OrganPetitionUpdate = {
-      idPetition: this.petitionListUtils.draftPetition()!.idOrganPetition,
-      petition: petition
-    }
-
 
     console.log(UpdatePetition);
 

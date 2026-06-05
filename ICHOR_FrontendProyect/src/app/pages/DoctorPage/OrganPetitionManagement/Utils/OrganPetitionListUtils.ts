@@ -76,7 +76,15 @@ export class OrganPetitionListUtils {
   }
 
   deletePetition(idPetition: number) {
-    //TODO!
+   this.organPetitionService.deletePetition(idPetition).subscribe({
+      next: (success) => {
+        console.log('Petition changed status: ', success);
+        this.organPetitionService.loadDraftPetitions().subscribe();
+        // todo manejar errorsitos
+      }, error: (err) => {
+        // todo manejar errores aquí;
+      }
+    })
   }
 
   assingPetition(idPetition: number) {

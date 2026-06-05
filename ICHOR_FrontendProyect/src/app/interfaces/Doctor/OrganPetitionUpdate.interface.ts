@@ -1,6 +1,10 @@
 import { IOrganPetition } from "./IOrganPetition.interface";
 
 export interface OrganPetitionUpdate {
-  idPetition: number,
-  petition: IOrganPetition
+  idOrganPetition: number,
+  idPatient: number,
+  organType: string,
+  weightGrams: number,
+  volumeCC: number,
+  hla: string
 }
