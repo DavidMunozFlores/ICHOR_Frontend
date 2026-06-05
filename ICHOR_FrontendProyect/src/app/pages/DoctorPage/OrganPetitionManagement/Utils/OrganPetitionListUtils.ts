@@ -3,13 +3,19 @@ import { hlaAllele } from "../../../../interfaces/Coordinator/OrganPostResponse.
 import { OrganPetitionService } from "../../../../services/OrganPetitions.service";
 
 import { Injectable } from '@angular/core';
+import { OrganPetitionResponse } from "../../../../interfaces/Doctor/OrganPetitionResponse.interface";
+import { Router } from "@angular/router";
 
 @Injectable({providedIn: 'root'})
 export class OrganPetitionListUtils {
 
 
   shownPetition = signal<number | null>(null);
+  draftPetition = signal<OrganPetitionResponse | undefined >(undefined);
+  isUpdate = signal<boolean>(false);
+  router = inject(Router);
   private organPetitionService = inject(OrganPetitionService);
+
 
 
   show(idPetition: number) {
@@ -21,14 +27,27 @@ export class OrganPetitionListUtils {
   }
 
 
-  showHla(hla: hlaAllele[]): string {
+  showHla(hla: hlaAllele[] | undefined): string {
     let result = '';
-    for (let index = 0; index < hla.length; index++) {
-      result += hla[index].letter + ":" + hla[index].allele + ":" + hla[index].protein + " ";
+
+    if(hla === undefined){
+      return result;
+    }
+    else{
+      for (let index = 0; index < hla.length; index++) {
+        result += hla[index].letter + ":" + hla[index].allele + ":" + hla[index].protein + " ";
+      }
     }
     return result.trim();
   }
 
+  editPetition(petition: OrganPetitionResponse){
+
+    this.draftPetition.set(petition);
+    this.isUpdate.set(true);
+    this.router.navigate(['./doctor/create-petition']);
+
+  }
 
   acceptPetition(idPetition: number) {
     this.organPetitionService.acceptPetition(idPetition).subscribe({

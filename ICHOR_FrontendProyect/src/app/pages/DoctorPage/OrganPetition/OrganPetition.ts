@@ -10,19 +10,23 @@ import { OrganService } from '../../../services/Organs.service';
 import { KeyValuePipe } from '@angular/common';
 import { IOrganPetition } from '../../../interfaces/Doctor/IOrganPetition.interface';
 import { Router, RouterLink } from "@angular/router";
+import { OrganPetitionListUtils } from '../OrganPetitionManagement/Utils/OrganPetitionListUtils';
+import { OrganPetitionUpdatePost } from '../../../interfaces/Doctor/OrganPetitionUpdatePost.interface';
+import { OrganPetitionUpdate } from '../../../interfaces/Doctor/OrganPetitionUpdate.interface';
 
 @Component({
   selector: 'app-organ-petition',
-  imports: [HeaderComponent, LoadingComponent, ErrorLoading, KeyValuePipe, ReactiveFormsModule, RouterLink],
+  imports: [HeaderComponent, LoadingComponent, ErrorLoading, KeyValuePipe, ReactiveFormsModule],
   templateUrl: './OrganPetition.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class OrganPetition {
 
   private fb = inject(FormBuilder);
-  organPetitionService = inject(OrganPetitionService);
-  organService = inject(OrganService);
   formUtils = FormUtils;
+  organPetitionService = inject(OrganPetitionService);
+  petitionListUtils = inject(OrganPetitionListUtils);
+  organService = inject(OrganService);
   router = inject(Router);
 
   // username: WritableSignal<string> = signal(sessionStorage.getItem('username')!);
@@ -57,15 +61,16 @@ export class OrganPetition {
 
 
   myForm = this.fb.group({
-    idPatient: [, [Validators.required, Validators.min(1)]],
-    organ: [, [Validators.required]],
-    weigth: ['', [Validators.required, Validators.min(10), Validators.max(4000)]],
-    volume: ['', [Validators.required, Validators.min(10), Validators.max(4000)]],
-    hla: ['', [Validators.required, hlaStringValidator()]],
+    idPatient: [this.petitionListUtils.draftPetition()?.idPatient, [Validators.required, Validators.min(1)]],
+    organ: [this.petitionListUtils.draftPetition()?.organType, [Validators.required]],
+    weigth: [this.petitionListUtils.draftPetition()?.weightGrams, [Validators.required, Validators.min(10), Validators.max(4000)]],
+    volume: [this.petitionListUtils.draftPetition()?.volumeCC, [Validators.required, Validators.min(10), Validators.max(4000)]],
+    hla: [this.petitionListUtils.showHla(this.petitionListUtils.draftPetition()?.hla), [Validators.required, hlaStringValidator()]],
   })
 
 
   goBack() {
+    this.petitionListUtils.draftPetition.set(undefined);
     this.router.navigate(['./doctor/organ-petitions']);
   }
 
@@ -106,6 +111,19 @@ export class OrganPetition {
     this.isSavingPetition.set(true);
     this.isSubmited.set(true);
 
+    if (!!this.petitionListUtils.isUpdate()) {
+      this.saveUpdatePetition();
+    } else {
+      this.saveNewPetition();
+    }
+
+
+
+  }
+
+
+  saveNewPetition() {
+
     const petition: IOrganPetition = {
       idPatient: this.myForm.controls.idPatient.value!,
       organType: this.myForm.controls.organ.value!,
@@ -119,9 +137,42 @@ export class OrganPetition {
 
     this.organPetitionService.savePetition(petition).subscribe({
       next: (success) => {
+        this.petitionListUtils.draftPetition.set(undefined);
         this.router.navigate(['./doctor/organ-petitions']);
       },
       error: (error) => {
+        this.hasError.set(true);
+        this.isSubmited.set(false);
+      }
+    });
+  }
+
+
+  saveUpdatePetition() {
+
+    const petition: IOrganPetition = {
+      idPatient: this.myForm.controls.idPatient.value!,
+      organType: this.myForm.controls.organ.value!,
+      weightGrams: Number(this.myForm.controls.weigth.value),
+      volumeCC: Number(this.myForm.controls.volume.value!),
+      hla: this.myForm.controls.hla.value!
+    }
+
+    const UpdatePetition: OrganPetitionUpdate = {
+      idPetition: this.petitionListUtils.draftPetition()!.idOrganPetition,
+      petition: petition
+    }
+
+
+    console.log(UpdatePetition);
+
+    this.organPetitionService.updatePetition(UpdatePetition).subscribe({
+      next: (success) => {
+        this.petitionListUtils.draftPetition.set(undefined);
+        this.router.navigate(['./doctor/organ-petitions']);
+      },
+      error: (error) => {
+        this.petitionListUtils.draftPetition.set(undefined);
         this.hasError.set(true);
         this.isSubmited.set(false);
       }

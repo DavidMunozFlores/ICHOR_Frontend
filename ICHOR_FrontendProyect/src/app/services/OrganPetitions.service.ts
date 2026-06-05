@@ -8,6 +8,8 @@ import { OrganPetitionPost } from '../interfaces/Doctor/OrganPetitionPost.interf
 import { API_URL } from './API_URL.const';
 import { OrganPetitionID } from '../interfaces/Doctor/OrganPetitionID.interface';
 import { OrganPetitionAcceptPatch } from '../interfaces/Doctor/OrganPetitionAcceptPatch.interface';
+import { OrganPetitionUpdate } from '../interfaces/Doctor/OrganPetitionUpdate.interface';
+import { OrganPetitionUpdatePost } from '../interfaces/Doctor/OrganPetitionUpdatePost.interface';
 
 
 @Injectable({ providedIn: 'root' })
@@ -31,27 +33,27 @@ export class OrganPetitionService {
 
 
 
-  availableToAssignPetitions: Signal<OrganPetitionResponse[]> = computed( () =>
-    this._waitingPetitions().filter( p => p.organAssigned !== null)
+  availableToAssignPetitions: Signal<OrganPetitionResponse[]> = computed(() =>
+    this._waitingPetitions().filter(p => p.organAssigned !== null)
   );
 
 
 
-  unavailableToAssignPetitions: Signal<OrganPetitionResponse[]> = computed( () =>
-    this._waitingPetitions().filter( p => p.organAssigned === null)
+  unavailableToAssignPetitions: Signal<OrganPetitionResponse[]> = computed(() =>
+    this._waitingPetitions().filter(p => p.organAssigned === null)
   );
 
 
-  private _lastPetitionSaved: WritableSignal<OrganPetitionResponse | {} > = signal({});
+  private _lastPetitionSaved: WritableSignal<OrganPetitionResponse | {}> = signal({});
   lastPetitionSaved = this._lastPetitionSaved.asReadonly();
 
-  private _lastPetitionAccepted: WritableSignal<OrganPetitionResponse | {} > = signal({});
+  private _lastPetitionAccepted: WritableSignal<OrganPetitionResponse | {}> = signal({});
   lastPetitionAccepted = this._lastPetitionAccepted.asReadonly();
 
-  private _lastPetitionAssigned: WritableSignal<OrganPetitionResponse | {} > = signal({});
+  private _lastPetitionAssigned: WritableSignal<OrganPetitionResponse | {}> = signal({});
   lastPetitionAssigned = this._lastPetitionAccepted.asReadonly();
 
-  private _lastPetitionCancelled: WritableSignal<OrganPetitionResponse | {} > = signal({});
+  private _lastPetitionCancelled: WritableSignal<OrganPetitionResponse | {}> = signal({});
   lastPetitionCancelled = this._lastPetitionAccepted.asReadonly();
 
 
@@ -70,6 +72,27 @@ export class OrganPetitionService {
     }
 
     return this.http.post<OrganPetitionResponse>(`${API_URL}/api/v1/organ-petitions/create`, body).pipe(
+      map(response => this.handleSuccessSave(response)),
+      catchError(error => this.handleErrorSave(error))
+    )
+
+  }
+
+
+  updatePetition(data: OrganPetitionUpdate) {
+
+    const credentials: LogInCredentials = {
+      username: sessionStorage.getItem('username')!,
+      password: sessionStorage.getItem('password')!,
+    }
+
+    const body: OrganPetitionUpdatePost = {
+      authCredentials: credentials,
+      data: data
+    }
+
+
+    return this.http.post<OrganPetitionResponse>(`${API_URL}/api/v1/organ-petitions/update`, body).pipe(
       map(response => this.handleSuccessSave(response)),
       catchError(error => this.handleErrorSave(error))
     )
