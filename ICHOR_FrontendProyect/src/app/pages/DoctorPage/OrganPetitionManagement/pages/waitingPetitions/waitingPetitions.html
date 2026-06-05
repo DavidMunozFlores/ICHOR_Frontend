@@ -1,0 +1,190 @@
+@if(isLoading()){
+<app-loading-component />
+}
+
+<section class="overflow-x-auto bg-base-100 rounded-lg shadow-sm border border-base-300 m-10">
+  <table class="table">
+    <thead>
+      <tr class="bg-base-300">
+        <th>#</th>
+        <th>Patient ID</th>
+        <th>Organ</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      @if(petitionsAvailableAssign().length !== 0){
+
+      @for (petition of petitionsAvailableAssign(); track petition.idOrganPetition; let index = $index) {
+      <tr class="hover:bg-base-200 hover:text-inherit cursor-pointer transition-colors bg-warning text-black"
+        (click)="petitionListUtils.show(petition.idOrganPetition)">
+        <td>{{index + 1}}</td>
+        <td>{{petition.idPatient}}</td>
+        <td>{{petition.organType}}</td>
+        <td>{{petition.petitionState}}</td>
+      </tr>
+      @if(petitionListUtils.shownPetition() === petition.idOrganPetition){
+      <tr>
+        <td colspan="4" class="bg-base-200 p-0">
+          <div class="card bg-base-100 shadow-md m-4 animate-in fade-in duration-300">
+            <div class="card-body">
+
+              <h2 class="card-title text-primary">
+                Petition #{{petition.idOrganPetition}}
+              </h2>
+
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+
+                <div class="stat bg-base-200 rounded-lg">
+                  <div class="stat-title">Patient ID</div>
+                  <div class="stat-value text-lg">
+                    {{petition.idPatient}}
+                  </div>
+                </div>
+
+                <div class="stat bg-base-200 rounded-lg">
+                  <div class="stat-title">Organ</div>
+                  <div class="stat-value text-lg">
+                    {{petition.organType}}
+                  </div>
+                </div>
+
+                <div class="stat bg-base-200 rounded-lg">
+                  <div class="stat-title">Weight</div>
+                  <div class="stat-value text-lg">
+                    {{petition.weightGrams}} g
+                  </div>
+                </div>
+
+                <div class="stat bg-base-200 rounded-lg">
+                  <div class="stat-title">Volume</div>
+                  <div class="stat-value text-lg">
+                    {{petition.volumeCC}} cc
+                  </div>
+                </div>
+
+              </div>
+
+              <div class="divider">Additional Information</div>
+
+              <div class="space-y-2">
+                <p>
+                  <span class="font-semibold">HLA:</span>
+                  {{petitionListUtils.showHla(petition.hla)}}
+                </p>
+
+                <p>
+                  <span class="font-semibold">Status:</span>
+                  <span class="badge badge-info">
+                    {{petition.petitionState}}
+                  </span>
+                </p>
+              </div>
+
+              <div class="card-actions justify-end mt-4">
+                <button class="btn btn-warning" (click)="petitionListUtils.cancelPetition(petition.idOrganPetition)">
+                  Cancel
+                </button>
+                <button class="btn btn-success" (click)="petitionListUtils.assingPetition(petition.idOrganPetition)">
+                  Confirm Assignment
+                </button>
+
+              </div>
+            </div>
+          </div>
+        </td>
+      </tr>
+
+      }
+      }
+      }
+      @if(petitionsUnavailableAssign().length !== 0){
+      @for (petition of petitionsUnavailableAssign(); track petition.idOrganPetition; let index = $index) {
+      <tr class="hover:bg-base-200 cursor-pointer transition-colors"
+        (click)="petitionListUtils.show(petition.idOrganPetition)">
+        <td>{{index + petitionsAvailableAssign().length + 1}}</td>
+        <td>{{petition.idPatient}}</td>
+        <td>{{petition.organType}}</td>
+        <td>{{petition.petitionState}}</td>
+      </tr>
+      @if(petitionListUtils.shownPetition() === petition.idOrganPetition){
+      <tr>
+        <td colspan="4" class="bg-base-200 p-0">
+          <div class="card bg-base-100 shadow-md m-4 animate-in fade-in duration-300">
+            <div class="card-body">
+
+              <h2 class="card-title text-primary">
+                Petition #{{petition.idOrganPetition}}
+              </h2>
+
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+
+                <div class="stat bg-base-200 rounded-lg">
+                  <div class="stat-title">Patient ID</div>
+                  <div class="stat-value text-lg">
+                    {{petition.idPatient}}
+                  </div>
+                </div>
+
+                <div class="stat bg-base-200 rounded-lg">
+                  <div class="stat-title">Organ</div>
+                  <div class="stat-value text-lg">
+                    {{petition.organType}}
+                  </div>
+                </div>
+
+                <div class="stat bg-base-200 rounded-lg">
+                  <div class="stat-title">Weight</div>
+                  <div class="stat-value text-lg">
+                    {{petition.weightGrams}} g
+                  </div>
+                </div>
+
+                <div class="stat bg-base-200 rounded-lg">
+                  <div class="stat-title">Volume</div>
+                  <div class="stat-value text-lg">
+                    {{petition.volumeCC}} cc
+                  </div>
+                </div>
+
+              </div>
+
+              <div class="divider">Additional Information</div>
+
+              <div class="space-y-2">
+                <p>
+                  <span class="font-semibold">HLA:</span>
+                  {{petitionListUtils.showHla(petition.hla)}}
+                </p>
+
+                <p>
+                  <span class="font-semibold">Status:</span>
+                  <span class="badge badge-info">
+                    {{petition.petitionState}}
+                  </span>
+                </p>
+              </div>
+
+              <div class="card-actions justify-end mt-4">
+                <button class="btn btn-warning" (click)="petitionListUtils.cancelPetition(petition.idOrganPetition)">
+                  Cancel
+                </button>
+
+              </div>
+            </div>
+          </div>
+        </td>
+      </tr>
+      }
+      }
+      }
+    </tbody>
+  </table>
+
+  @if(!petitions() || petitions().length === 0){
+  <div role="alert" class="alert alert-soft m-3 flex items-center justify-center h-20">
+    <span class="h-max">Ups! No petitions available yet.</span>
+  </div>
+  }
+</section>

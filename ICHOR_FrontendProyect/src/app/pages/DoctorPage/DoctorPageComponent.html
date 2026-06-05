@@ -1,4 +1,6 @@
-<div class="flex flex-col items-center min-h-screen bg-base-200 p-6">
+<app-header />
+
+<div class="flex flex-col items-center min-h-screen bg-base-100 p-6">
 
   <div class="w-full max-w-4xl flex flex-col gap-6">
 
@@ -13,6 +15,10 @@
 
       <button (click)="goToCreatePatient()" class="btn btn-primary w-full sm:w-auto">
         + Register New Patient
+      </button>
+
+       <button (click)="goToManagePetitions()" class="btn btn-primary w-full sm:w-auto">
+        Manage Petitions
       </button>
     </div>
 

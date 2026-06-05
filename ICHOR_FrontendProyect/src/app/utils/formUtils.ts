@@ -21,6 +21,9 @@ export class FormUtils {
         case 'min':
           return `Valor mínimo de ${errors['min'].min}`;
 
+        case 'max':
+          return `Max value of ${errors['max'].max}`;
+
         case 'email':
           return `El valor ingresado no es un correo electrónico`;
 
@@ -71,7 +74,6 @@ export class FormUtils {
     if (!form.controls[fieldName]) return null;
 
     const errors = form.controls[fieldName].errors ?? {};
-
     return FormUtils.getTextError(errors);
 
   }
@@ -89,7 +91,6 @@ export class FormUtils {
     if (formArray.controls.length === 0) return null;
 
     const errors = formArray.controls[index].errors ?? {};
-
     return FormUtils.getTextError(errors);
 
   }

@@ -3,34 +3,43 @@ import { HeaderComponent } from "../../components/shared/Header/HeaderComponent"
 import { FormUtils } from '../../utils/formUtils';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { hlaStringValidator } from '../../utils/hlaValidator';
-import { OrganServiceService } from '../../services/Organs.service';
+import { OrganService } from '../../services/Organs.service';
 import { Organ } from '../../interfaces/Coordinator/Organ.interface';
+import { LoadingComponent } from "../../components/shared/loadingComponent/loadingComponent";
+import { ErrorLoading } from "../../components/shared/errorLoading/errorLoading";
+import { CommonModule, KeyValuePipe } from '@angular/common';
 
 
 @Component({
   selector: 'app-coordinator-page-component',
-  imports: [HeaderComponent, ReactiveFormsModule],
+  imports: [
+    HeaderComponent,
+    ReactiveFormsModule,
+    LoadingComponent,
+    ErrorLoading,
+    CommonModule
+  ],
   templateUrl: './CoordinatorPageComponent.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CoordinatorPageComponent {
 
-  constructor(){
+  constructor() {
     this.loadOrgans();
   }
 
   private fb = inject(FormBuilder);
-  organService = inject(OrganServiceService);
+  organService = inject(OrganService);
   formUtils = FormUtils;
 
   username: WritableSignal<string> = signal(sessionStorage.getItem('username')!);
-  bloodTypes: WritableSignal<string[]> = signal(['A+','A-','B+','B-','O+','O-','AB+','AB-']);
+  bloodTypes: WritableSignal<string[]> = signal(['A+', 'A-', 'B+', 'B-', 'O+', 'O-', 'AB+', 'AB-']);
 
   isLoading: WritableSignal<boolean> = signal(true);
   hasLoaded: WritableSignal<boolean> = signal(false);
   hasError: WritableSignal<boolean> = signal(false);
   isVerified: WritableSignal<boolean> = signal(false);
-  isSavingOrgan:WritableSignal<boolean> = signal(false);
+  isSavingOrgan: WritableSignal<boolean> = signal(false);
 
   countdown: WritableSignal<number> = signal(10);
   canSubmit: WritableSignal<boolean> = signal(false);
@@ -40,11 +49,14 @@ export class CoordinatorPageComponent {
     organ: [, [Validators.required]],
     blood: [, [Validators.required]],
     weigth: ['', [Validators.required, Validators.min(1)]],
-    size: ['', [Validators.required, Validators.min(1)]],
+    volume: ['', [Validators.required, Validators.min(1)]],
     hla: ['', [Validators.required, hlaStringValidator()]],
   })
 
-  loadOrgans(){
+  myFormControls: string[] = Object.keys(this.myForm.controls);
+
+  loadOrgans() {
+
     this.organService.loadOrgans().subscribe({
       next: (success) => {
         this.hasLoaded.set(true);
@@ -60,24 +72,25 @@ export class CoordinatorPageComponent {
   }
 
 
-  onSubmit(){
-    if(!this.canSubmit()){
+  onSubmit() {
+    if (!this.canSubmit()) {
       return;
     }
 
+    this.isSavingOrgan.set(true);
+
     const organ: Organ = {
       organType: this.myForm.controls.organ.value!,
-      bloodType:this.myForm.controls.blood.value!,
       weightGrams: Number(this.myForm.controls.weigth.value),
-      volumeCC: Number(this.myForm.controls.size.value!),
-      hla: this.myForm.controls.hla.value!
+      volumeCC: Number(this.myForm.controls.volume.value!),
+      hla: this.myForm.controls.hla.value!,
+      bloodType: this.myForm.controls.blood.value!,
     }
 
     console.log(organ);
     this.organService.saveOrgan(organ).subscribe({
       next: (success) => {
-        this.isSavingOrgan.set(true);
-        //window.location.reload();
+        // window.location.reload();
       },
       error: (error) => {
         this.hasError.set(true);
@@ -87,10 +100,9 @@ export class CoordinatorPageComponent {
 
   }
 
-  showVerification(){
-    if(this.myForm.invalid){
+  showVerification() {
+    if (this.myForm.invalid) {
       this.myForm.markAllAsTouched();
-      console.log('has clicado en el boton de ver resumen');
       return;
     }
 
@@ -99,10 +111,10 @@ export class CoordinatorPageComponent {
     this.isVerified.set(true);
 
 
-    this.timerInterval = setInterval( () => {
-      this.countdown.update((v) => v-1);
+    this.timerInterval = setInterval(() => {
+      this.countdown.update((v) => v - 1);
 
-      if(this.countdown() <= 0){
+      if (this.countdown() <= 0) {
         this.canSubmit.set(true);
         clearInterval(this.timerInterval) // rarete autoreferencia para pararse a sí mismo pero funka bien
       }
@@ -110,9 +122,9 @@ export class CoordinatorPageComponent {
   }
 
 
-  cancelVerification(){
+  cancelVerification() {
     this.isVerified.set(false);
-    if(this.timerInterval){
+    if (this.timerInterval) {
       clearInterval(this.timerInterval);
     }
   }

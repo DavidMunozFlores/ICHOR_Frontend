@@ -4,14 +4,13 @@ import { catchError, map, Observable, of, throwError } from 'rxjs';
 import { LogInCredentials } from '../interfaces/LogIn/LogInCredentials';
 import { OrganPostResponse } from '../interfaces/Coordinator/OrganPostResponse.interface';
 import { Organ } from '../interfaces/Coordinator/Organ.interface';
+import { API_URL } from './API_URL.const';
 
 
 @Injectable({ providedIn: 'root' })
-export class OrganServiceService {
+export class OrganService {
 
   private http = inject(HttpClient);
-  // private API_URL = 'http://localhost:8080/api/v1/organs/type-info';
-  private API_URL = 'https://41545ad6-a59e-4b93-9fe7-3fa0e135f3c5.mock.pstmn.io/api/v1';
 
   private _organs: WritableSignal<OrganGetResponse[]> = signal<OrganGetResponse[]>([]);
   public organs = this._organs.asReadonly();
@@ -20,7 +19,7 @@ export class OrganServiceService {
   public lastOrganSaved = this._lastOrganSaved.asReadonly();
 
   loadOrgans(): Observable<boolean> {
-    return this.http.get<OrganGetResponse[]>(`${this.API_URL}/organs/type-info`).pipe(
+    return this.http.get<OrganGetResponse[]>(`${API_URL}/api/v1/organs/type-info`).pipe(
       map(response => this.handleSuccessLoad(response)),
       catchError((error) => this.handleErrorLoad(error))
     )
@@ -38,7 +37,7 @@ export class OrganServiceService {
       data: data
     }
 
-    return this.http.post<OrganPostResponse>(`${this.API_URL}/organs/register-organ`, body).pipe(
+    return this.http.post<OrganPostResponse>(`${API_URL}/api/v1/organs/register-organ`, body).pipe(
       map( response => this.handleSuccessSave(response)),
       catchError( error => this.handleErrorSave(error))
     );

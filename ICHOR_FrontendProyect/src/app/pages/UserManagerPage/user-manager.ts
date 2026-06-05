@@ -80,7 +80,7 @@ export class UserManager {
     );
   }
   redirectToCreate(): void {
-    this.router.navigate(['/create-users']);
+    this.router.navigate(['/user-manager/create-users']);
   }
 
 

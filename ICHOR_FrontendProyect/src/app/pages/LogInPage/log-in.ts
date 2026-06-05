@@ -23,8 +23,8 @@ export class LogIn {
 
   private readonly roleRoutes: Record<string, string> = {
     'MANAGER': '/user-manager',
-    'DOCTOR': '/doctor-page',
-    'COORDINATOR': '/coordinator-page'
+    'DOCTOR': '/doctor',
+    'COORDINATOR': '/coordinator'
   }
 
   myForm: FormGroup = this.fb.group({
@@ -33,7 +33,6 @@ export class LogIn {
   });
 
 
-  //TODO! MANEJAR ESTO CON FORMULARIOS REACTIVOS
   errMessage: WritableSignal<string> = signal('');
 
 

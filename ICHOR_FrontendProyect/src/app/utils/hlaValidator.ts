@@ -4,6 +4,7 @@ import { AbstractControl, ValidationErrors, ValidatorFn } from "@angular/forms";
 
 export function hlaStringValidator(): ValidatorFn {
 
+  // example correct hla: A:01:02 A:02:01 B:01:02 B:02:01 DRB1:01:02 DRB1:02:01
   return (control: AbstractControl): ValidationErrors | null => {
 
     const controlValue: string = control.value;

@@ -1,5 +1,5 @@
 import { Router } from '@angular/router';
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { HeaderComponent } from '../../components/shared/Header/HeaderComponent';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
@@ -20,6 +20,12 @@ interface Patient {
 
 export class DoctorPageComponent {
 
+  router = inject(Router);
+
+  goToManagePetitions() {
+    this.router.navigate(['/doctor/organ-petitions']);
+  }
+
   searchBar: string = '';
   patientSelected: Patient | null = null;
 
@@ -30,9 +36,7 @@ export class DoctorPageComponent {
     { fullname: 'Ana Martínez Ruiz', dni: '74185296M', bloodType: 'B-' }
   ];
 
-  constructor(private router: Router) {}
 
-  ngOnInit(): void {}
 
   get filteredPatients(): Patient[] {
     if (!this.searchBar.trim()) {
