@@ -1,0 +1,33 @@
+<div class="flex flex-col justify-center items-center min-h-screen bg-base-200 p-4">
+
+<h2 class="text-2xl font-bold mb-6 text-primary">Register Patient</h2>
+
+  <form [formGroup]="patientForm" (ngSubmit)="onSubmit()" class="flex flex-col gap-2 w-full max-w-xs">
+
+    <label class="font-semibold text-sm">internalID</label>
+    <input type="text" formControlName="internalID" class="input input-primary w-full" placeholder="InternalID">
+
+    <label class="font-semibold text-sm">Full name</label>
+    <input type="text" formControlName="fullname" class="input input-primary w-full" placeholder="name">
+
+    <label class="font-semibold text-sm">DNI</label>
+    <input type="text" formControlName="dni" class="input input-primary w-full" placeholder="DNI">
+
+    <label class="font-semibold text-sm">Height</label>
+    <input type="text" formControlName="height" class="input input-primary w-full" placeholder="Cm">
+
+    <label class="font-semibold text-sm">Weight</label>
+    <input type="text" formControlName="weight" class="input input-primary w-full" placeholder="Kg">
+
+
+    <label class="font-semibold text-sm">Blood type</label>
+    <select formControlName="bloodType" class="select select-primary w-full">
+      <option value="" disabled selected>Select type</option>
+      <option *ngFor="let type of bloodTypes" [value]="type">{{ type }}</option>
+    </select>
+
+    <button type="submit" class="btn btn-primary mt-2 w-full">Create Patient</button>
+
+  </form>
+
+</div>

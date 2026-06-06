@@ -1,7 +1,9 @@
 import { Routes } from '@angular/router';
+
 import { LogIn } from './pages/LogInPage/log-in';
-import { createUserComponent } from './pages/UserManagerPage/create-users/create-users';
 import { UserManager } from './pages/UserManagerPage/user-manager';
+import { createPatient } from './pages/create-patient/createPatient.component';
+import { createUserComponent } from './pages/UserManagerPage/create-users/create-users';
 import { DoctorPageComponent } from './pages/DoctorPage/DoctorPageComponent';
 import { CoordinatorPageComponent } from './pages/CoordinatorPage/CoordinatorPageComponent';
 import { authGuard } from './auth/guards/authGuard.guard';
@@ -18,6 +20,14 @@ export const routes: Routes = [
   {
     path: 'log-in',
     component: LogIn
+  },
+  {
+    path:'user-manager',
+    component: UserManager
+  },
+  {
+     path:'patientCreate',
+    component: createPatient
   },
   {
     path: 'unauthorized',
