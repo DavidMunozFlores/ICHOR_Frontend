@@ -1,14 +1,21 @@
 import { Router } from '@angular/router';
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, ChangeDetectorRef } from '@angular/core';
 import { HeaderComponent } from '../../components/shared/Header/HeaderComponent';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
+import { HttpClient } from '@angular/common/http';
+import { environment } from '../../../environments/environment';
 
 interface Patient {
-  fullname: string;
-  dni: string;
-  bloodType: string;
+    internalID: string,
+    name: string,
+    identification: string,
+    bloodType: string,
+    height: number,
+    weight: number,
+    idHospital: number
+
 }
 
 @Component({
@@ -19,24 +26,34 @@ interface Patient {
 })
 
 export class DoctorPageComponent {
+  private http = inject(HttpClient);
+  private router = inject(Router);
+  private cdr = inject(ChangeDetectorRef);
 
-  router = inject(Router);
+  constructor() {
+    this.loadPatients();
+  }
 
   goToManagePetitions() {
     this.router.navigate(['/doctor/organ-petitions']);
   }
 
+
   searchBar: string = '';
   patientSelected: Patient | null = null;
+  patients: Patient[] = [];
 
-  patients: Patient[] = [
-    { fullname: 'Juan Pérez Gómez', dni: '12345678X', bloodType: 'A+' },
-    { fullname: 'María Rodríguez López', dni: '87654321Y', bloodType: 'O-' },
-    { fullname: 'Carlos Sainz Cenoz', dni: '45678912W', bloodType: 'AB+' },
-    { fullname: 'Ana Martínez Ruiz', dni: '74185296M', bloodType: 'B-' }
-  ];
+loadPatients() {
+     this.http.get<Patient[]>(`${environment.url}api/v1/patients`).subscribe(data => {
+      this.patients = data;
+      this.cdr.markForCheck();
+     },
 
+     error => {
+      console.error('Error fetching patients:', error);
+     });
 
+}
 
   get filteredPatients(): Patient[] {
     if (!this.searchBar.trim()) {
@@ -44,8 +61,8 @@ export class DoctorPageComponent {
     }
     const query = this.searchBar.toLowerCase();
     return this.patients.filter(patient =>
-      patient.fullname.toLowerCase().includes(query) ||
-      patient.dni.toLowerCase().includes(query)
+      patient.name.toLowerCase().includes(query) ||
+      patient.identification.toLowerCase().includes(query)
     );
   }
   selectPatient(patient: Patient): void {

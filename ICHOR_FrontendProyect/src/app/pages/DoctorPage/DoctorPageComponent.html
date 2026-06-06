@@ -2,24 +2,24 @@
 
 <div class="flex flex-col items-center min-h-screen bg-base-100 p-6">
 
-  <div class="w-full max-w-4xl flex flex-col gap-6">
-
-    <h1 class="text-3xl font-bold text-primary text-center">Doctor Page</h1>
+  <div class="w-full max-w-5xl flex flex-col gap-6"> <h1 class="text-3xl font-bold text-primary text-center">Doctor Page</h1>
 
     <div class="flex flex-col sm:flex-row justify-between items-center gap-4">
       <input
         type="text"
         [(ngModel)]="searchBar"
-        placeholder="Search by name"
+        placeholder="Search by name or identification..."
         class="input input-primary w-full sm:max-w-md">
 
-      <button (click)="goToCreatePatient()" class="btn btn-primary w-full sm:w-auto">
-        + Register New Patient
-      </button>
+      <div class="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+        <button (click)="goToCreatePatient()" class="btn btn-primary w-full sm:w-auto">
+          + Register New Patient
+        </button>
 
-       <button (click)="goToManagePetitions()" class="btn btn-primary w-full sm:w-auto">
-        Manage Petitions
-      </button>
+        <button (click)="goToManagePetitions()" class="btn btn-primary w-full sm:w-auto">
+          Manage Petitions
+        </button>
+      </div>
     </div>
 
     <div class="overflow-x-auto bg-base-100 rounded-lg shadow-sm border border-base-300">
@@ -27,8 +27,11 @@
         <thead>
           <tr class="bg-base-300">
             <th>Full Name</th>
-            <th>DNI</th>
+            <th>Identification / DNI</th>
             <th>Blood Type</th>
+            <th>Height</th>
+            <th>Weight</th>
+            <th>System ID</th>
           </tr>
         </thead>
         <tbody>
@@ -36,14 +39,17 @@
             *ngFor="let patient of filteredPatients"
             (click)="selectPatient(patient)"
             class="hover:bg-primary/10 cursor-pointer transition-colors">
-            <td class="font-medium">{{ patient.fullname }}</td>
-            <td>{{ patient.dni }}</td>
+            <td class="font-medium">{{ patient.name }}</td>
+            <td>{{ patient.identification }}</td>
             <td>
               <span class="badge badge-ghost font-bold text-error">{{ patient.bloodType }}</span>
             </td>
+            <td>{{ patient.height }} cm</td>
+            <td>{{ patient.weight }} kg</td>
+            <td class="text-xs text-base-content/60">{{ patient.internalID }}</td>
           </tr>
           <tr *ngIf="filteredPatients.length === 0">
-            <td colspan="3" class="text-center text-base-400 py-4">Patients not found.</td>
+            <td colspan="6" class="text-center text-base-400 py-4">Patients not found.</td>
           </tr>
         </tbody>
       </table>
@@ -51,14 +57,17 @@
 
     <div *ngIf="patientSelected" class="p-4 bg-base-100 rounded-lg border-l-4 border-primary shadow-sm flex flex-col gap-2">
       <div class="flex justify-between items-center border-b border-base-300 pb-2">
-        <h3 class="text-lg font-bold text-primary">Patient</h3>
+        <h3 class="text-lg font-bold text-primary">Patient Medical File</h3>
         <button (click)="patientSelected = null" class="btn btn-xs btn-circle btn-ghost">✕</button>
       </div>
 
-      <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 pt-2 text-sm">
-        <div><span class="font-semibold text-base-content/70">Full name:</span> {{ patientSelected?.fullname }}</div>
-        <div><span class="font-semibold text-base-content/70">DNI:</span> {{ patientSelected?.dni }}</div>
-        <div><span class="font-semibold text-base-content/70">BloodType:</span> <span class="text-error font-bold">{{ patientSelected?.bloodType }}</span></div>
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 pt-2 text-sm">
+        <div><span class="font-semibold text-base-content/70">Full name:</span> {{ patientSelected?.name }}</div>
+        <div><span class="font-semibold text-base-content/70">Identification:</span> {{ patientSelected?.identification }}</div>
+        <div><span class="font-semibold text-base-content/70">Blood Type:</span> <span class="text-error font-bold">{{ patientSelected?.bloodType }}</span></div>
+        <div><span class="font-semibold text-base-content/70">Height:</span> {{ patientSelected?.height }} cm</div>
+        <div><span class="font-semibold text-base-content/70">Weight:</span> {{ patientSelected?.weight }} kg</div>
+        <div><span class="font-semibold text-base-content/70">System ID:</span> {{ patientSelected?.internalID }}</div>
       </div>
     </div>
 
