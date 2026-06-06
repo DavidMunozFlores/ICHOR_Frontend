@@ -13,41 +13,41 @@ export class FormUtils {
     for (const key of Object.keys(errors)) {
       switch (key) {
         case 'required':
-          return 'Este campo es requerido';
+          return 'Required field';
 
         case 'minlength':
-          return `Mínimo de ${errors['minlength'].requiredLength} caracteres`;
+          return `Minimum length of ${errors['minlength'].requiredLength} characteres`;
 
         case 'min':
-          return `Valor mínimo de ${errors['min'].min}`;
+          return `Minimum value of ${errors['min'].min}`;
 
         case 'max':
-          return `Max value of ${errors['max'].max}`;
+          return `Maximum value of ${errors['max'].max}`;
 
         case 'email':
-          return `El valor ingresado no es un correo electrónico`;
+          return `The input value it is not an email`;
 
         case 'pattern':
           if (errors['pattern'].requiredPattern === FormUtils.emailPattern) {
-            return `El campo introducido no es un correo electrónico`
+            return `The input value it is not an email`
 
           } else if (errors['pattern'].requiredPattern === FormUtils.namePattern) {
-            return `Debe introducir un NOMBRE y un APELLIDO.
+            return `First Name and Last Name are mandatory.
             `
           } else if (errors['pattern'].requiredPattern === FormUtils.notOnlySpacesPattern) {
-            return `El campo no debe contener espacios`
+            return `The input cannot contain spaces`
           }
 
-          return `Error de patrón contra expresión regular`
+          return `Regular expression error`
 
         case 'passwordsNotEqual':
-          return `Las contraseñas no coinciden`;
+          return `The passwords are not equals`;
 
         case 'emailTaken':
-          return `Email ya existente: NO VALIDO`
+          return `Email already exists: NOT VALID`
 
         case 'reservedName':
-          return `Ese valor está reservado`
+          return `This value is reserved`
 
         case 'hlaInvalid':
           return errors['hlaInvalid'].message;
@@ -68,6 +68,7 @@ export class FormUtils {
       form.controls[fieldName].touched
     );
   }
+
 
   static getFieldError(form: FormGroup, fieldName: string): string | null {
 
