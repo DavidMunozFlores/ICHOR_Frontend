@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, inject, signal, WritableSignal } from '@angular/core';
+
 import { PetitionList } from "../../components/petitionList/petitionList";
-import { OrganPetitionResponse } from '../../../../../interfaces/Doctor/OrganPetitionResponse.interface';
 import { OrganPetitionService } from '../../../../../services/OrganPetitions.service';
 import { OrganPetitionListUtils } from '../../Utils/OrganPetitionListUtils';
 
@@ -35,7 +35,6 @@ export class AssignedPetitions {
   }
 
   // TODO! MANEJAR EL ESTADO PARA CUANDO SE HACEN LAS PETICIONES
-  // TODO! HACER QUE EN LAS DRAFT SALGA EL COMPONENTE DE EDITAR PARA PODER PONERLA EN WAITING
 
 
 }

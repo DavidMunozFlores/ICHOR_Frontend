@@ -8,6 +8,8 @@ import { Organ } from '../../interfaces/Coordinator/Organ.interface';
 import { LoadingComponent } from "../../components/shared/loadingComponent/loadingComponent";
 import { ErrorLoading } from "../../components/shared/errorLoading/errorLoading";
 import { CommonModule, KeyValuePipe } from '@angular/common';
+import { InfoMessageService } from '../../services/InfoMessage.service';
+import { InfoMessage } from "../../components/shared/infoMessage/infoMessage";
 
 
 @Component({
@@ -17,7 +19,8 @@ import { CommonModule, KeyValuePipe } from '@angular/common';
     ReactiveFormsModule,
     LoadingComponent,
     ErrorLoading,
-    CommonModule
+    CommonModule,
+    InfoMessage
   ],
   templateUrl: './CoordinatorPageComponent.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -30,6 +33,7 @@ export class CoordinatorPageComponent {
 
   private fb = inject(FormBuilder);
   organService = inject(OrganService);
+  infoMessageService = inject(InfoMessageService);
   formUtils = FormUtils;
 
   username: WritableSignal<string> = signal(sessionStorage.getItem('username')!);
@@ -90,7 +94,7 @@ export class CoordinatorPageComponent {
     console.log(organ);
     this.organService.saveOrgan(organ).subscribe({
       next: (success) => {
-        // window.location.reload();
+        this.resetState();
       },
       error: (error) => {
         this.hasError.set(true);
@@ -129,6 +133,25 @@ export class CoordinatorPageComponent {
     }
   }
 
+
+  private resetState() {
+
+    this.myForm.reset()
+
+    this.username.set(sessionStorage.getItem('username')!);
+
+    this.isLoading.set(true);
+    this.hasLoaded.set(false);
+    this.hasError.set(false);
+    this.isVerified.set(false);
+    this.isSavingOrgan.set(false);
+
+    this.countdown.set(10);
+    this.canSubmit.set(false);
+
+    this.loadOrgans();
+
+  }
 
 
 

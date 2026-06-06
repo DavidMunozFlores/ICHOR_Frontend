@@ -5,12 +5,15 @@ import { LogInCredentials } from '../interfaces/LogIn/LogInCredentials';
 import { OrganPostResponse } from '../interfaces/Coordinator/OrganPostResponse.interface';
 import { Organ } from '../interfaces/Coordinator/Organ.interface';
 import { API_URL } from './API_URL.const';
+import { InfoMessageService } from './InfoMessage.service';
 
 
 @Injectable({ providedIn: 'root' })
 export class OrganService {
 
   private http = inject(HttpClient);
+  infoMessageService = inject(InfoMessageService);
+
 
   private _organs: WritableSignal<OrganGetResponse[]> = signal<OrganGetResponse[]>([]);
   public organs = this._organs.asReadonly();
@@ -38,8 +41,8 @@ export class OrganService {
     }
 
     return this.http.post<OrganPostResponse>(`${API_URL}/api/v1/organs/register-organ`, body).pipe(
-      map( response => this.handleSuccessSave(response)),
-      catchError( error => this.handleErrorSave(error))
+      map(response => this.handleSuccessSave(response)),
+      catchError(error => this.handleErrorSave(error))
     );
   }
 
@@ -49,8 +52,10 @@ export class OrganService {
     return true;
   }
 
-  private handleSuccessSave( response: OrganPostResponse ): boolean {
+  private handleSuccessSave(response: OrganPostResponse): boolean {
     this._lastOrganSaved.set(response);
+    console.log('Se supone que he añadido el mensaje de éxito de que se ha creado bien');
+    this.infoMessageService.loadSuccess('Organ saved successfully.');
     return true;
   }
 
@@ -70,6 +75,8 @@ export class OrganService {
 
     console.error('Catched error on get petition to obtain organ types: ', errMessage);
 
+    this.infoMessageService.loadError('Ups! Something went wrong loading organ types.');
+
     this._organs.set([]);
     return of(false);
   }
@@ -78,18 +85,21 @@ export class OrganService {
 
     let errMessage = 'An error occurred saving the organ in the system.';
 
-    if(error instanceof HttpErrorResponse){
-      if( error.status === 0 ){
+    if (error instanceof HttpErrorResponse) {
+      if (error.status === 0) {
         errMessage = 'Server Error'
-      }else if( error.status === 500 ){
+      } else if (error.status === 500) {
         errMessage = 'Impossible to save organ in the system.'
       }
-    }else{
+    } else {
       console.log('Client side error saving the organ in the system.');
       errMessage = error.message || 'Client side error';
     }
 
     console.error('Catched error trying to save an organ in the system: ', errMessage);
+
+    this.infoMessageService.loadError('Ups! Something went wrong saving a new organ.');
+
     this._lastOrganSaved.set({});
     return of(false);
 

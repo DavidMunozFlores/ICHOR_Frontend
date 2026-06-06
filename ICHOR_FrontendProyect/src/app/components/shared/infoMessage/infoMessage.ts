@@ -1,4 +1,5 @@
-import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { InfoMessageService } from '../../../services/InfoMessage.service';
 
 @Component({
   selector: 'app-info-message',
@@ -8,10 +9,8 @@ import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
 })
 export class InfoMessage {
 
-  message = signal<string>('');
+  infoMessageService = inject(InfoMessageService);
 
-  onMessageChange(msg: string){
-    this.message.set(msg);
-  }
+  messages = this.infoMessageService.infoMessages;
 
 }

@@ -10,12 +10,14 @@ import { OrganPetitionID } from '../interfaces/Doctor/OrganPetitionID.interface'
 import { OrganPetitionUpdateStatusPatch } from '../interfaces/Doctor/OrganPetitionUpdateStatusPatch.interface';
 import { OrganPetitionUpdate } from '../interfaces/Doctor/OrganPetitionUpdate.interface';
 import { OrganPetitionUpdatePost } from '../interfaces/Doctor/OrganPetitionUpdatePost.interface';
+import { InfoMessageService } from './InfoMessage.service';
 
 
 @Injectable({ providedIn: 'root' })
 export class OrganPetitionService {
 
   private http = inject(HttpClient);
+  private infoMessageService = inject(InfoMessageService);
 
 
   private _draftPetitions: WritableSignal<OrganPetitionResponse[]> = signal<OrganPetitionResponse[]>([]);
@@ -104,7 +106,7 @@ export class OrganPetitionService {
 
   }
 
-  deletePetition(idPetition: number){
+  deletePetition(idPetition: number) {
 
     const credentials: LogInCredentials = {
       username: sessionStorage.getItem('username')!,
@@ -192,8 +194,22 @@ export class OrganPetitionService {
       data: cancelPetition
     }
 
+//     PATCH
+// /api/v1/organ-petitions/cancel
 
-    return this.http.patch<OrganPetitionResponse>(`${API_URL}/api/v1/organ-petitions/cancell`, body).pipe(
+
+// {
+//   "authCredentials": {
+//     "username": "string",
+//     "password": "string"
+//   },
+//   "data": {
+//     "idOrganPetition": 0
+//   }
+// }
+
+
+    return this.http.patch<OrganPetitionResponse>(`${API_URL}/api/v1/organ-petitions/cancel`, body).pipe(
       map(response => this.handleSuccessCancel(response)),
       catchError(error => this.handleErrorCancel(error))
     )
@@ -205,7 +221,7 @@ export class OrganPetitionService {
   loadDraftPetitions(): Observable<boolean> {
     return this.http.get<OrganPetitionResponse[]>(`${API_URL}/api/v1/organ-petitions/state/DRAFT`).pipe(
       map(draftPetitions => this.handleSuccessLoad(draftPetitions, this._draftPetitions)),
-      catchError(error => this.handleErrorLoad(error, this._draftPetitions))
+      catchError(error => this.handleErrorLoad(error, this._draftPetitions)),
     )
   }
 
@@ -230,33 +246,39 @@ export class OrganPetitionService {
     )
   }
 
-  private handleSuccessLoad(draftPetitions: OrganPetitionResponse[], signalToSet: WritableSignal<OrganPetitionResponse[]>) {
-    signalToSet.set(draftPetitions);
+  private handleSuccessLoad(petitions: OrganPetitionResponse[], signalToSet: WritableSignal<OrganPetitionResponse[]>) {
+    signalToSet.set(petitions);
+    this.infoMessageService.loadInfo('Petitions loaded correctly.');
     return true;
   }
 
   private handleSuccessSave(petition: OrganPetitionResponse) {
     this._lastPetitionSaved.set(petition);
+    this.infoMessageService.loadSuccess('Petition saved successfully.')
     return true;
   }
 
   private handleSuccessAccept(petition: OrganPetitionResponse) {
     this._lastPetitionAccepted.set(petition);
+    this.infoMessageService.loadSuccess('Petition accepted successfully.')
     return true;
   }
 
   private handleSuccessAssign(petition: OrganPetitionResponse) {
     this._lastPetitionAssigned.set(petition);
+    this.infoMessageService.loadSuccess('Petition assigned successfully.')
     return true;
   }
 
   private handleSuccessCancel(petition: OrganPetitionResponse) {
     this._lastPetitionCancelled.set(petition);
+    this.infoMessageService.loadSuccess('Petition cancelled successfully.')
     return true;
   }
 
   private handleSuccessDelete(petition: OrganPetitionResponse) {
     this._lastPetitionDeleted.set(petition);
+    this.infoMessageService.loadSuccess('Petition deleted successfully.')
     return true;
   }
 
@@ -277,6 +299,8 @@ export class OrganPetitionService {
     }
 
     console.error('Catched error on GET petition to obtain organ petitions: ', errMessage);
+
+    this.infoMessageService.loadError('Ups! Something went wrong loading petitions.')
 
     signalToSet.set([]);
     return of(false);
@@ -301,7 +325,10 @@ export class OrganPetitionService {
 
     console.error('Catched error on POST petition to save organ petition: ', errMessage);
 
-    this._lastPetitionSaved.set({}); return of(false);
+    this.infoMessageService.loadError('Ups! Something went wrong saving the petition.')
+
+    this._lastPetitionSaved.set({});
+    return of(false);
 
   }
 
@@ -321,6 +348,8 @@ export class OrganPetitionService {
     }
 
     console.error('Catched error on PATCH petition to accept organ petition: ', errMessage);
+
+    this.infoMessageService.loadError('Ups! Something went wrong accepting the petition.')
 
     this._lastPetitionAccepted.set({});
     return of(false);
@@ -345,6 +374,8 @@ export class OrganPetitionService {
 
     console.error('Catched error on PATCH petition to assing/check organ petition: ', errMessage);
 
+    this.infoMessageService.loadError('Ups! Something went wrong assigning the petition.')
+
     this._lastPetitionAssigned.set({});
     return of(false);
 
@@ -367,6 +398,8 @@ export class OrganPetitionService {
 
     console.error('Catched error on PATCH petition to cancel organ petition: ', errMessage);
 
+    this.infoMessageService.loadError('Ups! Something went wrong cancelling the petition.')
+
     this._lastPetitionCancelled.set({});
     return of(false);
 
@@ -388,6 +421,8 @@ export class OrganPetitionService {
     }
 
     console.error('Catched error on PATCH petition to delete organ petition: ', errMessage);
+
+    this.infoMessageService.loadError('Ups! Something went wrong deleting the petition.')
 
     this._lastPetitionDeleted.set({});
     return of(false);

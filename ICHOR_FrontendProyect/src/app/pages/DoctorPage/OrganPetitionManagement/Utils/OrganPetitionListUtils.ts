@@ -5,15 +5,17 @@ import { OrganPetitionService } from "../../../../services/OrganPetitions.servic
 import { Injectable } from '@angular/core';
 import { OrganPetitionResponse } from "../../../../interfaces/Doctor/OrganPetitionResponse.interface";
 import { Router } from "@angular/router";
+import { InfoMessageService } from "../../../../services/InfoMessage.service";
 
 @Injectable({providedIn: 'root'})
 export class OrganPetitionListUtils {
 
+  router = inject(Router);
+  infoMessageService = inject(InfoMessageService);
 
   shownPetition = signal<number | null>(null);
   draftPetition = signal<OrganPetitionResponse | undefined >(undefined);
   isUpdate = signal<boolean>(false);
-  router = inject(Router);
   private organPetitionService = inject(OrganPetitionService);
 
 
@@ -54,10 +56,7 @@ export class OrganPetitionListUtils {
       next: (success) => {
         console.log('Petition changed status: ', success);
         this.organPetitionService.loadDraftPetitions().subscribe();
-        //todo manejar errores aquí también.
-      }, error: (err) => {
-        // todo manejar errores aquí;
-      }
+      }, error: (err) => {}
     })
   }
 
@@ -66,11 +65,8 @@ export class OrganPetitionListUtils {
       next: (success) => {
         console.log('Petition changed status: ', success);
         this.organPetitionService.loadWaitingPetitions().subscribe();
-        // todo manejar errores aquí también
         this.organPetitionService.loadAssignedPetitions().subscribe();
-        // todo manejar errores aquí también
       }, error: (err) => {
-        // todo manejar errores aquí;
       }
     })
   }
@@ -80,9 +76,7 @@ export class OrganPetitionListUtils {
       next: (success) => {
         console.log('Petition changed status: ', success);
         this.organPetitionService.loadDraftPetitions().subscribe();
-        // todo manejar errorsitos
       }, error: (err) => {
-        // todo manejar errores aquí;
       }
     })
   }
@@ -92,9 +86,7 @@ export class OrganPetitionListUtils {
       next: (success) => {
         console.log('Petition changed status: ', success);
         this.organPetitionService.loadWaitingPetitions().subscribe();
-        // todo manejar errorsitos
       }, error: (err) => {
-        // todo manejar errores aquí;
       }
     })
   }

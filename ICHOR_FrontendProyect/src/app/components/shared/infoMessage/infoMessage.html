@@ -1,7 +1,13 @@
-@if(message()){
-  <div class="fixed top-4 right-4 z-50">
-    <div class="alert alert-success shadow-lg">
-      <span>{{ message() }}</span>
-    </div>
+<div class="fixed bottom-4 right-4 z-50">
+  @for(message of messages(); track message.id){
+  <div role="alert" class="alert alert-outline m-1"
+    [class.alert-info]="message.type === 'info' "
+    [class.alert-error]="message.type === 'error' "
+    [class.alert-warning]="message.type === 'warning' "
+    [class.alert-success]="message.type === 'success' "
+  >
+
+    <span>{{ message.message }}</span>
   </div>
-}
+  }
+</div>
