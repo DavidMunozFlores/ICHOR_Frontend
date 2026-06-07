@@ -20,28 +20,21 @@ export class AuthService {
   private http = inject(HttpClient);
   private router = inject(Router);
 
-  // private url = 'http://localhost:8080/api/v1/login';
 
   public login(user: string, pass: string): Observable<LogInResponse> {
     const userTry: LogInCredentials = { username: user, password: pass };
-
-    // hacer tu propia construcción de cuerpo a encriptar
 
 
     //TODO! DESCOMENTAR ESTO PARA QUE LO MANDE ENCRIPTADO
     return from(this.encryptData.encrypt(JSON.stringify(userTry))).pipe(
 
       switchMap((encryptedResult: string) => {
-        // ---------------------------
-        // construcción de datos a mandar
+
         const body: LogInPost = {
           data: encryptedResult
         };
-        //---------------------------------
 
-        // modificación de la url para distintos post
         return this.http.post<LogInResponse>(`${API_URL}/api/v1/auth/log-in`, body);
-        // return this.http.post<LogInResponse>(this.url, body);
       }),
 
       catchError(error => this.handleError(error))

@@ -1,6 +1,3 @@
-@if(isLoading()){
-<app-loading-component />
-}
 
 <section class="overflow-x-auto bg-base-100 rounded-lg shadow-sm border border-base-300 m-10">
   <table class="table">
@@ -14,7 +11,7 @@
     </thead>
 
     <tbody>
-      @if(petitionsAvailableAssign().length !== 0){
+      @if(petitionsAvailableAssign().length !== 0 && !hasError() && !isLoading()){
 
       @for (petition of petitionsAvailableAssign(); track petition.idOrganPetition; let index = $index) {
       <tr class="hover:bg-base-200 hover:text-inherit cursor-pointer transition-colors bg-warning text-black"
@@ -99,7 +96,7 @@
       }
       }
       }
-      @if(petitionsUnavailableAssign().length !== 0){
+      @if(petitionsUnavailableAssign().length !== 0 && !hasError() && !isLoading()){
       @for (petition of petitionsUnavailableAssign(); track petition.idOrganPetition; let index = $index) {
       <tr class="hover:bg-base-200 cursor-pointer transition-colors"
         (click)="petitionListUtils.show(petition.idOrganPetition)">
@@ -182,7 +179,13 @@
     </tbody>
   </table>
 
-  @if(!petitions() || petitions().length === 0){
+  @if(isLoading()){
+  <app-loading-component />
+  }
+  @else if(!!hasError()){
+    <app-error-loading />
+  }
+  @else if((!petitions() || petitions().length === 0) && !hasError() && !isLoading()){
   <div role="alert" class="alert alert-soft m-3 flex items-center justify-center h-20">
     <span class="h-max">Ups! No petitions available yet.</span>
   </div>

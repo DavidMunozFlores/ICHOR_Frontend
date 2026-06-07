@@ -2,10 +2,11 @@ import { ChangeDetectionStrategy, Component, inject, signal, WritableSignal } fr
 import { OrganPetitionService } from '../../../../../services/OrganPetitions.service';
 import { LoadingComponent } from "../../../../../components/shared/loadingComponent/loadingComponent";
 import { OrganPetitionListUtils } from '../../Utils/OrganPetitionListUtils';
+import { ErrorLoading } from "../../../../../components/shared/errorLoading/errorLoading";
 
 @Component({
   selector: 'app-waiting-petitions',
-  imports: [LoadingComponent],
+  imports: [LoadingComponent, ErrorLoading],
   templateUrl: './waitingPetitions.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

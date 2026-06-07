@@ -39,7 +39,7 @@ export class LogIn {
   private redirect(role: string) {
     const route = this.roleRoutes[role];
 
-    if(route){
+    if (route) {
       this.router.navigate([route]);
     }
 
@@ -67,14 +67,15 @@ export class LogIn {
     }
   }
 
-  onSubmit(){
-    if(this.myForm.invalid){
+  onSubmit() {
+    if (this.myForm.invalid) {
       this.myForm.markAllAsTouched();
       return;
     }
 
     const { name, password } = this.myForm.value;
     this.errMessage.set('');
+
 
     this.authService.login(name, password)
       .subscribe({
