@@ -51,23 +51,28 @@ export class UserManager {
   }
 
   loadAllUsers(): void {
-    const urlDoctors =`${environment.url}api/v1/doctors`;
+    const urlDoctors = `${environment.url}api/v1/doctors`;
     const urlCoordinators = `${environment.url}api/v1/coordinators`;
 
-    forkJoin ({
-      doctors: this.http.get<Employee[]>(urlDoctors),
-      coordinators: this.http.get<Employee[]>(urlCoordinators)
+    // Usamos <any> para que permita inspeccionar si el backend devuelve un objeto contenedor o una lista directa
+    forkJoin({
+      doctors: this.http.get<any>(urlDoctors),
+      coordinators: this.http.get<any>(urlCoordinators)
     }).subscribe({
-        next: ({doctors, coordinators}) => {
-          const DoctorList = doctors.map(employee => ({...employee, role: 'DOCTOR'}))
-          const CoordinatorList = coordinators.map(employee => ({...employee, role: 'COORDINATOR'}))
-          this.employees = [...DoctorList, ...CoordinatorList];
-
-          this.cdr.markForCheck();
-        },
-        error: (err) => {console.error(err)}
+      next: ({ doctors, coordinators }) => {
+        const rawDoctors = doctors?.data || doctors?.content || doctors;
+        const rawCoordinators = coordinators?.data || coordinators?.content || coordinators;
+        const finalDoctors = Array.isArray(rawDoctors) ? rawDoctors : [];
+        const finalCoordinators = Array.isArray(rawCoordinators) ? rawCoordinators : [];
+        const DoctorList = finalDoctors.map((employee: any) => ({ ...employee, role: 'DOCTOR' }));
+        const CoordinatorList = finalCoordinators.map((employee: any) => ({ ...employee, role: 'COORDINATOR' }));
+        this.employees = [...DoctorList, ...CoordinatorList];
+        this.cdr.markForCheck();
+      },
+      error: (err) => {
+        console.error('Error loading employees via forkJoin:', err);
+      }
     });
-
   }
   get filteredEmployees(): Employee[] {
     if (!this.searchBar.trim()) {
