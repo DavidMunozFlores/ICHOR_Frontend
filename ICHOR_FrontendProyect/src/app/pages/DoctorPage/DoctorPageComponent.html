@@ -2,7 +2,8 @@
 
 <div class="flex flex-col items-center min-h-screen bg-base-100 p-6">
 
-  <div class="w-full max-w-5xl flex flex-col gap-6"> <h1 class="text-3xl font-bold text-primary text-center">Doctor Page</h1>
+  <div class="w-full max-w-5xl flex flex-col gap-6">
+    <h1 class="text-3xl font-bold text-primary text-center">Doctor Page</h1>
 
     <div class="flex flex-col sm:flex-row justify-between items-center gap-4">
       <input
@@ -35,42 +36,55 @@
           </tr>
         </thead>
         <tbody>
-          <tr
-            *ngFor="let patient of filteredPatients"
-            (click)="selectPatient(patient)"
-            class="hover:bg-primary/10 cursor-pointer transition-colors">
-            <td class="font-medium">{{ patient.name }}</td>
-            <td>{{ patient.identification }}</td>
-            <td>
-              <span class="badge badge-ghost font-bold text-error">{{ patient.bloodType }}</span>
-            </td>
-            <td>{{ patient.height }} cm</td>
-            <td>{{ patient.weight }} kg</td>
-            <td class="text-xs text-base-content/60">{{ patient.internalID }}</td>
-          </tr>
-          <tr *ngIf="filteredPatients.length === 0">
-            <td colspan="6" class="text-center text-base-400 py-4">Patients not found.</td>
-          </tr>
+
+          @for (patient of filteredPatients(); track patient.internalID) {
+            <tr
+              (click)="selectPatient(patient)"
+              class="hover:bg-primary/10 cursor-pointer transition-colors"
+              [class.bg-primary/5]="patientSelected?.internalID === patient.internalID">
+
+              <td class="font-medium">{{ patient.name }}</td>
+              <td>{{ patient.identification }}</td>
+              <td>
+                <span class="badge badge-ghost font-bold text-error">{{ patient.bloodType }}</span>
+              </td>
+              <td>{{ patient.height }} cm</td>
+              <td>{{ patient.weight }} kg</td>
+              <td class="text-xs text-base-content/60">{{ patient.internalID }}</td>
+            </tr>
+
+            @if (patientSelected && patientSelected.internalID === patient.internalID) {
+              <tr class="bg-base-200/50 animation-fade-in">
+                <td colspan="6" class="p-4">
+                  <div class="p-4 bg-base-100 rounded-lg border-l-4 border-primary shadow-inner flex flex-col gap-3">
+
+                    <div class="flex justify-between items-center border-b border-base-300 pb-2">
+                      <h3 class="text-sm font-bold uppercase tracking-wider text-primary">Patient Medical File Details</h3>
+                      <button (click)="$event.stopPropagation(); patientSelected = null" class="btn btn-xs btn-circle btn-ghost">✕</button>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 text-sm pt-1">
+                      <div><span class="font-semibold text-base-content/70">Full name:</span> {{ patientSelected.name }}</div>
+                      <div><span class="font-semibold text-base-content/70">Identification:</span> {{ patientSelected.identification }}</div>
+                      <div><span class="font-semibold text-base-content/70">Blood Type:</span> <span class="text-error font-bold">{{ patientSelected.bloodType }}</span></div>
+                      <div><span class="font-semibold text-base-content/70">Height:</span> {{ patientSelected.height }} cm</div>
+                      <div><span class="font-semibold text-base-content/70">Weight:</span> {{ patientSelected.weight }} kg</div>
+                      <div><span class="font-semibold text-base-content/70">System ID:</span> <span class="font-mono text-xs">{{ patientSelected.internalID }}</span></div>
+                    </div>
+
+                  </div>
+                </td>
+              </tr>
+            }
+          } @empty {
+            <tr>
+              <td colspan="6" class="text-center text-base-400 py-6 font-medium">Patients not found.</td>
+            </tr>
+          }
+
         </tbody>
       </table>
     </div>
 
-    <div *ngIf="patientSelected" class="p-4 bg-base-100 rounded-lg border-l-4 border-primary shadow-sm flex flex-col gap-2">
-      <div class="flex justify-between items-center border-b border-base-300 pb-2">
-        <h3 class="text-lg font-bold text-primary">Patient Medical File</h3>
-        <button (click)="patientSelected = null" class="btn btn-xs btn-circle btn-ghost">✕</button>
-      </div>
-
-      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 pt-2 text-sm">
-        <div><span class="font-semibold text-base-content/70">Full name:</span> {{ patientSelected?.name }}</div>
-        <div><span class="font-semibold text-base-content/70">Identification:</span> {{ patientSelected?.identification }}</div>
-        <div><span class="font-semibold text-base-content/70">Blood Type:</span> <span class="text-error font-bold">{{ patientSelected?.bloodType }}</span></div>
-        <div><span class="font-semibold text-base-content/70">Height:</span> {{ patientSelected?.height }} cm</div>
-        <div><span class="font-semibold text-base-content/70">Weight:</span> {{ patientSelected?.weight }} kg</div>
-        <div><span class="font-semibold text-base-content/70">System ID:</span> {{ patientSelected?.internalID }}</div>
-      </div>
-    </div>
-
   </div>
-
 </div>

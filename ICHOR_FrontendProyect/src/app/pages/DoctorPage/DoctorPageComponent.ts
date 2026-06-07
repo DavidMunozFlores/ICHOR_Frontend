@@ -35,6 +35,7 @@ export class DoctorPageComponent {
   private cdr = inject(ChangeDetectorRef);
   private createPatientService = inject(CreatePatientService);
 
+
   constructor() {
     this.loadPatients();
   }
@@ -66,7 +67,7 @@ loadPatients() {
 
 }
 
-get filteredPatients(): Patient[] {
+ filteredPatients(): Patient[] {
     const currentPatients = this.createPatientService.patients() as unknown as Patient[];
 
     if (!this.searchBar.trim()) {
@@ -79,6 +80,7 @@ get filteredPatients(): Patient[] {
       patient.identification.toLowerCase().includes(query)
     );
   }
+
 
   selectPatient(patient: Patient): void {
     this.patientSelected = patient;
