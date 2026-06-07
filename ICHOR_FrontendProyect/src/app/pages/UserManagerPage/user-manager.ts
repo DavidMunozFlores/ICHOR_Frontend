@@ -11,7 +11,7 @@ import as from "@angular/common/locales/extra/as";
 
 interface Employee {
   username: string;
-  hospitalId: string;
+  hospital: string;
   role: string;
 }
 @Component({
@@ -50,30 +50,18 @@ export class UserManager {
     this.cdr.markForCheck();
   }
 
-  loadAllUsers(): void {
-    const urlDoctors = `${environment.url}api/v1/doctors`;
-    const urlCoordinators = `${environment.url}api/v1/coordinators`;
+loadAllUsers(): void {
+    const urlWorkers = `${environment.url}api/v1/workers`;
 
-    // Usamos <any> para que permita inspeccionar si el backend devuelve un objeto contenedor o una lista directa
-    forkJoin({
-      doctors: this.http.get<any>(urlDoctors),
-      coordinators: this.http.get<any>(urlCoordinators)
-    }).subscribe({
-      next: ({ doctors, coordinators }) => {
-        const rawDoctors = doctors?.data || doctors?.content || doctors;
-        const rawCoordinators = coordinators?.data || coordinators?.content || coordinators;
-        const finalDoctors = Array.isArray(rawDoctors) ? rawDoctors : [];
-        const finalCoordinators = Array.isArray(rawCoordinators) ? rawCoordinators : [];
-        const DoctorList = finalDoctors.map((employee: any) => ({ ...employee, role: 'DOCTOR' }));
-        const CoordinatorList = finalCoordinators.map((employee: any) => ({ ...employee, role: 'COORDINATOR' }));
-        this.employees = [...DoctorList, ...CoordinatorList];
+    this.http.get<any>(urlWorkers).subscribe({
+      next: (workers) => {
+        this.employees = workers.data;
         this.cdr.markForCheck();
       },
-      error: (err) => {
-        console.error('Error loading employees via forkJoin:', err);
-      }
+      error: (err) => { console.error(err); }
     });
   }
+
   get filteredEmployees(): Employee[] {
     if (!this.searchBar.trim()) {
       return this.employees;
@@ -85,7 +73,7 @@ export class UserManager {
     );
   }
   redirectToCreate(): void {
-    this.router.navigate(['/user-manager/create-users']);
+    this.router.navigate(['/create-users']);
   }
 
 
