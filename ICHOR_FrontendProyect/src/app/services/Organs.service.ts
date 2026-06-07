@@ -44,20 +44,20 @@ export class OrganService {
       data: data
     }
 
-    return from(this.encryptService.encrypt(JSON.stringify(body1))).pipe(
-      switchMap((encryptedResult: string) => {
-        const body2: LogInPost = {
-          data: encryptedResult,
-        };
+    // return from(this.encryptService.encrypt(JSON.stringify(body1))).pipe(
+    //   switchMap((encryptedResult: string) => {
+    //     const body2: LogInPost = {
+    //       data: encryptedResult,
+    //     };
 
-        console.log(body2);
+    //     console.log(body2);
 
-        return this.http.post<OrganPostResponse>(`${API_URL}/api/v1/organs/register-organ`, body2).pipe(
+        return this.http.post<OrganPostResponse>(`${API_URL}/api/v1/organs/register-organ`, body1).pipe(
           map(response => this.handleSuccessSave(response)),
           catchError(error => this.handleErrorSave(error))
         );
-      }),
-    );
+    //   }),
+    // );
 
   }
 
