@@ -66,7 +66,7 @@ export class CreatePatientService {
           idHospital: targetHospitalId
         }
         const authCredentials = { username: username, password: password };
-        const patientCreateBody = { auth: authCredentials, data: patientData };
+        const patientCreateBody = { authCredentials: authCredentials, data: patientData };
         console.log(patientCreateBody);
         return from(this.encryptData.encrypt(JSON.stringify(patientCreateBody))).pipe(
           switchMap((encryptedResult: string) => {

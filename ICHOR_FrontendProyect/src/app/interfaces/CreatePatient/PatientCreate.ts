@@ -12,6 +12,6 @@ export interface PatientAuthCredentials {
     password: string
 }
 export interface PatientCreateBody {
-    auth: PatientAuthCredentials,
+    authCredentials: PatientAuthCredentials,
     data: PatientCreateResponse
 }
