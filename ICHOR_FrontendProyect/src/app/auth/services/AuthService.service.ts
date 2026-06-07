@@ -9,7 +9,6 @@ import { LogInCredentials } from '../../interfaces/LogIn/LogInCredentials';
 import { LogInPost } from '../../interfaces/LogIn/LogInPost';
 import { LogInResponse } from '../../interfaces/LogIn/LogInResponse';
 import { Router } from '@angular/router';
-import { routes } from '../../app.routes';
 import { API_URL } from '../../services/API_URL.const';
 
 @Injectable({
@@ -25,18 +24,13 @@ export class AuthService {
     const userTry: LogInCredentials = { username: user, password: pass };
 
 
-    //TODO! DESCOMENTAR ESTO PARA QUE LO MANDE ENCRIPTADO
     return from(this.encryptData.encrypt(JSON.stringify(userTry))).pipe(
-
       switchMap((encryptedResult: string) => {
-
         const body: LogInPost = {
           data: encryptedResult
         };
-
         return this.http.post<LogInResponse>(`${API_URL}/api/v1/auth/log-in`, body);
       }),
-
       catchError(error => this.handleError(error))
     );
   }

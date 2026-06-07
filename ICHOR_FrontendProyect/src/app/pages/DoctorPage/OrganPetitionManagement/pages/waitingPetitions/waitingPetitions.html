@@ -4,7 +4,7 @@
     <thead>
       <tr class="bg-base-300">
         <th>#</th>
-        <th>Patient ID</th>
+        <th>Patient Identification</th>
         <th>Organ</th>
         <th>Status</th>
       </tr>
@@ -17,7 +17,7 @@
       <tr class="hover:bg-base-200 hover:text-inherit cursor-pointer transition-colors bg-warning text-black"
         (click)="petitionListUtils.show(petition.idOrganPetition)">
         <td>{{index + 1}}</td>
-        <td>{{petition.idPatient}}</td>
+        <td>{{petition.identification}}</td>
         <td>{{petition.organType}}</td>
         <td>{{petition.petitionState}}</td>
       </tr>
@@ -101,7 +101,7 @@
       <tr class="hover:bg-base-200 cursor-pointer transition-colors"
         (click)="petitionListUtils.show(petition.idOrganPetition)">
         <td>{{index + petitionsAvailableAssign().length + 1}}</td>
-        <td>{{petition.idPatient}}</td>
+        <td>{{petition.identification}}</td>
         <td>{{petition.organType}}</td>
         <td>{{petition.petitionState}}</td>
       </tr>

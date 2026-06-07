@@ -30,7 +30,6 @@ export class OrganPetition {
   organService = inject(OrganService);
   router = inject(Router);
 
-  // username: WritableSignal<string> = signal(sessionStorage.getItem('username')!);
   bloodTypes: WritableSignal<string[]> = signal(['A+', 'A-', 'B+', 'B-', 'O+', 'O-', 'AB+', 'AB-']);
 
   isLoading: WritableSignal<boolean> = signal(true);

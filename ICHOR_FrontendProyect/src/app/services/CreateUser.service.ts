@@ -37,17 +37,13 @@ export class CreateUserService {
     const doctorCreateBody: userCreateBody = {authCredentials: authCredentials, data: credentials};
 
     return from(this.encryptData.encrypt(JSON.stringify(doctorCreateBody))).pipe(
-
       switchMap((encryptedResult: string) => {
-
         const body: CreateUserPost = {
           data: encryptedResult
         };
 
-
         return this.http.post<CreateUserResponse>(`${API_URL}/api/v1/${role}/create`, body);
       }),
-
       catchError((error) => this.handleError(error))
     );
   }

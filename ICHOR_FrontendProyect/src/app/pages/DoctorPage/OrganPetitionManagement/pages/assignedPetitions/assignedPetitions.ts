@@ -34,7 +34,5 @@ export class AssignedPetitions {
     })
   }
 
-  // TODO! MANEJAR EL ESTADO PARA CUANDO SE HACEN LAS PETICIONES
-
 
 }

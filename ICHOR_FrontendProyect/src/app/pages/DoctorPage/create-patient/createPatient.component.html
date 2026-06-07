@@ -53,7 +53,7 @@
       placeholder="Kg">
 
     <span *ngIf="patientForm.get('weight')?.errors?.['min']" class="text-xs text-error font-medium px-1">
-      Weight cannot be negative.
+      Weight cannot be under 2kg.
     </span>
     <span *ngIf="patientForm.get('weight')?.errors?.['max']" class="text-xs text-error font-medium px-1">
       Maximum weight is 400 kg.

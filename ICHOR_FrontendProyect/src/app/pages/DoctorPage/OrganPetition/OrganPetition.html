@@ -28,7 +28,7 @@
     <fieldset class="fieldset">
       <legend class="fieldset-legend">Patient Identification</legend>
       <input type="text" [class.input-error]="formUtils.isValidField(myForm, 'patientIdentification')" class="input w-full"
-        placeholder="ID" formControlName="patientIdentification" />
+        placeholder="Identification" formControlName="patientIdentification" />
 
       @if( formUtils.isValidField(myForm, 'patientIdentification')){
       <span class="label text-orange-600">{{ formUtils.getFieldError(myForm, 'patientIdentification') }}</span>

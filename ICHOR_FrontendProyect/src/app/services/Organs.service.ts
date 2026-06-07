@@ -1,11 +1,14 @@
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { inject, Injectable, signal, WritableSignal } from '@angular/core';
-import { catchError, map, Observable, of, throwError } from 'rxjs';
+import { catchError, from, map, Observable, of, switchMap, throwError } from 'rxjs';
 import { LogInCredentials } from '../interfaces/LogIn/LogInCredentials';
 import { OrganPostResponse } from '../interfaces/Coordinator/OrganPostResponse.interface';
 import { Organ } from '../interfaces/Coordinator/Organ.interface';
 import { API_URL } from './API_URL.const';
 import { InfoMessageService } from './InfoMessage.service';
+import { OrganPetitionResponse } from '../interfaces/Doctor/OrganPetitionResponse.interface';
+import { LogInPost } from '../interfaces/LogIn/LogInPost';
+import { EncryptDataService } from './EncryptData.service';
 
 
 @Injectable({ providedIn: 'root' })
@@ -13,6 +16,7 @@ export class OrganService {
 
   private http = inject(HttpClient);
   infoMessageService = inject(InfoMessageService);
+  encryptService = inject(EncryptDataService);
 
 
   private _organs: WritableSignal<OrganGetResponse[]> = signal<OrganGetResponse[]>([]);
@@ -35,15 +39,24 @@ export class OrganService {
       password: sessionStorage.getItem('password')!
     }
 
-    const body = {
+    const body1 = {
       authCredentials: authCredentials,
       data: data
     }
 
-    return this.http.post<OrganPostResponse>(`${API_URL}/api/v1/organs/register-organ`, body).pipe(
-      map(response => this.handleSuccessSave(response)),
-      catchError(error => this.handleErrorSave(error))
+    return from(this.encryptService.encrypt(JSON.stringify(body1))).pipe(
+      switchMap((encryptedResult: string) => {
+        const body2: LogInPost = {
+          data: encryptedResult,
+        };
+
+        return this.http.post<OrganPostResponse>(`${API_URL}/api/v1/organs/register-organ`, body2).pipe(
+          map(response => this.handleSuccessSave(response)),
+          catchError(error => this.handleErrorSave(error))
+        );
+      }),
     );
+
   }
 
 

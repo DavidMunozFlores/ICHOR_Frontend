@@ -37,7 +37,7 @@ export class CreatePatientComponent {
       identification: ['', Validators.required],
       bloodType: ['', Validators.required],
       height: ['', [Validators.required, Validators.min(10), Validators.max(250)]],
-      weight: ['', [Validators.required, Validators.min(0), Validators.max(400)]],
+      weight: ['', [Validators.required, Validators.min(2), Validators.max(400)]],
     });
   }
 
