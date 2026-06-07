@@ -5,11 +5,12 @@ import { FormBuilder, FormGroup, ReactiveFormsModule } from "@angular/forms";
 import { HttpClient } from "@angular/common/http";
 import { Router } from '@angular/router';
 import {Validators} from "@angular/forms";
+import { HeaderComponent } from "../../../components/shared/Header/HeaderComponent";
 
 @Component({
   templateUrl: 'create-users.html',
   selector:'app-create-user',
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, HeaderComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 

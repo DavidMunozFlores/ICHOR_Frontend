@@ -4,11 +4,12 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject } from "@
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
 import { CreatePatientService } from '../../../services/CreatePatient.service';
 import { Router } from "@angular/router";
+import { HeaderComponent } from "../../../components/shared/Header/HeaderComponent";
 
 @Component({
   selector: 'app-create-patient',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, HeaderComponent],
   templateUrl: './createPatient.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush
 })

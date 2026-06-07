@@ -50,6 +50,8 @@ export class OrganService {
           data: encryptedResult,
         };
 
+        console.log(body2);
+
         return this.http.post<OrganPostResponse>(`${API_URL}/api/v1/organs/register-organ`, body2).pipe(
           map(response => this.handleSuccessSave(response)),
           catchError(error => this.handleErrorSave(error))
