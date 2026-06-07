@@ -14,7 +14,7 @@ import { DoctorResponse } from '../interfaces/CreatePatient/DoctorResponse';
 @Injectable({
   providedIn: 'root',
 })
-export class CreateUserService {
+export class CreatePatientService {
   private encryptData = inject(EncryptDataService);
   private http = inject(HttpClient);
 

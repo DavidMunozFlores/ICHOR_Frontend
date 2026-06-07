@@ -6,6 +6,7 @@ import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
+import {CreatePatientService} from '../../services/CreatePatient.service';
 
 interface Patient {
     internalID: string,
@@ -29,6 +30,7 @@ export class DoctorPageComponent {
   private http = inject(HttpClient);
   private router = inject(Router);
   private cdr = inject(ChangeDetectorRef);
+  private createPatientService = inject(CreatePatientService);
 
   constructor() {
     this.loadPatients();
@@ -37,6 +39,9 @@ export class DoctorPageComponent {
   goToManagePetitions() {
     this.router.navigate(['/doctor/organ-petitions']);
   }
+  goToCreatePatient() {
+    this.router.navigate(['/doctor/create-patient']);
+  }
 
 
   searchBar: string = '';
@@ -44,13 +49,15 @@ export class DoctorPageComponent {
   patients: Patient[] = [];
 
 loadPatients() {
-     this.http.get<Patient[]>(`${environment.url}api/v1/patients`).subscribe(data => {
-      this.patients = data;
-      this.cdr.markForCheck();
-     },
-
-     error => {
-      console.error('Error fetching patients:', error);
+     this.createPatientService.loadPatients().subscribe({
+       next: (success) => {
+         if (success) {
+          console.log('Patients loaded successfully');
+         }
+       },
+       error: (error) => {
+         console.error('Error fetching patients:', error);
+       }
      });
 
 }
@@ -67,10 +74,6 @@ loadPatients() {
   }
   selectPatient(patient: Patient): void {
     this.patientSelected = patient;
-  }
-
-  goToCreatePatient(): void {
-    this.router.navigate(['/patient-create']);
   }
 }
 
