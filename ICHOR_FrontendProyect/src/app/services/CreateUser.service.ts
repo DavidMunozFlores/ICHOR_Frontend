@@ -8,7 +8,8 @@ import { EncryptDataService } from './EncryptData.service';
 import { CreateUserPost } from '../interfaces/CreateUsers/CreateUserPost';
 import { data, authCredentials, userCreateBody } from '../interfaces/CreateUsers/CreateUser';
 import { API_URL } from './API_URL.const';
-
+import { HospitalGetResponse } from '../interfaces/CreateUsers/HospitalGetResponse.interface';
+import { HospitalsResponse } from '../interfaces/CreateUsers/HospitalsResponse';
 
 @Injectable({
   providedIn: 'root',
@@ -17,13 +18,13 @@ export class CreateUserService {
   private encryptData = inject(EncryptDataService);
   private http = inject(HttpClient);
 
-  private _hospitals:  WritableSignal<HospitalGetResponse[]> = signal<HospitalGetResponse[]>([]);
+  private _hospitals:  WritableSignal<HospitalsResponse[]> = signal<HospitalsResponse[]>([]);
   public hospitals = this._hospitals.asReadonly();
 
   loadHospitals(): Observable<boolean> {
-    return this.http.get<HospitalGetResponse[]>(`${API_URL}/api/v1/hospitals`).pipe(
-      switchMap((response: HospitalGetResponse[]) => {
-        this._hospitals.set(response);
+    return this.http.get<HospitalGetResponse>(`${API_URL}/api/v1/hospitals`).pipe(
+      switchMap((response: HospitalGetResponse) => {
+        this._hospitals.set(response.data);
         return from([true]);
       }),
       catchError((error) => this.handleError(error))

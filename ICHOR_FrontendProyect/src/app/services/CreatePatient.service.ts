@@ -7,8 +7,9 @@ import { throwError } from 'rxjs';
 import { EncryptDataService } from './EncryptData.service';
 import { CreateUserPost } from '../interfaces/CreateUsers/CreateUserPost';
 import { API_URL } from './API_URL.const';
-import { PatientGetResponse } from '../interfaces/CreatePatient/PatientsGetResponse';
+import { PatientGetResponse, PatientsApiResponse } from '../interfaces/CreatePatient/PatientsGetResponse';
 import { DoctorResponse } from '../interfaces/CreatePatient/DoctorResponse';
+import { CreatePatientResponse } from '../interfaces/CreatePatient/PatientCreateResponse';
 
 
 @Injectable({
@@ -21,8 +22,8 @@ export class CreatePatientService {
   private _patients:  WritableSignal<PatientGetResponse[]> = signal<PatientGetResponse[]>([]);
   public patients = this._patients.asReadonly();
 
-  getDoctorByName(name: string): Observable<DoctorResponse> {
-    return this.http.get<DoctorResponse>(`${API_URL}/api/v1/doctors/get-by-name/${name}`).pipe(
+  getDoctorByName(name: string): Observable<DoctorResponse[]> {
+    return this.http.get<DoctorResponse[]>(`${API_URL}/api/v1/doctors/get-by-name/${name}`).pipe(
       catchError((error) => this.handleError(error))
     );
   }
@@ -31,12 +32,15 @@ export class CreatePatientService {
   loadPatients(): Observable<boolean> {
 
     return this.getDoctorByName(sessionStorage.getItem('username') || '').pipe(
-      switchMap((doctor: DoctorResponse) => {
+      switchMap((doctors: DoctorResponse[]) => {
+        const doctor = doctors[0];
         const targetHospitalId = doctor.hospitalId;
 
-        return this.http.get<PatientGetResponse[]>(`${API_URL}/api/v1/patients`).pipe(
-          map((patients: PatientGetResponse[]) => {
-            this._patients.set(patients.filter(p => p.idHospital === targetHospitalId));
+        return this.http.get<PatientsApiResponse>(`${API_URL}/api/v1/patients`).pipe(
+          map((response: PatientsApiResponse) => {
+
+            const rawPatients = response.data;
+            this._patients.set(rawPatients.filter(p => p.idHospital === targetHospitalId));
             return true;
           })
         );
@@ -45,27 +49,33 @@ export class CreatePatientService {
     );
   }
 
-  // public CreateUser(user: string, pass: string, hospitalID: Number, userManager: string, passManager: string, role: string ): Observable<CreateUserResponse> {
-  //   const credentials: data = { username: user, password: pass, idHospital: hospitalID};
-  //   const authCredentials: authCredentials = {username: userManager, password: passManager};
-  //   const doctorCreateBody: userCreateBody = {authCredentials: authCredentials, data: credentials};
+  public createPatient(InternalID: string,name: string, identification: string, bloodType: string, height: number, weight: number): Observable<CreatePatientResponse> {
+    const username = sessionStorage.getItem('username') || '';
+    const password = sessionStorage.getItem('password') || '';
+    return this.getDoctorByName(sessionStorage.getItem('username') || '').pipe(
+      switchMap((doctors: DoctorResponse[]) => {
+        const doctor = doctors[0];
+        const targetHospitalId: number = doctor.hospitalId;
+        const patientData = {
+          internalID: InternalID,
+          name: name,
+          identification: identification,
+          bloodType: bloodType,
+          height: height,
+          weight: weight,
+          idHospital: targetHospitalId
+        }
+        const authCredentials = { username: username, password: password };
+        const patientCreateBody = { auth: authCredentials, data: patientData };
+        console.log(patientCreateBody);
+        return this.http.post<CreatePatientResponse>(`${API_URL}/api/v1/patients/create`, patientData).pipe(
+          catchError((error) => this.handleError(error))
+        );
+      }),
+      catchError((error) => this.handleError(error))
+    );
+  }
 
-
-  //   return from(this.encryptData.encrypt(JSON.stringify(doctorCreateBody))).pipe(
-
-  //     switchMap((encryptedResult: string) => {
-
-  //       const body: CreateUserPost = {
-  //         data: encryptedResult
-  //       };
-
-
-  //       return this.http.post<CreateUserResponse>(`${API_URL}/api/v1/${role}/create`, body);
-  //     }),
-
-  //     catchError((error) => this.handleError(error))
-  //   );
-  // }
 
   private handleError(error: any) {
     let errMessage = 'An error happened.';

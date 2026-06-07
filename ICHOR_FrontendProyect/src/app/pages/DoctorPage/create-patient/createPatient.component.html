@@ -1,32 +1,39 @@
 <div class="flex flex-col justify-center items-center min-h-screen bg-base-200 p-4">
 
-<h2 class="text-2xl font-bold mb-6 text-primary">Register Patient</h2>
+  <h2 class="text-2xl font-bold mb-6 text-primary">Register Patient</h2>
 
   <form [formGroup]="patientForm" (ngSubmit)="onSubmit()" class="flex flex-col gap-2 w-full max-w-xs">
 
-    <label class="font-semibold text-sm">internalID</label>
+    <label class="font-semibold text-sm">Internal ID</label>
     <input type="text" formControlName="internalID" class="input input-primary w-full" placeholder="InternalID">
 
-    <label class="font-semibold text-sm">Full name</label>
-    <input type="text" formControlName="fullname" class="input input-primary w-full" placeholder="name">
+    <label class="font-semibold text-sm">Full Name</label>
+    <input type="text" formControlName="name" class="input input-primary w-full" placeholder="Name">
 
-    <label class="font-semibold text-sm">DNI</label>
-    <input type="text" formControlName="dni" class="input input-primary w-full" placeholder="DNI">
+    <label class="font-semibold text-sm">Identification / DNI</label>
+    <input type="text" formControlName="identification" class="input input-primary w-full" placeholder="Identification / DNI">
 
     <label class="font-semibold text-sm">Height</label>
-    <input type="text" formControlName="height" class="input input-primary w-full" placeholder="Cm">
+    <input type="number" formControlName="height" class="input input-primary w-full" placeholder="Cm">
 
     <label class="font-semibold text-sm">Weight</label>
-    <input type="text" formControlName="weight" class="input input-primary w-full" placeholder="Kg">
+    <input type="number" formControlName="weight" class="input input-primary w-full" placeholder="Kg">
 
-
-    <label class="font-semibold text-sm">Blood type</label>
+    <label class="font-semibold text-sm">Blood Type</label>
     <select formControlName="bloodType" class="select select-primary w-full">
       <option value="" disabled selected>Select type</option>
       <option *ngFor="let type of bloodTypes" [value]="type">{{ type }}</option>
     </select>
 
-    <button type="submit" class="btn btn-primary mt-2 w-full">Create Patient</button>
+    <div class="flex flex-row gap-2 mt-4 w-full">
+      <button type="submit" [disabled]="patientForm.invalid" class="btn btn-primary flex-1">
+        Create
+      </button>
+
+      <button type="button" (click)="onCancel()" class="btn btn-outline btn-error flex-1">
+        Cancel
+      </button>
+    </div>
 
   </form>
 

@@ -9,15 +9,18 @@ import { environment } from '../../../environments/environment';
 import {CreatePatientService} from '../../services/CreatePatient.service';
 
 interface Patient {
-    internalID: string,
-    name: string,
-    identification: string,
-    bloodType: string,
-    height: number,
-    weight: number,
-    idHospital: number
-
+  idPatient: number;
+  internalID: string;
+  name: string;
+  identification: string;
+  bloodType: string;
+  height: number;
+  weight: number;
+  idHospital: number;
+  organPetitions: any[];
 }
+
+
 
 @Component({
   selector: 'app-doctor-page-component',
@@ -53,6 +56,7 @@ loadPatients() {
        next: (success) => {
          if (success) {
           console.log('Patients loaded successfully');
+          this.cdr.markForCheck();
          }
        },
        error: (error) => {
@@ -62,16 +66,20 @@ loadPatients() {
 
 }
 
-  get filteredPatients(): Patient[] {
+get filteredPatients(): Patient[] {
+    const currentPatients = this.createPatientService.patients() as unknown as Patient[];
+
     if (!this.searchBar.trim()) {
-      return this.patients;
+      return currentPatients;
     }
+
     const query = this.searchBar.toLowerCase();
-    return this.patients.filter(patient =>
+    return currentPatients.filter(patient =>
       patient.name.toLowerCase().includes(query) ||
       patient.identification.toLowerCase().includes(query)
     );
   }
+
   selectPatient(patient: Patient): void {
     this.patientSelected = patient;
   }
