@@ -165,35 +165,6 @@ export class OrganPetition {
 
   saveUpdatePetition() {
 
-    // blasdlj coger aqui el ide del paciente con el servicio
-
-
-    // const UpdatePetition: OrganPetitionUpdate = {
-    //   idOrganPetition: this.petitionListUtils.draftPetition()!.idOrganPetition,
-    //   idPatient: this.myForm.controls.idPatient.value!,
-    //   organType: this.myForm.controls.organ.value!,
-    //   weightGrams: Number(this.myForm.controls.weigth.value),
-    //   volumeCC: Number(this.myForm.controls.volume.value!),
-    //   hla: this.myForm.controls.hla.value!.trim()
-    // }
-
-    // console.log(UpdatePetition);
-
-    // this.organPetitionService.updatePetition(UpdatePetition).subscribe({
-    //   next: (success) => {
-    //     this.petitionListUtils.draftPetition.set(undefined);
-    //     this.petitionListUtils.isUpdate.set(false);
-    //     this.router.navigate(['./doctor/organ-petitions']);
-    //   },
-    //   error: (error) => {
-    //     this.petitionListUtils.draftPetition.set(undefined);
-    //     this.petitionListUtils.isUpdate.set(false);
-    //     this.hasError.set(true);
-    //     this.isSubmited.set(false);
-    //   }
-    // });
-
-
     const identification = this.myForm.controls.patientIdentification.value!;
 
     this.organPetitionService.getPatientByIdentification(identification).pipe(

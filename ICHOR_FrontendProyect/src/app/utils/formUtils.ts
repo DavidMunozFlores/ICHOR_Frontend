@@ -1,7 +1,7 @@
 import { AbstractControl, AsyncValidatorFn, FormArray, FormGroup, ValidationErrors } from "@angular/forms";
 import { OrganPetitionService } from "../services/OrganPetitions.service";
 import { inject } from "@angular/core";
-import { map, Observable, of } from "rxjs";
+import { catchError, map, Observable, of } from "rxjs";
 
 
 export class FormUtils {
@@ -58,7 +58,7 @@ export class FormUtils {
         case 'hlaInvalid':
           return errors['hlaInvalid'].message;
 
-        case 'patientFound':
+        case 'patientNotFound':
           return `Not patient found with such identification.`
 
         default:
@@ -161,15 +161,10 @@ export class FormUtils {
     }
 
     return organPetitionService.getPatientByIdentification(patientIdentification).pipe(
-      map(exists => {
-        if(exists){
-          return null;
-        }else{
-          return {
-            patientFound: false
-          }
-        }
-      })
+       map(() => null),
+      catchError(() =>
+        of({ patientNotFound: true })
+      )
     );
   }
 
