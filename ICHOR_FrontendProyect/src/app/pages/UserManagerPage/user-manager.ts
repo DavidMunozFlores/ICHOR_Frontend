@@ -73,7 +73,7 @@ loadAllUsers(): void {
     );
   }
   redirectToCreate(): void {
-    this.router.navigate(['/create-users']);
+    this.router.navigate(['user-manager/create-users']);
   }
 
 

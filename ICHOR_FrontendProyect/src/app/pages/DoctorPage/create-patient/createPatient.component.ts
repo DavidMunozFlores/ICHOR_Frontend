@@ -1,47 +1,53 @@
 import { CommonModule } from "@angular/common";
 import { HttpClient } from "@angular/common/http";
-import { ChangeDetectionStrategy, Component, inject, OnInit } from "@angular/core";
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validator, Validators } from "@angular/forms";
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject } from "@angular/core";
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
 import { CreatePatientService } from '../../../services/CreatePatient.service';
 import { Router } from "@angular/router";
 
 @Component({
+  selector: 'app-create-patient',
+  standalone: true,
   imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './createPatient.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
+export class CreatePatientComponent {
 
-export class createPatient {
+  patientForm!: FormGroup;
+  private fb = inject(FormBuilder);
+  private router = inject(Router);
+  private http = inject(HttpClient);
+  private createPatientService = inject(CreatePatientService);
+  public cdr = inject(ChangeDetectorRef);
 
-    patientForm!: FormGroup;
-    private http = inject(HttpClient)
-    private CreatePatientService = inject(CreatePatientService);
+  errorMessage: string = '';
+  bloodTypes: string[] = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'];
 
-    bloodTypes: string[] = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'];
+  readonly NAME_REGEX = /^[a-zA-ZàáâäãåąčćęèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçčšžæÀÁÂÄÃÅĄĆČĖĘÈÉÊËÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆČŠŽ∂ð ,.'-]{10,50}$/;
 
-    constructor(private fb: FormBuilder, private router: Router){
-        this.initForm();
-    }
+  constructor() {
+    this.initForm();
+  }
 
+  initForm(): void {
+    this.patientForm = this.fb.group({
+      internalID: ['', Validators.required],
+      name: ['', [Validators.required, Validators.pattern(this.NAME_REGEX)]],
+      identification: ['', Validators.required],
+      bloodType: ['', Validators.required],
+      height: ['', [Validators.required, Validators.min(10), Validators.max(250)]],
+      weight: ['', [Validators.required, Validators.min(0), Validators.max(400)]],
+    });
+  }
 
+  onSubmit(): void {
+    if (this.patientForm.invalid) return;
 
-    initForm(): void {
-      this.patientForm = this.fb.group({
-        internalID: ['', Validators.required],
-        name: ['', Validators.required],
-        identification: ['', Validators.required],
-        bloodType: ['', Validators.required],
-        height: ['', [Validators.required, Validators.min(0)]],
-        weight: ['', [Validators.required, Validators.min(0)]],
-
-      });
-    }
-
-    onSubmit(): void {
-
+    this.errorMessage = ''; // Limpiamos residuos de errores anteriores
     const { internalID, name, identification, height, weight, bloodType } = this.patientForm.value;
-          console.log(bloodType);
-    this.CreatePatientService.createPatient(
+
+    this.createPatientService.createPatient(
       internalID,
       name,
       identification,
@@ -53,11 +59,14 @@ export class createPatient {
         console.log('Patient created successfully:', response);
         this.router.navigate(['/doctor']);
       },
-      error: (error) => {
-        console.error('Failed to create patient:', error);
+      error: (err: Error) => {
+        this.errorMessage = err.message;
+
+        this.cdr.markForCheck();
       }
     });
   }
+
   onCancel(): void {
     this.router.navigate(['/doctor']);
   }

@@ -10,7 +10,7 @@ import { CancelledPetitions } from "./OrganPetitionManagement/pages/cancelledPet
 import { DraftPetitions } from "./OrganPetitionManagement/pages/draftPetitions/draftPetitions";
 import { OrganPetition } from "./OrganPetition/OrganPetition";
 import { Component } from '@angular/core';
-import { createPatient } from "./create-patient/createPatient.component";
+import { CreatePatientComponent } from "./create-patient/createPatient.component";
 
 
 export const doctorRoutes: Routes = [
@@ -29,7 +29,7 @@ export const doctorRoutes: Routes = [
   },
   {
     path: 'create-patient',
-    component: createPatient,
+    component: CreatePatientComponent,
     canActivate: [authGuard, roleGuard],
     data: { role: ['DOCTOR'] },
   },

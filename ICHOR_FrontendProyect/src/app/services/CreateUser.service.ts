@@ -60,6 +60,8 @@ export class CreateUserService {
         errMessage = 'Server Error';
       } else if (error.status === 500) {
         errMessage = 'Error de Front :D';
+      } else if (error.status === 409) {
+        errMessage = 'Username already exists';
       }
     } else {
       console.error('Encryption or Client Error:', error);
