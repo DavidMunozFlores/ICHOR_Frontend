@@ -76,16 +76,6 @@ export class LogIn {
     const { name, password } = this.myForm.value;
     this.errMessage.set('');
 
-    // // DESCOMENTAR ESTO --------------------
-
-    // sessionStorage.setItem('username', 'Doctor');
-    // sessionStorage.setItem('password', '1234');
-    // sessionStorage.setItem('role', 'DOCTOR');
-    // this.myForm.reset();
-    // this.redirect(sessionStorage.getItem('role')!);
-
-
-    // // DESCOMENTAR ESTO --------------------
 
     this.authService.login(name, password)
       .subscribe({

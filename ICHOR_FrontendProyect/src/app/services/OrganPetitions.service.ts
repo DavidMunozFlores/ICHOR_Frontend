@@ -22,11 +22,11 @@ export class OrganPetitionService {
 
 
   private _lastPatientByIdentification:
-    WritableSignal<PatientResponse | {}> = signal<PatientResponse | {}>({});
+    WritableSignal<PatientResponse | undefined> = signal<PatientResponse | undefined>(undefined);
   lastPatientByIdentification = this._lastPatientByIdentification.asReadonly();
 
   private _lastPatientById:
-    WritableSignal<PatientResponse | {}> = signal<PatientResponse | {}>({});
+    WritableSignal<PatientResponse | undefined> = signal<PatientResponse | undefined>(undefined);
   lastPatientById = this._lastPatientById.asReadonly();
 
 
@@ -329,7 +329,7 @@ export class OrganPetitionService {
     console.error('Catched error on GET petition to obtain patient by identification: ', errMessage);
 
 
-    this._lastPatientByIdentification.set({});
+    this._lastPatientByIdentification.set(undefined);
     return of(false);
 
   }
@@ -352,7 +352,7 @@ export class OrganPetitionService {
     console.error('Catched error on GET petition to obtain patient by id: ', errMessage);
 
 
-    this._lastPatientById.set({});
+    this._lastPatientById.set(undefined);
     return of(false);
 
   }
