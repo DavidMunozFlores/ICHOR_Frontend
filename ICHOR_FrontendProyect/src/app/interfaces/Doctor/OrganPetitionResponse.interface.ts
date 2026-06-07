@@ -3,6 +3,7 @@ import { hlaAllele, OrganPostResponse } from "../Coordinator/OrganPostResponse.i
 export interface OrganPetitionResponse {
   idOrganPetition: number,
   idPatient: number,
+  identification: string,
   organType: string,
   weightGrams: number,
   volumeCC: number,
