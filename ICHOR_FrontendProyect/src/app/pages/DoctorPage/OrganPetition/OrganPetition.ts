@@ -13,6 +13,7 @@ import { Router, RouterLink } from "@angular/router";
 import { OrganPetitionListUtils } from '../OrganPetitionManagement/Utils/OrganPetitionListUtils';
 import { OrganPetitionUpdatePost } from '../../../interfaces/Doctor/OrganPetitionUpdatePost.interface';
 import { OrganPetitionUpdate } from '../../../interfaces/Doctor/OrganPetitionUpdate.interface';
+import { switchMap } from 'rxjs';
 
 @Component({
   selector: 'app-organ-petition',
@@ -61,11 +62,16 @@ export class OrganPetition {
 
 
   myForm = this.fb.group({
-    patientIdentification:
-      [this.petitionListUtils.getPatientById(this.petitionListUtils.draftPetition()?.idPatient)?.identification,
-      [Validators.required],
-      [this.formUtils.patientExistsByIdentification(this.organPetitionService)]
-      ],
+    patientIdentification: this.fb.control(
+      this.petitionListUtils.draftPetition()?.identification,
+      {
+        validators: [Validators.required],
+        asyncValidators: [
+          this.formUtils.patientExistsByIdentification(this.organPetitionService)
+        ],
+        updateOn: 'blur' // all this just to put this line because i didnt want to make petitions all the time
+      }
+    ),
     organ: [this.petitionListUtils.draftPetition()?.organType, [Validators.required]],
     weigth: [this.petitionListUtils.draftPetition()?.weightGrams, [Validators.required, Validators.min(10), Validators.max(4000)]],
     volume: [this.petitionListUtils.draftPetition()?.volumeCC, [Validators.required, Validators.min(10), Validators.max(4000)]],
@@ -130,69 +136,65 @@ export class OrganPetition {
 
     const identification = this.myForm.controls.patientIdentification.value!;
 
+    this.organPetitionService.getPatientByIdentification(identification).pipe(
+      switchMap(patient => {
 
-    const patient = () => {
-      this.organPetitionService.getPatientByIdentification(identification).subscribe();
-      return this.organPetitionService.lastPatientByIdentification();
-    }
+        const petition: IOrganPetition = {
+          idPatient: patient.idPatient,
+          organType: this.myForm.controls.organ.value!,
+          weightGrams: Number(this.myForm.controls.weigth.value),
+          volumeCC: Number(this.myForm.controls.volume.value!),
+          hla: this.myForm.controls.hla.value!
+        };
 
-    if(patient !== undefined){
-
-      const petition: IOrganPetition = {
-        idPatient: patient()!.idPatient,
-        organType: this.myForm.controls.organ.value!,
-        weightGrams: Number(this.myForm.controls.weigth.value),
-        volumeCC: Number(this.myForm.controls.volume.value!),
-        hla: this.myForm.controls.hla.value!
+        return this.organPetitionService.savePetition(petition);
+      })
+    ).subscribe({
+      next: () => {
+        this.petitionListUtils.draftPetition.set(undefined);
+        this.router.navigate(['./doctor/organ-petitions']);
+      },
+      error: () => {
+        this.hasError.set(true);
+        this.isSubmited.set(false);
       }
-
-      console.log(petition);
-
-      this.organPetitionService.savePetition(petition).subscribe({
-        next: (success) => {
-          this.petitionListUtils.draftPetition.set(undefined);
-          this.router.navigate(['./doctor/organ-petitions']);
-        },
-        error: (error) => {
-          this.hasError.set(true);
-          this.isSubmited.set(false);
-        }
-      });
-
-    }
+    });
 
   }
 
 
   saveUpdatePetition() {
 
-    // blasdlj coger aqui el ide del paciente con el servicio
+    const identification = this.myForm.controls.patientIdentification.value!;
 
+    this.organPetitionService.getPatientByIdentification(identification).pipe(
+      switchMap(patient => {
 
-    // const UpdatePetition: OrganPetitionUpdate = {
-    //   idOrganPetition: this.petitionListUtils.draftPetition()!.idOrganPetition,
-    //   idPatient: this.myForm.controls.idPatient.value!,
-    //   organType: this.myForm.controls.organ.value!,
-    //   weightGrams: Number(this.myForm.controls.weigth.value),
-    //   volumeCC: Number(this.myForm.controls.volume.value!),
-    //   hla: this.myForm.controls.hla.value!.trim()
-    // }
+        const petition: OrganPetitionUpdate = {
+          idOrganPetition: this.petitionListUtils.draftPetition()!.idOrganPetition,
+          idPatient: patient.idPatient,
+          organType: this.myForm.controls.organ.value!,
+          weightGrams: Number(this.myForm.controls.weigth.value),
+          volumeCC: Number(this.myForm.controls.volume.value!),
+          hla: this.myForm.controls.hla.value!
+        };
 
-    // console.log(UpdatePetition);
+        return this.organPetitionService.updatePetition(petition);
+      })
+    ).subscribe({
+      next: () => {
+        this.petitionListUtils.draftPetition.set(undefined);
+        this.petitionListUtils.isUpdate.set(false);
+        this.router.navigate(['./doctor/organ-petitions']);
+      },
+      error: () => {
+        this.petitionListUtils.draftPetition.set(undefined);
+        this.petitionListUtils.isUpdate.set(false);
+        this.hasError.set(true);
+        this.isSubmited.set(false);
+      }
+    });
 
-    // this.organPetitionService.updatePetition(UpdatePetition).subscribe({
-    //   next: (success) => {
-    //     this.petitionListUtils.draftPetition.set(undefined);
-    //     this.petitionListUtils.isUpdate.set(false);
-    //     this.router.navigate(['./doctor/organ-petitions']);
-    //   },
-    //   error: (error) => {
-    //     this.petitionListUtils.draftPetition.set(undefined);
-    //     this.petitionListUtils.isUpdate.set(false);
-    //     this.hasError.set(true);
-    //     this.isSubmited.set(false);
-    //   }
-    // });
 
   }
 }

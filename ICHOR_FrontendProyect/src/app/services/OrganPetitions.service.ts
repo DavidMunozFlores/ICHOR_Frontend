@@ -75,12 +75,9 @@ export class OrganPetitionService {
 
 
 
-  getPatientByIdentification(identification: string): Observable<boolean> {
+  getPatientByIdentification(identification: string): Observable<PatientResponse> {
 
-    return this.http.get<PatientResponse>(`${API_URL}/api/v1/patients/identification/${identification}`).pipe(
-      map(response => this.handleSuccessGetPatientByIdentification(response)),
-      catchError(error => this.handleErrorGetPatientByIdentification(error))
-    );
+    return this.http.get<PatientResponse>(`${API_URL}/api/v1/patients/identification/${identification}`);
 
   }
 
