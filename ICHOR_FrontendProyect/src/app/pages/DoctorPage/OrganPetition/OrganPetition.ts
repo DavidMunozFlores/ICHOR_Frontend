@@ -61,7 +61,11 @@ export class OrganPetition {
 
 
   myForm = this.fb.group({
-    idPatient: [this.petitionListUtils.draftPetition()?.idPatient, [Validators.required, Validators.min(1)]],
+    patientIdentification:
+      [this.petitionListUtils.getPatientById(this.petitionListUtils.draftPetition()?.idPatient)?.identification,
+      [Validators.required],
+      [this.formUtils.patientExistsByIdentification(this.organPetitionService)]
+      ],
     organ: [this.petitionListUtils.draftPetition()?.organType, [Validators.required]],
     weigth: [this.petitionListUtils.draftPetition()?.weightGrams, [Validators.required, Validators.min(10), Validators.max(4000)]],
     volume: [this.petitionListUtils.draftPetition()?.volumeCC, [Validators.required, Validators.min(10), Validators.max(4000)]],
@@ -124,55 +128,60 @@ export class OrganPetition {
 
   saveNewPetition() {
 
-    const petition: IOrganPetition = {
-      idPatient: Number(this.myForm.controls.idPatient.value!),
-      organType: this.myForm.controls.organ.value!,
-      weightGrams: Number(this.myForm.controls.weigth.value),
-      volumeCC: Number(this.myForm.controls.volume.value!),
-      hla: this.myForm.controls.hla.value!
-    }
+    // //blasdlj coger aqui el ide del paciente con el servicio
 
-    console.log(petition);
+    // const petition: IOrganPetition = {
+    //   idPatient: Number(this.myForm.controls.idPatient.value!),
+    //   organType: this.myForm.controls.organ.value!,
+    //   weightGrams: Number(this.myForm.controls.weigth.value),
+    //   volumeCC: Number(this.myForm.controls.volume.value!),
+    //   hla: this.myForm.controls.hla.value!
+    // }
 
-    this.organPetitionService.savePetition(petition).subscribe({
-      next: (success) => {
-        this.petitionListUtils.draftPetition.set(undefined);
-        this.router.navigate(['./doctor/organ-petitions']);
-      },
-      error: (error) => {
-        this.hasError.set(true);
-        this.isSubmited.set(false);
-      }
-    });
+    // console.log(petition);
+
+    // this.organPetitionService.savePetition(petition).subscribe({
+    //   next: (success) => {
+    //     this.petitionListUtils.draftPetition.set(undefined);
+    //     this.router.navigate(['./doctor/organ-petitions']);
+    //   },
+    //   error: (error) => {
+    //     this.hasError.set(true);
+    //     this.isSubmited.set(false);
+    //   }
+    // });
   }
 
 
   saveUpdatePetition() {
 
-    const UpdatePetition: OrganPetitionUpdate = {
-      idOrganPetition: this.petitionListUtils.draftPetition()!.idOrganPetition,
-      idPatient: this.myForm.controls.idPatient.value!,
-      organType: this.myForm.controls.organ.value!,
-      weightGrams: Number(this.myForm.controls.weigth.value),
-      volumeCC: Number(this.myForm.controls.volume.value!),
-      hla: this.myForm.controls.hla.value!.trim()
-    }
+    // blasdlj coger aqui el ide del paciente con el servicio
 
-    console.log(UpdatePetition);
 
-    this.organPetitionService.updatePetition(UpdatePetition).subscribe({
-      next: (success) => {
-        this.petitionListUtils.draftPetition.set(undefined);
-        this.petitionListUtils.isUpdate.set(false);
-        this.router.navigate(['./doctor/organ-petitions']);
-      },
-      error: (error) => {
-        this.petitionListUtils.draftPetition.set(undefined);
-        this.petitionListUtils.isUpdate.set(false);
-        this.hasError.set(true);
-        this.isSubmited.set(false);
-      }
-    });
+    // const UpdatePetition: OrganPetitionUpdate = {
+    //   idOrganPetition: this.petitionListUtils.draftPetition()!.idOrganPetition,
+    //   idPatient: this.myForm.controls.idPatient.value!,
+    //   organType: this.myForm.controls.organ.value!,
+    //   weightGrams: Number(this.myForm.controls.weigth.value),
+    //   volumeCC: Number(this.myForm.controls.volume.value!),
+    //   hla: this.myForm.controls.hla.value!.trim()
+    // }
+
+    // console.log(UpdatePetition);
+
+    // this.organPetitionService.updatePetition(UpdatePetition).subscribe({
+    //   next: (success) => {
+    //     this.petitionListUtils.draftPetition.set(undefined);
+    //     this.petitionListUtils.isUpdate.set(false);
+    //     this.router.navigate(['./doctor/organ-petitions']);
+    //   },
+    //   error: (error) => {
+    //     this.petitionListUtils.draftPetition.set(undefined);
+    //     this.petitionListUtils.isUpdate.set(false);
+    //     this.hasError.set(true);
+    //     this.isSubmited.set(false);
+    //   }
+    // });
 
   }
 }

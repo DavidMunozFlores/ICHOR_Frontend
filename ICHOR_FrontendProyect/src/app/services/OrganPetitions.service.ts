@@ -11,6 +11,7 @@ import { OrganPetitionUpdateStatusPatch } from '../interfaces/Doctor/OrganPetiti
 import { OrganPetitionUpdate } from '../interfaces/Doctor/OrganPetitionUpdate.interface';
 import { OrganPetitionUpdatePost } from '../interfaces/Doctor/OrganPetitionUpdatePost.interface';
 import { InfoMessageService } from './InfoMessage.service';
+import { PatientResponse } from '../interfaces/Doctor/PatientResponse';
 
 
 @Injectable({ providedIn: 'root' })
@@ -18,6 +19,17 @@ export class OrganPetitionService {
 
   private http = inject(HttpClient);
   private infoMessageService = inject(InfoMessageService);
+
+
+  private _lastPatientByIdentification:
+    WritableSignal<PatientResponse | {}> = signal<PatientResponse | {}>({});
+  lastPatientByIdentification = this._lastPatientByIdentification.asReadonly();
+
+  private _lastPatientById:
+    WritableSignal<PatientResponse | {}> = signal<PatientResponse | {}>({});
+  lastPatientById = this._lastPatientById.asReadonly();
+
+
 
 
   private _draftPetitions: WritableSignal<OrganPetitionResponse[]> = signal<OrganPetitionResponse[]>([]);
@@ -60,6 +72,26 @@ export class OrganPetitionService {
 
   private _lastPetitionDeleted: WritableSignal<OrganPetitionResponse | {}> = signal({});
   lastPetitionDeleted = this._lastPetitionDeleted.asReadonly();
+
+
+
+  getPatientByIdentification(identification: string): Observable<boolean> {
+
+    return this.http.get<PatientResponse>(`${API_URL}/api/v1/patients/identification/${identification}`).pipe(
+      map(response => this.handleSuccessGetPatientByIdentification(response)),
+      catchError(error => this.handleErrorGetPatientByIdentification(error))
+    );
+
+  }
+
+  getPatientById(id: number): Observable<boolean> {
+
+    return this.http.get<PatientResponse>(`${API_URL}/api/v1/patients/${id}`).pipe(
+      map(response => this.handleSuccessGetPatientById(response)),
+      catchError(error => this.handleErrorGetPatientById(error))
+    );
+
+  }
 
 
 
@@ -194,20 +226,6 @@ export class OrganPetitionService {
       data: cancelPetition
     }
 
-//     PATCH
-// /api/v1/organ-petitions/cancel
-
-
-// {
-//   "authCredentials": {
-//     "username": "string",
-//     "password": "string"
-//   },
-//   "data": {
-//     "idOrganPetition": 0
-//   }
-// }
-
 
     return this.http.patch<OrganPetitionResponse>(`${API_URL}/api/v1/organ-petitions/cancel`, body).pipe(
       map(response => this.handleSuccessCancel(response)),
@@ -246,6 +264,16 @@ export class OrganPetitionService {
     )
   }
 
+  private handleSuccessGetPatientByIdentification(patient: PatientResponse) {
+    this._lastPatientByIdentification.set(patient);
+    return true;
+  }
+
+  private handleSuccessGetPatientById(patient: PatientResponse) {
+    this._lastPatientById.set(patient);
+    return true;
+  }
+
   private handleSuccessLoad(petitions: OrganPetitionResponse[], signalToSet: WritableSignal<OrganPetitionResponse[]>) {
     signalToSet.set(petitions);
     this.infoMessageService.loadInfo('Petitions loaded correctly.');
@@ -282,6 +310,52 @@ export class OrganPetitionService {
     return true;
   }
 
+
+  private handleErrorGetPatientByIdentification(error:any){
+
+    let errMessage = `Unexpected error happened.`;
+
+    if (error instanceof HttpErrorResponse) {
+      if (error.status === 0) {
+        errMessage = 'Server Error';
+      } else if (error.status === 500) {
+        errMessage = 'Imposible to obtain patient by identification.';
+      }
+    } else {
+      console.error('Encryption or Client Error:', error);
+      errMessage = error.message || 'Client side error';
+    }
+
+    console.error('Catched error on GET petition to obtain patient by identification: ', errMessage);
+
+
+    this._lastPatientByIdentification.set({});
+    return of(false);
+
+  }
+
+  private handleErrorGetPatientById(error:any){
+
+    let errMessage = `Unexpected error happened.`;
+
+    if (error instanceof HttpErrorResponse) {
+      if (error.status === 0) {
+        errMessage = 'Server Error';
+      } else if (error.status === 500) {
+        errMessage = 'Imposible to obtain patient by id.';
+      }
+    } else {
+      console.error('Encryption or Client Error:', error);
+      errMessage = error.message || 'Client side error';
+    }
+
+    console.error('Catched error on GET petition to obtain patient by id: ', errMessage);
+
+
+    this._lastPatientById.set({});
+    return of(false);
+
+  }
 
   private handleErrorLoad(error: any, signalToSet: WritableSignal<OrganPetitionResponse[]>) {
 

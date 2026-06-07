@@ -1,12 +1,18 @@
-import { AbstractControl, FormArray, FormGroup, ValidationErrors } from "@angular/forms";
+import { AbstractControl, AsyncValidatorFn, FormArray, FormGroup, ValidationErrors } from "@angular/forms";
+import { OrganPetitionService } from "../services/OrganPetitions.service";
+import { inject } from "@angular/core";
+import { map, Observable, of } from "rxjs";
 
 
 export class FormUtils {
   //aqui podemos poner expresiones regulares y cositas que necesitemos para validar
 
+
+
   static namePattern = '^([a-zA-Z]+) ([a-zA-Z]+)$';
   static emailPattern = '^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,4}$';
   static notOnlySpacesPattern = '^[a-zA-Z0-9]+$';
+  static passwordRegisterPattern = '^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{8,127}$';
 
   static getTextError(errors: ValidationErrors) {
 
@@ -52,6 +58,8 @@ export class FormUtils {
         case 'hlaInvalid':
           return errors['hlaInvalid'].message;
 
+        case 'patientFound':
+          return `Not patient found with such identification.`
 
         default:
           return `Error de validación no controlado ${key}`;
@@ -138,6 +146,33 @@ export class FormUtils {
     }
 
     return null;
+  }
+
+
+  static patientExistsByIdentification(organPetitionService: OrganPetitionService): AsyncValidatorFn {
+
+
+    return (control: AbstractControl): Observable<ValidationErrors | null> => {
+
+    const patientIdentification = control.value
+
+    if(!control.value){
+      return of(null);
+    }
+
+    return organPetitionService.getPatientByIdentification(patientIdentification).pipe(
+      map(exists => {
+        if(exists){
+          return null;
+        }else{
+          return {
+            patientFound: false
+          }
+        }
+      })
+    );
+  }
+
   }
 
 }

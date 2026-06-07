@@ -26,12 +26,12 @@
   <form [formGroup]="myForm" (ngSubmit)="showVerification()">
 
     <fieldset class="fieldset">
-      <legend class="fieldset-legend">Patient ID</legend>
-      <input type="text" [class.input-error]="formUtils.isValidField(myForm, 'idPatient')" class="input w-full"
-        placeholder="ID" formControlName="idPatient" />
+      <legend class="fieldset-legend">Patient Identification</legend>
+      <input type="text" [class.input-error]="formUtils.isValidField(myForm, 'patientIdentification')" class="input w-full"
+        placeholder="ID" formControlName="patientIdentification" />
 
-      @if( formUtils.isValidField(myForm, 'idPatient')){
-      <span class="label text-orange-600">{{ formUtils.getFieldError(myForm, 'idPatient') }}</span>
+      @if( formUtils.isValidField(myForm, 'patientIdentification')){
+      <span class="label text-orange-600">{{ formUtils.getFieldError(myForm, 'patientIdentification') }}</span>
       }
     </fieldset>
 

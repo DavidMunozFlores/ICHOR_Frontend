@@ -6,6 +6,7 @@ import { Injectable } from '@angular/core';
 import { OrganPetitionResponse } from "../../../../interfaces/Doctor/OrganPetitionResponse.interface";
 import { Router } from "@angular/router";
 import { InfoMessageService } from "../../../../services/InfoMessage.service";
+import { PatientResponse } from "../../../../interfaces/Doctor/PatientResponse";
 
 @Injectable({providedIn: 'root'})
 export class OrganPetitionListUtils {
@@ -48,6 +49,27 @@ export class OrganPetitionListUtils {
     this.draftPetition.set(petition);
     this.isUpdate.set(true);
     this.router.navigate(['./doctor/create-petition']);
+
+  }
+
+  getPatientById(id: number | undefined): PatientResponse | undefined {
+
+    let patient = undefined;
+
+    if(id === undefined) {
+      return undefined;
+    }
+
+    this.organPetitionService.getPatientById(id).subscribe({
+
+      next: (success) =>{
+        console.log('Patient obtained by patientId: ', success);
+        patient = this.organPetitionService.lastPatientById();
+      }
+
+    });
+
+    return patient;
 
   }
 
