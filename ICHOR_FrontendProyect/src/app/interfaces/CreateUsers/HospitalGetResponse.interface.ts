@@ -1,4 +1,6 @@
-interface HospitalGetResponse {
-  id: number,
-  name: string,
+import { HospitalsResponse } from "./HospitalsResponse";
+
+export interface HospitalGetResponse {
+  data: HospitalsResponse[]
 }
+
