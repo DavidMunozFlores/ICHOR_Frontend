@@ -68,7 +68,15 @@ export class CreatePatientService {
         const authCredentials = { username: username, password: password };
         const patientCreateBody = { auth: authCredentials, data: patientData };
         console.log(patientCreateBody);
-        return this.http.post<CreatePatientResponse>(`${API_URL}/api/v1/patients/create`, patientData).pipe(
+        return from(this.encryptData.encrypt(JSON.stringify(patientCreateBody))).pipe(
+          switchMap((encryptedResult: string) => {
+            const body: CreateUserPost = {
+              data: encryptedResult
+            };
+            return this.http.post<CreatePatientResponse>(`${API_URL}/api/v1/patients/create`, body).pipe(
+              catchError((error) => this.handleError(error))
+            );
+          }),
           catchError((error) => this.handleError(error))
         );
       }),

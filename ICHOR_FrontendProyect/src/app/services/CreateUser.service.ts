@@ -36,7 +36,6 @@ export class CreateUserService {
     const authCredentials: authCredentials = {username: userManager, password: passManager};
     const doctorCreateBody: userCreateBody = {authCredentials: authCredentials, data: credentials};
 
-
     return from(this.encryptData.encrypt(JSON.stringify(doctorCreateBody))).pipe(
 
       switchMap((encryptedResult: string) => {
