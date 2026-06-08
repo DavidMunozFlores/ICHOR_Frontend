@@ -16,7 +16,6 @@ export class EncryptDataService {
   async encrypt(plaintext: string): Promise<string> {
 
 
-
     if (!this.publicKey) {
       try {
         const response: PublicKeyResponse = await firstValueFrom(this.publicKeyService.get());
@@ -29,6 +28,7 @@ export class EncryptDataService {
 
     const keyBuffer = Uint8Array.from(atob(this.publicKey), c => c.charCodeAt(0));
 
+
     const importedKey = await crypto.subtle.importKey(
       'spki',
       keyBuffer,
@@ -37,15 +37,40 @@ export class EncryptDataService {
       ['encrypt']
     );
 
-    const encoded = new TextEncoder().encode(plaintext);
+    const aesKey = await crypto.subtle.generateKey(
+      { name: 'AES-GCM', length: 256},
+      true,
+      ['encrypt']
+    );
+
+    const iv = crypto.getRandomValues(new Uint8Array(12));
+    const encoded: Uint8Array<ArrayBuffer> = new TextEncoder().encode(plaintext);
     const encryptedBuffer = await crypto.subtle.encrypt(
-      { name: 'RSA-OAEP' },
-      importedKey,
+      { name: 'AES-GCM', iv: iv },
+      aesKey,
       encoded
     );
 
-    return btoa(String.fromCharCode(...new Uint8Array(encryptedBuffer)));
+    const rawAesKey = await crypto.subtle.exportKey('raw', aesKey);
+    const encryptedAesKeyBuffer = await crypto.subtle.encrypt(
+      { name: 'RSA-OAEP' },
+      importedKey,
+      rawAesKey
+    );
+
+    return this.packagePayload(iv, encryptedAesKeyBuffer, encryptedBuffer);
   }
 
+  private packagePayload(iv: Uint8Array, encryptedAesKey: ArrayBuffer, encryptedByAesData: ArrayBuffer): string {
+    const encryptedKeyArray = new Uint8Array(encryptedAesKey);
+    const encryptedDataArray = new Uint8Array(encryptedByAesData);
 
+    const payload = {
+      iv: btoa(String.fromCodePoint(...iv)),
+      encryptedKey: btoa(String.fromCharCode(...encryptedKeyArray)),
+      ciphertext: btoa(String.fromCharCode(...encryptedDataArray))
+    }
+
+    return btoa(JSON.stringify(payload));
+  }
 }

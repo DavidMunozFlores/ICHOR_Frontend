@@ -11,7 +11,7 @@ import as from "@angular/common/locales/extra/as";
 
 interface Employee {
   username: string;
-  hospitalId: string;
+  hospital: string;
   role: string;
 }
 @Component({
@@ -50,25 +50,18 @@ export class UserManager {
     this.cdr.markForCheck();
   }
 
-  loadAllUsers(): void {
-    const urlDoctors =`${environment.url}api/v1/doctors`;
-    const urlCoordinators = `${environment.url}api/v1/coordinators`;
+loadAllUsers(): void {
+    const urlWorkers = `${environment.url}api/v1/workers`;
 
-    forkJoin ({
-      doctors: this.http.get<Employee[]>(urlDoctors),
-      coordinators: this.http.get<Employee[]>(urlCoordinators)
-    }).subscribe({
-        next: ({doctors, coordinators}) => {
-          const DoctorList = doctors.map(employee => ({...employee, role: 'DOCTOR'}))
-          const CoordinatorList = coordinators.map(employee => ({...employee, role: 'COORDINATOR'}))
-          this.employees = [...DoctorList, ...CoordinatorList];
-
-          this.cdr.markForCheck();
-        },
-        error: (err) => {console.error(err)}
+    this.http.get<any>(urlWorkers).subscribe({
+      next: (workers) => {
+        this.employees = workers.data;
+        this.cdr.markForCheck();
+      },
+      error: (err) => { console.error(err); }
     });
-
   }
+
   get filteredEmployees(): Employee[] {
     if (!this.searchBar.trim()) {
       return this.employees;
@@ -80,7 +73,7 @@ export class UserManager {
     );
   }
   redirectToCreate(): void {
-    this.router.navigate(['/create-users']);
+    this.router.navigate(['user-manager/create-users']);
   }
 
 

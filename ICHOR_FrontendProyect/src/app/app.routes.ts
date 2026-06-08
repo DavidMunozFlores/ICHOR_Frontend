@@ -1,12 +1,14 @@
 import { Routes } from '@angular/router';
+
 import { LogIn } from './pages/LogInPage/log-in';
-import { createUserComponent } from './pages/create-users/create-users';
 import { UserManager } from './pages/UserManagerPage/user-manager';
+import { createUserComponent } from './pages/UserManagerPage/create-users/create-users';
 import { DoctorPageComponent } from './pages/DoctorPage/DoctorPageComponent';
 import { CoordinatorPageComponent } from './pages/CoordinatorPage/CoordinatorPageComponent';
 import { authGuard } from './auth/guards/authGuard.guard';
 import { roleGuard } from './auth/guards/roleGuard.guard';
 import { UnauthorizedPage } from './pages/UnauthorizedPage/UnauthorizedPage';
+import { OrganPetitionManagement } from './pages/DoctorPage/OrganPetitionManagement/OrganPetitionManagement';
 
 export const routes: Routes = [
 
@@ -19,31 +21,30 @@ export const routes: Routes = [
     component: LogIn
   },
   {
+    path:'user-manager',
+    component: UserManager
+  },
+  {
     path: 'unauthorized',
     component: UnauthorizedPage
   },
   {
-    path: 'create-users',
-    component: createUserComponent,
-    canActivate: [authGuard, roleGuard],
-    data: { role: ['MANAGER'] }
-  },
-  {
     path: 'user-manager',
-    component: UserManager,
+    loadChildren: () => import('./pages/UserManagerPage/userManager.routes'),
     canActivate: [authGuard, roleGuard],
     data: { role: ['MANAGER'] }
   },
   {
-    path: 'doctor-page',
-    component: DoctorPageComponent,
+    path: 'doctor',
+    loadChildren: () => import('./pages/DoctorPage/doctor.routes'),
     canActivate: [authGuard, roleGuard],
     data: { role: ['DOCTOR'] }
   },
   {
-    path: 'coordinator-page',
+    path: 'coordinator',
     component: CoordinatorPageComponent,
     canActivate: [authGuard, roleGuard],
     data: { role: ['COORDINATOR'] }
-  }
+  },
+
 ];

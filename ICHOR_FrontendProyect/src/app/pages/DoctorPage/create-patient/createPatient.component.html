@@ -1,0 +1,83 @@
+
+<app-header />
+
+<div class="flex flex-col justify-center items-center bg-base-100 p-4">
+
+  <h2 class="text-2xl font-bold mb-6 text-primary">Register Patient</h2>
+
+  <form [formGroup]="patientForm" (ngSubmit)="onSubmit()" class="flex flex-col gap-2 w-full max-w-xs">
+
+    <div *ngIf="errorMessage" class="alert alert-error shadow-sm mb-2 text-sm p-3 flex flex-row items-center gap-2">
+      <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-5 w-5" fill="none" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+      </svg>
+      <span>{{ errorMessage }}</span>
+    </div>
+
+    <label class="font-semibold text-sm">Internal ID</label>
+    <input type="text" formControlName="internalID" class="input input-primary w-full" placeholder="InternalID">
+
+    <label class="font-semibold text-sm">Full Name</label>
+    <input
+      type="text"
+      formControlName="name"
+      class="input input-primary w-full"
+      [class.input-error]="patientForm.get('name')?.invalid && patientForm.get('name')?.dirty"
+      placeholder="Name">
+
+    <span *ngIf="patientForm.get('name')?.errors?.['pattern']" class="text-xs text-error font-medium px-1 leading-tight">
+      Name must be between 10 and 50 characters long.
+    </span>
+
+    <label class="font-semibold text-sm">Identification / DNI</label>
+    <input type="text" formControlName="identification" class="input input-primary w-full" placeholder="Identification / DNI">
+
+    <label class="font-semibold text-sm">Height</label>
+    <input
+      type="number"
+      formControlName="height"
+      class="input input-primary w-full"
+      [class.input-error]="patientForm.get('height')?.invalid && patientForm.get('height')?.dirty"
+      placeholder="Cm">
+
+    <span *ngIf="patientForm.get('height')?.errors?.['min']" class="text-xs text-error font-medium px-1">
+      Minimum height is 10 cm.
+    </span>
+    <span *ngIf="patientForm.get('height')?.errors?.['max']" class="text-xs text-error font-medium px-1">
+      Maximum height is 250 cm.
+    </span>
+
+    <label class="font-semibold text-sm">Weight</label>
+    <input
+      type="number"
+      formControlName="weight"
+      class="input input-primary w-full"
+      [class.input-error]="patientForm.get('weight')?.invalid && patientForm.get('weight')?.dirty"
+      placeholder="Kg">
+
+    <span *ngIf="patientForm.get('weight')?.errors?.['min']" class="text-xs text-error font-medium px-1">
+      Weight cannot be under 2kg.
+    </span>
+    <span *ngIf="patientForm.get('weight')?.errors?.['max']" class="text-xs text-error font-medium px-1">
+      Maximum weight is 400 kg.
+    </span>
+
+    <label class="font-semibold text-sm">Blood Type</label>
+    <select formControlName="bloodType" class="select select-primary w-full">
+      <option value="" disabled selected>Select type</option>
+      <option *ngFor="let type of bloodTypes" [value]="type">{{ type }}</option>
+    </select>
+
+    <div class="flex flex-row gap-2 mt-4 w-full">
+      <button type="submit" [disabled]="patientForm.invalid" class="btn btn-primary flex-1">
+        Create
+      </button>
+
+      <button type="button" (click)="onCancel()" class="btn btn-outline btn-error flex-1">
+        Cancel
+      </button>
+    </div>
+
+  </form>
+
+</div>

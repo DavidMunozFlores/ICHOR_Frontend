@@ -2,10 +2,11 @@ export interface OrganPostResponse {
 organType: string,
 weightGrams: number,
 volumeCC: number,
-hla: hlaAllele[]
+hla: hlaAllele[],
+bloodType: string
 }
 
-interface hlaAllele {
+export interface hlaAllele {
   letter: string,
   allele: string,
   protein: string

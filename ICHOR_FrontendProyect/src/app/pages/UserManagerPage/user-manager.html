@@ -4,7 +4,7 @@
     <span>{{ toastMessage }}</span>
   </div>
 </div>
-<div class="flex flex-col items-center min-h-screen bg-base-200 p-6">
+<div class="flex flex-col items-center min-h-screen bg-base-100 p-6">
 
   <div class="w-full max-w-4xl flex flex-col gap-6">
 
@@ -34,7 +34,7 @@
         <tbody>
           <tr *ngFor="let employee of filteredEmployees" class="hover:bg-base-200 transition-colors">
             <td class="font-medium">{{ employee.username }}</td>
-            <td>{{ employee.hospitalId }}</td>
+            <td>{{ employee.hospital }}</td>
             <td>
   <span class="badge badge-ghost font-medium">
     {{ employee.role }}

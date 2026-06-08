@@ -2,13 +2,16 @@
 <app-loading-component />
 }
 
+
 @else if(hasError()){
-<app-error-loading />
+  <app-error-loading />
 }
 
 @else if(hasLoaded() && !hasError() && !isVerified()) {
 
-<app-header />
+  <app-header />
+
+  <app-info-message />
 
 <div class="card bg-base-300 shadow-xl max-w-2xl mx-auto my-4 p-6">
   <h3 class="text text-green-400 text-2xl card-title mb-4">Welcome {{ this.username() }}</h3>

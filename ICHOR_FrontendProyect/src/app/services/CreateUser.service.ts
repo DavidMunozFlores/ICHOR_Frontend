@@ -7,7 +7,9 @@ import { throwError } from 'rxjs';
 import { EncryptDataService } from './EncryptData.service';
 import { CreateUserPost } from '../interfaces/CreateUsers/CreateUserPost';
 import { data, authCredentials, userCreateBody } from '../interfaces/CreateUsers/CreateUser';
-
+import { API_URL } from './API_URL.const';
+import { HospitalGetResponse } from '../interfaces/CreateUsers/HospitalGetResponse.interface';
+import { HospitalsResponse } from '../interfaces/CreateUsers/HospitalsResponse';
 
 @Injectable({
   providedIn: 'root',
@@ -15,15 +17,14 @@ import { data, authCredentials, userCreateBody } from '../interfaces/CreateUsers
 export class CreateUserService {
   private encryptData = inject(EncryptDataService);
   private http = inject(HttpClient);
-  API_URL = 'http://localhost:8080/api/v1/hospitals';
 
-  private _hospitals:  WritableSignal<HospitalGetResponse[]> = signal<HospitalGetResponse[]>([]);
+  private _hospitals:  WritableSignal<HospitalsResponse[]> = signal<HospitalsResponse[]>([]);
   public hospitals = this._hospitals.asReadonly();
 
   loadHospitals(): Observable<boolean> {
-    return this.http.get<HospitalGetResponse[]>(`${this.API_URL}`).pipe(
-      switchMap((response: HospitalGetResponse[]) => {
-        this._hospitals.set(response);
+    return this.http.get<HospitalGetResponse>(`${API_URL}/api/v1/hospitals`).pipe(
+      switchMap((response: HospitalGetResponse) => {
+        this._hospitals.set(response.data);
         return from([true]);
       }),
       catchError((error) => this.handleError(error))
@@ -35,22 +36,14 @@ export class CreateUserService {
     const authCredentials: authCredentials = {username: userManager, password: passManager};
     const doctorCreateBody: userCreateBody = {authCredentials: authCredentials, data: credentials};
 
-    const url = `http://localhost:8080/api/v1/${role}/create`;
-
-
-
     return from(this.encryptData.encrypt(JSON.stringify(doctorCreateBody))).pipe(
-
       switchMap((encryptedResult: string) => {
-
         const body: CreateUserPost = {
           data: encryptedResult
         };
 
-
-        return this.http.post<CreateUserResponse>(url, body);
+        return this.http.post<CreateUserResponse>(`${API_URL}/api/v1/${role}/create`, body);
       }),
-
       catchError((error) => this.handleError(error))
     );
   }
@@ -63,6 +56,8 @@ export class CreateUserService {
         errMessage = 'Server Error';
       } else if (error.status === 500) {
         errMessage = 'Error de Front :D';
+      } else if (error.status === 409) {
+        errMessage = 'Username already exists';
       }
     } else {
       console.error('Encryption or Client Error:', error);

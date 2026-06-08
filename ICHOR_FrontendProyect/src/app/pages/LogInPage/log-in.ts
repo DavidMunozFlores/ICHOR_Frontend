@@ -23,8 +23,8 @@ export class LogIn {
 
   private readonly roleRoutes: Record<string, string> = {
     'MANAGER': '/user-manager',
-    'DOCTOR': '/doctor-page',
-    'COORDINATOR': '/coordinator-page'
+    'DOCTOR': '/doctor',
+    'COORDINATOR': '/coordinator'
   }
 
   myForm: FormGroup = this.fb.group({
@@ -33,14 +33,13 @@ export class LogIn {
   });
 
 
-  //TODO! MANEJAR ESTO CON FORMULARIOS REACTIVOS
   errMessage: WritableSignal<string> = signal('');
 
 
   private redirect(role: string) {
     const route = this.roleRoutes[role];
 
-    if(route){
+    if (route) {
       this.router.navigate([route]);
     }
 
@@ -68,14 +67,15 @@ export class LogIn {
     }
   }
 
-  onSubmit(){
-    if(this.myForm.invalid){
+  onSubmit() {
+    if (this.myForm.invalid) {
       this.myForm.markAllAsTouched();
       return;
     }
 
     const { name, password } = this.myForm.value;
     this.errMessage.set('');
+
 
     this.authService.login(name, password)
       .subscribe({

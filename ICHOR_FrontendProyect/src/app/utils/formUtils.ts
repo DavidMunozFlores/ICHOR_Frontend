@@ -1,54 +1,65 @@
-import { AbstractControl, FormArray, FormGroup, ValidationErrors } from "@angular/forms";
+import { AbstractControl, AsyncValidatorFn, FormArray, FormGroup, ValidationErrors } from "@angular/forms";
+import { OrganPetitionService } from "../services/OrganPetitions.service";
+import { inject } from "@angular/core";
+import { catchError, map, Observable, of } from "rxjs";
 
 
 export class FormUtils {
   //aqui podemos poner expresiones regulares y cositas que necesitemos para validar
 
+
+
   static namePattern = '^([a-zA-Z]+) ([a-zA-Z]+)$';
   static emailPattern = '^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,4}$';
   static notOnlySpacesPattern = '^[a-zA-Z0-9]+$';
+  static passwordRegisterPattern = '^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{8,127}$';
 
   static getTextError(errors: ValidationErrors) {
 
     for (const key of Object.keys(errors)) {
       switch (key) {
         case 'required':
-          return 'Este campo es requerido';
+          return 'Required field';
 
         case 'minlength':
-          return `Mínimo de ${errors['minlength'].requiredLength} caracteres`;
+          return `Minimum length of ${errors['minlength'].requiredLength} characteres`;
 
         case 'min':
-          return `Valor mínimo de ${errors['min'].min}`;
+          return `Minimum value of ${errors['min'].min}`;
+
+        case 'max':
+          return `Maximum value of ${errors['max'].max}`;
 
         case 'email':
-          return `El valor ingresado no es un correo electrónico`;
+          return `The input value it is not an email`;
 
         case 'pattern':
           if (errors['pattern'].requiredPattern === FormUtils.emailPattern) {
-            return `El campo introducido no es un correo electrónico`
+            return `The input value it is not an email`
 
           } else if (errors['pattern'].requiredPattern === FormUtils.namePattern) {
-            return `Debe introducir un NOMBRE y un APELLIDO.
+            return `First Name and Last Name are mandatory.
             `
           } else if (errors['pattern'].requiredPattern === FormUtils.notOnlySpacesPattern) {
-            return `El campo no debe contener espacios`
+            return `The input cannot contain spaces`
           }
 
-          return `Error de patrón contra expresión regular`
+          return `Regular expression error`
 
         case 'passwordsNotEqual':
-          return `Las contraseñas no coinciden`;
+          return `The passwords are not equals`;
 
         case 'emailTaken':
-          return `Email ya existente: NO VALIDO`
+          return `Email already exists: NOT VALID`
 
         case 'reservedName':
-          return `Ese valor está reservado`
+          return `This value is reserved`
 
         case 'hlaInvalid':
           return errors['hlaInvalid'].message;
 
+        case 'patientNotFound':
+          return `Not patient found with such identification.`
 
         default:
           return `Error de validación no controlado ${key}`;
@@ -65,6 +76,7 @@ export class FormUtils {
       form.controls[fieldName].touched
     );
   }
+
 
   static getFieldError(form: FormGroup, fieldName: string): string | null {
 
@@ -134,6 +146,28 @@ export class FormUtils {
     }
 
     return null;
+  }
+
+
+  static patientExistsByIdentification(organPetitionService: OrganPetitionService): AsyncValidatorFn {
+
+
+    return (control: AbstractControl): Observable<ValidationErrors | null> => {
+
+    const patientIdentification = control.value
+
+    if(!control.value){
+      return of(null);
+    }
+
+    return organPetitionService.getPatientByIdentification(patientIdentification).pipe(
+       map(() => null),
+      catchError(() =>
+        of({ patientNotFound: true })
+      )
+    );
+  }
+
   }
 
 }
